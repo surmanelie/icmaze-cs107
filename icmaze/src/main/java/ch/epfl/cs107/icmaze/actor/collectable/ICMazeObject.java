@@ -1,14 +1,18 @@
 package ch.epfl.cs107.icmaze.actor.collectable;
+
 import ch.epfl.cs107.icmaze.actor.ICMazeActor;
+import ch.epfl.cs107.play.areagame.actor.CollectableAreaEntity;
+import ch.epfl.cs107.play.areagame.area.Area;
 import ch.epfl.cs107.play.engine.actor.Sprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Orientation;
 import ch.epfl.cs107.play.window.Canvas;
 
-import java.awt.geom.Area;
 
-public abstract class ICMazeObject extends ICMazeActor {
+
+public abstract class ICMazeObject extends CollectableAreaEntity {
     private final Sprite sprite;
+
 
 
     public ICMazeObject (Area area, Orientation orientation, DiscreteCoordinates position, String spriteName){
@@ -17,11 +21,31 @@ public abstract class ICMazeObject extends ICMazeActor {
     }
 
 
-    public boolean isCellIntercatable(){
-        return true;
+
+
+    @Override
+    public boolean takeCellSpace() {
+        return false;
     }
+
     @Override
     public void draw(Canvas canvas){
         sprite.draw(canvas);
+    }
+
+    @Override
+    public boolean isCellInteractable() {
+        return true;
+    }
+
+    @Override
+    public boolean isViewInteractable(){
+        return false;
+    }
+
+    @Override
+    public void collect() {
+        super.collect();
+        getOwnerArea().unregisterActor(this);
     }
 }

@@ -82,8 +82,6 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
             if(!isDisplacementOccurs()){
                 orientate(orientation);
                 move(MOVE_DURATION);
-            }else{
-                //penser à l'animation ici
             }
         }
     }
