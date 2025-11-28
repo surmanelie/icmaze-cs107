@@ -1,5 +1,10 @@
 package ch.epfl.cs107.icmaze.handler;
 
+import ch.epfl.cs107.icmaze.ICMaze;
+import ch.epfl.cs107.icmaze.ICMazeBehavior;
+import ch.epfl.cs107.icmaze.actor.Health;
+import ch.epfl.cs107.icmaze.actor.ICMazePlayer;
+import ch.epfl.cs107.play.areagame.actor.Interactable;
 import ch.epfl.cs107.play.areagame.handler.AreaInteractionVisitor;
 /**
  * InteractionVisitor for the ICMaze entities
@@ -7,5 +12,29 @@ import ch.epfl.cs107.play.areagame.handler.AreaInteractionVisitor;
 
 public interface ICMazeInteractionVisitor extends AreaInteractionVisitor {
   /// Add Interaction method with all non Abstract Interactable
+
+
+    public interface ICMazeInteractionHandler extends AreaInteractionVisitor {
+
+        // Interaction avec une cellule
+        default void interactWith(ICMazeBehavior.ICMazeCell cell, boolean isCellInteraction) {
+            // rien par défaut
+        }
+
+        // Interaction avec le joueur
+        default void interactWith(ICMazePlayer player, boolean isCellInteraction) {
+            // rien par défaut
+        }
+
+        // Interaction avec une pioche
+        default void interactWith(Pickaxe pickaxe, boolean isCellInteraction) {
+            // rien par défaut
+        }
+
+        // Interaction avec un cœur
+        default void interactWith(Heart heart, boolean isCellInteraction) {
+            // rien par défaut
+        }
+    }
 
 }

@@ -1,6 +1,7 @@
 package ch.epfl.cs107.icmaze;
 
 
+import ch.epfl.cs107.icmaze.handler.ICMazeInteractionVisitor;
 import ch.epfl.cs107.play.areagame.actor.Interactable;
 import ch.epfl.cs107.play.areagame.area.AreaBehavior;
 import ch.epfl.cs107.play.areagame.handler.AreaInteractionVisitor;
@@ -56,7 +57,9 @@ public class ICMazeBehavior extends AreaBehavior{
         public ICMazeCell(int x, int y, CellType type){
             super(x,y);
             this.type = type;
+
         }
+
 
         @Override
         public boolean takeCellSpace(){ // à vérifier si c'est bien publique
@@ -92,10 +95,9 @@ public class ICMazeBehavior extends AreaBehavior{
         public boolean isViewInteractable(){ // est ce qu'on peut intéragir avec cette cellule à distance
             return false ;// false parce que les cellules n'ont pas d'action à distance
         }
-         @Override
-        public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteractable){
-
-         }
+        public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteraction) {
+            ((ICMazeInteractionVisitor.ICMazeInteractionHandler) v).interactWith(this, isCellInteraction);
+        }
     }
 
 

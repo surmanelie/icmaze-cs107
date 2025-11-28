@@ -1,10 +1,12 @@
 package ch.epfl.cs107.icmaze.actor;
 
 import ch.epfl.cs107.icmaze.KeyBindings;
+import ch.epfl.cs107.icmaze.handler.ICMazeInteractionVisitor;
 import ch.epfl.cs107.play.areagame.actor.Interactable;
 import ch.epfl.cs107.play.areagame.actor.Interactor;
 import ch.epfl.cs107.play.areagame.actor.MovableAreaEntity;
 import ch.epfl.cs107.play.areagame.area.Area;
+import ch.epfl.cs107.play.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.engine.actor.Animation;
 import ch.epfl.cs107.play.engine.actor.OrientedAnimation;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
@@ -28,6 +30,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
     private KeyBindings.PlayerKeyBindings key;
     private Keyboard keyboard = getOwnerArea().getKeyboard(); //est-ce qu'il faut mettre en private ?
     private OrientedAnimation animation;
+    private final ICMazePlayerInteractionHandler handler = new ICMazePlayerInteractionHandler();
 
 
 
@@ -96,8 +99,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
 
     @Override
     public List<DiscreteCoordinates> getFieldOfViewCells(){
-        Collections.singletonList
-                (getCurrentMainCellCoordinates().jump(getOrientation().toVector()));
+         return Collections.singletonList (getCurrentMainCellCoordinates().jump(getOrientation().toVector()));
     }
 
     @Override
@@ -116,8 +118,17 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
 
     @Override
     public void interactWith(Interactable other, boolean isCellInteraction) {
+        other.acceptInteraction(handler, isCellInteraction);
 
     }
+    private class ICMazePlayerInteractionHandler implements ICMazeInteractionVisitor {
+        wantsCellIntercation(){
+
+        }
+
+    }
+
+
 
 
 }
