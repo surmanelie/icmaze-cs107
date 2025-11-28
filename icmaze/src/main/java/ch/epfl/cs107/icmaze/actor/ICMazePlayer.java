@@ -1,6 +1,8 @@
 package ch.epfl.cs107.icmaze.actor;
 
 import ch.epfl.cs107.icmaze.KeyBindings;
+import ch.epfl.cs107.play.areagame.actor.Interactable;
+import ch.epfl.cs107.play.areagame.actor.Interactor;
 import ch.epfl.cs107.play.areagame.actor.MovableAreaEntity;
 import ch.epfl.cs107.play.areagame.area.Area;
 import ch.epfl.cs107.play.engine.actor.Animation;
@@ -12,9 +14,13 @@ import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
 
-import static ch.epfl.cs107.icmaze.actor.ICMazePlayer.PlayerState.IDLE;
+import java.util.Collections;
+import java.util.List;
 
-public class ICMazePlayer extends ICMazeActor {
+import static ch.epfl.cs107.icmaze.actor.ICMazePlayer.PlayerState.IDLE;
+import static ch.epfl.cs107.icmaze.actor.ICMazePlayer.PlayerState.INTERACTING;
+
+public class ICMazePlayer extends ICMazeActor implements Interactor {
 
     private final static int  MOVE_DURATION = 4;
     private String name;
@@ -85,6 +91,33 @@ public class ICMazePlayer extends ICMazeActor {
     }
 
 
+
+
+
+    @Override
+    public List<DiscreteCoordinates> getFieldOfViewCells(){
+        Collections.singletonList
+                (getCurrentMainCellCoordinates().jump(getOrientation().toVector()));
+    }
+
+    @Override
+    public boolean wantsCellInteraction(){
+        return true;
+    }
+
+    @Override
+    public boolean wantsViewInteraction(){
+    if (currentState == INTERACTING){
+        return true;
+
+    }else
+        return false;
+    }
+
+    @Override
+    public void interactWith(Interactable other, boolean isCellInteraction) {
+
+    }
 
 
 }
