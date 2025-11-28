@@ -22,7 +22,7 @@ public abstract class ICMazeObject extends CollectableAreaEntity {
 
     @Override
     public List<DiscreteCoordinates> getCurrentCells() {
-        return List.of();
+        return List.of(getCurrentMainCellCoordinates());
     }
 
 

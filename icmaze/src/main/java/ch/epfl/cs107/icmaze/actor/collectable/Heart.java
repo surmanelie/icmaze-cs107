@@ -30,8 +30,7 @@ public  class Heart extends ICMazeObject{
     }
 
     @Override
-    public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteraction) { ((ICMazeInteractionVisitor) v).interactWith(this, isCellInteraction);
-
-
+    public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteraction) {
+        ((ICMazeInteractionVisitor) v).interactWith(this, isCellInteraction);
     }
 }
