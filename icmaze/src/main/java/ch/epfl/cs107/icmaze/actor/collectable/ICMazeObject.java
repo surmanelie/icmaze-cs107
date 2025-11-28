@@ -8,19 +8,22 @@ import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Orientation;
 import ch.epfl.cs107.play.window.Canvas;
 
+import java.util.List;
 
 
 public abstract class ICMazeObject extends CollectableAreaEntity {
-    private final Sprite sprite;
 
 
 
-    public ICMazeObject (Area area, Orientation orientation, DiscreteCoordinates position, String spriteName){
+
+    public ICMazeObject (Area area, Orientation orientation, DiscreteCoordinates position){
         super(area,orientation,position);
-        sprite = new Sprite(spriteName,1,1,this);
     }
 
-
+    @Override
+    public List<DiscreteCoordinates> getCurrentCells() {
+        return List.of();
+    }
 
 
     @Override
@@ -28,10 +31,7 @@ public abstract class ICMazeObject extends CollectableAreaEntity {
         return false;
     }
 
-    @Override
-    public void draw(Canvas canvas){
-        sprite.draw(canvas);
-    }
+
 
     @Override
     public boolean isCellInteractable() {
