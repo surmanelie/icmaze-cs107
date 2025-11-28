@@ -16,7 +16,7 @@ public interface ICMazeInteractionVisitor extends AreaInteractionVisitor {
   /// Add Interaction method with all non Abstract Interactable
 
 
-    public interface ICMazeInteractionHandler extends AreaInteractionVisitor {
+
 
         // Interaction avec une cellule
         default void interactWith(ICMazeBehavior.ICMazeCell cell, boolean isCellInteraction) {
@@ -37,6 +37,6 @@ public interface ICMazeInteractionVisitor extends AreaInteractionVisitor {
         default void interactWith(Heart heart, boolean isCellInteraction) {
             // rien par défaut
         }
-    }
+
 
 }

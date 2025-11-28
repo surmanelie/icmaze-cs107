@@ -96,7 +96,7 @@ public class ICMazeBehavior extends AreaBehavior{
             return false ;// false parce que les cellules n'ont pas d'action à distance
         }
         public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteraction) {
-            ((ICMazeInteractionVisitor.ICMazeInteractionHandler) v).interactWith(this, isCellInteraction);
+            ((ICMazeInteractionVisitor) v).interactWith(this, isCellInteraction);
         }
     }
 

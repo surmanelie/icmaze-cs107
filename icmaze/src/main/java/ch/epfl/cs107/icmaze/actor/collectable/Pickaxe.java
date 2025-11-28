@@ -1,5 +1,6 @@
 package ch.epfl.cs107.icmaze.actor.collectable;
 
+import ch.epfl.cs107.icmaze.handler.ICMazeInteractionVisitor;
 import ch.epfl.cs107.play.areagame.area.Area;
 import ch.epfl.cs107.play.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.engine.actor.Sprite;
@@ -22,6 +23,8 @@ public class Pickaxe extends Equipement{
 
     @Override
     public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteraction) {
+        ((ICMazeInteractionVisitor) v).interactWith(this, isCellInteraction);
+
 
     }
 }
