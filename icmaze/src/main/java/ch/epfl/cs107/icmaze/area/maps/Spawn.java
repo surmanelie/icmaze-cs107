@@ -17,7 +17,7 @@ public class Spawn extends ICMazeArea {
 
 
     public Spawn(){
-        super("SmallArea");
+        super("SmallArea",8);
     }
 
     @Override
@@ -46,6 +46,7 @@ public class Spawn extends ICMazeArea {
         registerActor(heart);
 
         registerActor(player);
+
     }
 
 }

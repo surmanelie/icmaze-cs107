@@ -1,5 +1,6 @@
 package ch.epfl.cs107.icmaze.actor.collectable;
 
+import ch.epfl.cs107.icmaze.handler.ICMazeInteractionVisitor;
 import ch.epfl.cs107.play.areagame.area.Area;
 import ch.epfl.cs107.play.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.engine.actor.Sprite;
@@ -46,9 +47,13 @@ public class Key extends ICMazeObject{
 
     @Override
     public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteraction) {
-        if(isCellInteraction){
-            getOwnerArea().unregisterActor(this);
-        }
+        ((ICMazeInteractionVisitor) v).interactWith(this, isCellInteraction);
 
+
+    }
+
+    @Override
+    public boolean isViewInteractable() {
+        return false;
     }
 }

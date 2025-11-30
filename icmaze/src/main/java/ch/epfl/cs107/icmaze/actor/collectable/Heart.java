@@ -29,8 +29,16 @@ public  class Heart extends ICMazeObject{
         animation.update(deltaTime);
     }
 
+//    @Override
+//    public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteraction) {
+//        ((ICMazeInteractionVisitor) v).interactWith(this, isCellInteraction);
+//    }
+
     @Override
     public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteraction) {
-        ((ICMazeInteractionVisitor) v).interactWith(this, isCellInteraction);
+        if (isCellInteraction && v instanceof ICMazeInteractionVisitor visitor) {
+            visitor.interactWith(this, true);
+        }
     }
+
 }

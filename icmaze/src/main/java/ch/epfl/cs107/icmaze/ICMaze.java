@@ -32,6 +32,7 @@ public class ICMaze extends AreaGame {
         createAreas();
         setCurrentArea(INITIAL_AREA, true);
 
+
         return true;
     }
 

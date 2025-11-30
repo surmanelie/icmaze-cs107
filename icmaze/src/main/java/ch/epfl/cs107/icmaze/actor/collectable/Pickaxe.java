@@ -11,8 +11,6 @@ import ch.epfl.cs107.play.window.Canvas;
 public class Pickaxe extends Equipement{
 
 
-
-
     public Pickaxe(Area area, Orientation orientation, DiscreteCoordinates position){
         super(area, orientation,position);
         setSprite( new Sprite("icmaze/pickaxe", .75f, .75f, this));
@@ -24,7 +22,5 @@ public class Pickaxe extends Equipement{
     @Override
     public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteraction) {
         ((ICMazeInteractionVisitor) v).interactWith(this, isCellInteraction);
-
-
     }
 }

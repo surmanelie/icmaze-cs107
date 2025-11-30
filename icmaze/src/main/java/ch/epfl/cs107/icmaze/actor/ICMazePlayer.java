@@ -2,6 +2,8 @@ package ch.epfl.cs107.icmaze.actor;
 
 import ch.epfl.cs107.icmaze.KeyBindings;
 import ch.epfl.cs107.icmaze.actor.collectable.Heart;
+import ch.epfl.cs107.icmaze.actor.collectable.ICMazeObject;
+import ch.epfl.cs107.icmaze.actor.collectable.Key;
 import ch.epfl.cs107.icmaze.actor.collectable.Pickaxe;
 import ch.epfl.cs107.icmaze.handler.ICMazeInteractionVisitor;
 import ch.epfl.cs107.play.areagame.actor.Interactable;
@@ -18,6 +20,7 @@ import ch.epfl.cs107.play.window.Button;
 import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.play.window.Keyboard;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,16 +32,18 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
     private final static int MOVE_DURATION = 4;
     private String name;
     private PlayerState currentState = IDLE;
-    private KeyBindings.PlayerKeyBindings key;
+    private final KeyBindings.PlayerKeyBindings keys;
     private Keyboard keyboard = getOwnerArea().getKeyboard(); //est-ce qu'il faut mettre en private ?
     private OrientedAnimation animation;
     private final ICMazePlayerInteractionHandler handler = new ICMazePlayerInteractionHandler();
+    private final List<ICMazeObject> bag = new ArrayList<>();
+
 
 
     public ICMazePlayer(Area owner, Orientation orientation, DiscreteCoordinates coordinates, String spriteName, KeyBindings.PlayerKeyBindings key) {
         super(owner, orientation, coordinates);
         this.name = spriteName;
-        this.key = key;
+        this.keys = key;
         final Vector anchor = new Vector(0, 0);
         final Orientation[] orders = {Orientation.DOWN, Orientation.RIGHT, Orientation.UP, Orientation.LEFT}; //on peut faire ça comme ça ?
         final int ANIMATION_DURATION = 4;
@@ -60,12 +65,12 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
     public void update(float deltaTime) { //vérifier que l'update est bon
         switch (currentState) {
             case IDLE:
-                moveIfPressed(Orientation.DOWN, keyboard.get(key.down()));
-                moveIfPressed(Orientation.RIGHT, keyboard.get(key.right()));
-                moveIfPressed(Orientation.UP, keyboard.get(key.up()));
-                moveIfPressed(Orientation.LEFT, keyboard.get(key.left()));
+                moveIfPressed(Orientation.DOWN, keyboard.get(keys.down()));// créer une méthode ici
+                moveIfPressed(Orientation.RIGHT, keyboard.get(keys.right()));
+                moveIfPressed(Orientation.UP, keyboard.get(keys.up()));
+                moveIfPressed(Orientation.LEFT, keyboard.get(keys.left()));
                 if (isDisplacementOccurs()) {
-                    animation.update(deltaTime);
+                    animation.update(deltaTime); //on peut créer une méthde
                 } else {
                     animation.reset();
                 }
@@ -123,6 +128,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
         @Override
         public void interactWith(Pickaxe pickaxe, boolean isCellInteraction) {
             if (isCellInteraction) {
+                bag.add(pickaxe);
                 pickaxe.collect();
             }
 
@@ -135,6 +141,16 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
             }
         }
 
+        @Override
+        public void interactWith(Key key, boolean isCellInteraction) {
+            if (isCellInteraction) {
+                bag.add(key);
+                key.collect();
+                System.out.println(bag);
+
+            }
+
+        }
 
     }
 }
