@@ -2,6 +2,7 @@ package ch.epfl.cs107.icmaze.area.maps;
 
 import ch.epfl.cs107.icmaze.KeyBindings;
 import ch.epfl.cs107.icmaze.actor.ICMazePlayer;
+import ch.epfl.cs107.icmaze.actor.Portal;
 import ch.epfl.cs107.icmaze.actor.collectable.Heart;
 import ch.epfl.cs107.icmaze.actor.collectable.Key;
 import ch.epfl.cs107.icmaze.actor.collectable.Pickaxe;
@@ -27,9 +28,9 @@ public class Spawn extends ICMazeArea {
 
     @Override
     protected void createArea(){
-        super.createArea();
-        registerActor(new Background(this));
-        registerActor(new Foreground(this));
+        registerActor(new Background(this, getBehaviorName()));
+        //registerActor(new Background(this));
+        //registerActor(new Foreground(this));
 
         ICMazePlayer player  = new ICMazePlayer(this, Orientation.DOWN, new DiscreteCoordinates(5,7), "icmaze/player",KeyBindings.PLAYER_KEY_BINDINGS);
         Pickaxe pickaxe = new Pickaxe(this, Orientation.DOWN, new DiscreteCoordinates(5,4));
@@ -46,6 +47,17 @@ public class Spawn extends ICMazeArea {
         registerActor(heart);
 
         registerActor(player);
+        createPortals();
+
+        setEastState(Portal.State.OPEN);
+        setSouthState(Portal.State.OPEN);
+        setNorthState(Portal.State.OPEN);
+        setWestState(Portal.State.OPEN);
+
+        setNorthDestination("icmaze/Boss");
+;
+
+
 
     }
 

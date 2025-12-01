@@ -4,6 +4,7 @@ import ch.epfl.cs107.icmaze.ICMazeBehavior;
 import ch.epfl.cs107.icmaze.actor.Portal;
 import ch.epfl.cs107.play.areagame.area.Area;
 import ch.epfl.cs107.play.engine.actor.Background;
+import ch.epfl.cs107.play.engine.actor.Foreground;
 import ch.epfl.cs107.play.io.FileSystem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Orientation;
@@ -16,6 +17,31 @@ public abstract class ICMazeArea extends Area {
     private Portal E;
     private Portal N;
     protected final int size;
+
+    private String northDestination ;
+    private String southDestination ;
+    private String westDestination;
+    private String eastDestination;
+
+
+
+    private  Portal.State northState;
+    private  Portal.State southState;
+    private  Portal.State eastState;
+    private  Portal.State weststate;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -42,55 +68,52 @@ public abstract class ICMazeArea extends Area {
         return true;
     }
 
-    protected void createArea(){
-        registerActor(new Background(this, behaviorName));
+    protected  abstract void createArea();
 
+
+
+    protected void setNorthState(Portal.State state) {
+        N.setState(state);
+    }
+
+    protected void setSouthState(Portal.State state) {
+        S.setState(state);
+    }
+
+    protected void setEastState(Portal.State state) {
+        E.setState(state);
+    }
+
+    protected void setWestState(Portal.State state) {
+        W.setState(state);
+    }
+
+    protected void setNorthDestination(String destination){
+        this.northDestination = destination;
     }
 
 
 
 
+
+
+    public String getBehaviorName() {
+        return behaviorName;
+    }
+
     protected void createPortals() {
 
         // Portail Nord
-        N = new Portal(
-                this,
-                Orientation.DOWN,  // le sprite regarde vers la carte
-                new DiscreteCoordinates(size / 2, size + 1),
-                null,
-                null,
-                Portal.NO_KEY_ID
-        );
+        N = new Portal( this, AreaPortals.N.getOrientation().opposite(),  new DiscreteCoordinates(size / 2, size + 1),northDestination,new DiscreteCoordinates(size/2+1,1),0, northState);
 
         // Portail Sud
-        S = new Portal(
-                this,
-                Orientation.UP,
-                new DiscreteCoordinates(size / 2, 0),
-                null,
-                null,
-                Portal.NO_KEY_ID
-        );
+        S = new Portal( this, Orientation.UP, new DiscreteCoordinates(size / 2, 0),southDestination ,new DiscreteCoordinates(size / 2, 0), 0, southState);
 
         // Portail Ouest
-        W = new Portal(
-                this,
-                Orientation.RIGHT,
-                new DiscreteCoordinates(0, size / 2),
-                null,
-                null,
-                Portal.NO_KEY_ID
-        );
+        W = new Portal( this, Orientation.RIGHT, new DiscreteCoordinates(0, size / 2), westDestination,new DiscreteCoordinates(0, size / 2) ,0,weststate);
 
         // Portail Est
-        E = new Portal(
-                this,
-                Orientation.LEFT,
-                new DiscreteCoordinates(size + 1, size / 2),
-                null,
-                null,
-                Portal.NO_KEY_ID
-        );
+        E = new Portal( this, Orientation.LEFT, new DiscreteCoordinates(size + 1, size / 2), eastDestination,new DiscreteCoordinates(size + 1, size / 2) , 0, eastState );
 
         // Enregistrer les portails comme acteurs
         registerActor(N);
@@ -98,6 +121,9 @@ public abstract class ICMazeArea extends Area {
         registerActor(E);
         registerActor(W);
     }
+
+
+
 
     public enum AreaPortals {
         N(Orientation.UP),
@@ -123,6 +149,12 @@ public abstract class ICMazeArea extends Area {
             case E -> new DiscreteCoordinates(size, size/2 + 1);
         };
     }
+
+
+
+
+
+
 
 
 

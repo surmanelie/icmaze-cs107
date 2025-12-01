@@ -24,14 +24,9 @@ public class Portal extends ICMazeActor implements Interactable {
 
 
 
-    public Portal(Area owner,
-                  Orientation orientation,
-                  DiscreteCoordinates position,
-                  String destinationAreaName,
-                  DiscreteCoordinates arrivalCoordinates,
-                  int keyId) {
+    public Portal(Area area, Orientation orientation,DiscreteCoordinates position,String destinationAreaName, DiscreteCoordinates arrivalCoordinates, int keyId, State state) {
 
-        super(owner, orientation, position);
+        super(area, orientation, position);
 
         this.state = State.INVISIBLE;
         this.destinationAreaName = destinationAreaName;
@@ -75,4 +70,9 @@ public class Portal extends ICMazeActor implements Interactable {
                 Vector((getOrientation().ordinal()+1)%2,
                 getOrientation().ordinal()%2)));
     }
+    public void setState(State newState) {
+        this.state = newState;
+    }
+
+
 }
