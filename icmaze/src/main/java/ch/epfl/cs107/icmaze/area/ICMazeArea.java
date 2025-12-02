@@ -98,7 +98,7 @@ public abstract class ICMazeArea extends Area {
         return behaviorName;
     }
 
-    protected void createPortals() {
+    protected void createPortals() {// modifier cordonne arrivee
 
         // Portail Nord
         N = new Portal( this, AreaPortals.N.getOrientation().opposite(),  new DiscreteCoordinates(size / 2, size + 1),northDestination,new DiscreteCoordinates(size/2+1,1),0, northState);
