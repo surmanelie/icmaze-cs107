@@ -4,6 +4,7 @@ import ch.epfl.cs107.icmaze.ICMaze;
 import ch.epfl.cs107.icmaze.ICMazeBehavior;
 import ch.epfl.cs107.icmaze.actor.Health;
 import ch.epfl.cs107.icmaze.actor.ICMazePlayer;
+import ch.epfl.cs107.icmaze.actor.Portal;
 import ch.epfl.cs107.icmaze.actor.collectable.Heart;
 import ch.epfl.cs107.icmaze.actor.collectable.Key;
 import ch.epfl.cs107.icmaze.actor.collectable.Pickaxe;
@@ -42,6 +43,10 @@ public interface ICMazeInteractionVisitor extends AreaInteractionVisitor {
         default void interactWith(Key key, boolean isCellInteraction) {
 
         }
+        default void interactWith(Portal portal, boolean isCellInteraction) {}
+
+
+
 
 
 

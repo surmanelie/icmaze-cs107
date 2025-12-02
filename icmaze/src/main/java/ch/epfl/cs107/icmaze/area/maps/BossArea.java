@@ -27,8 +27,11 @@ public class BossArea extends ICMazeArea {
     @Override
     protected void createArea(){
         //super.createArea();
-        registerActor(new Background(this));
-        registerActor(new Foreground(this));
+        registerActor(new Background(this, getBehaviorName()));
     }
 
+    @Override
+    public DiscreteCoordinates getplayerSpawnPosition() {
+        return new DiscreteCoordinates(5,7);
+    }
 }

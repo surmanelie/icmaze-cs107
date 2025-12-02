@@ -46,6 +46,15 @@ public abstract class ICMazeActor extends MovableAreaEntity implements Interacta
 
     //est-ce qu'on pourrait mettre update ici ou pas ?
 
-
+    public void leaveArea(){
+        getOwnerArea().unregisterActor(this);
+    }
+    public void enterArea(Area area, DiscreteCoordinates position) {
+        area.registerActor(this);
+        area.setViewCandidate(this);
+        setOwnerArea(area);
+        setCurrentPosition(position.toVector());
+        resetMotion();
+    }
 
 }

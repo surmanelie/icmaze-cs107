@@ -8,47 +8,72 @@ import ch.epfl.cs107.icmaze.actor.collectable.Pickaxe;
 import ch.epfl.cs107.icmaze.handler.ICMazeInteractionVisitor;
 import ch.epfl.cs107.play.areagame.actor.Interactable;
 import ch.epfl.cs107.play.areagame.actor.Interactor;
-import ch.epfl.cs107.play.areagame.actor.MovableAreaEntity;
 import ch.epfl.cs107.play.areagame.area.Area;
-import ch.epfl.cs107.play.areagame.handler.AreaInteractionVisitor;
-import ch.epfl.cs107.play.engine.actor.Animation;
 import ch.epfl.cs107.play.engine.actor.OrientedAnimation;
-import ch.epfl.cs107.play.math.DiscreteCoordinates;
-import ch.epfl.cs107.play.math.Orientation;
 import ch.epfl.cs107.play.math.Vector;
-import ch.epfl.cs107.play.window.Button;
-import ch.epfl.cs107.play.window.Canvas;
-import ch.epfl.cs107.play.window.Keyboard;
+import ch.epfl.cs107.play.window.*;
+import ch.epfl.cs107.play.math.*;
+import ch.epfl.cs107.icmaze.actor.Portal;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static ch.epfl.cs107.icmaze.actor.ICMazePlayer.PlayerState.IDLE;
-import static ch.epfl.cs107.icmaze.actor.ICMazePlayer.PlayerState.INTERACTING;
+import java.util.*;
 
 public class ICMazePlayer extends ICMazeActor implements Interactor {
 
     private final static int MOVE_DURATION = 4;
+
     private String name;
-    private PlayerState currentState = IDLE;
+    private PlayerState currentState = PlayerState.IDLE;
+
     private final KeyBindings.PlayerKeyBindings keys;
-    private Keyboard keyboard = getOwnerArea().getKeyboard(); //est-ce qu'il faut mettre en private ?
+    private Keyboard keyboard = getOwnerArea().getKeyboard();
+
     private OrientedAnimation animation;
     private final ICMazePlayerInteractionHandler handler = new ICMazePlayerInteractionHandler();
+
     private final List<ICMazeObject> bag = new ArrayList<>();
+    private boolean isChanging;
+    private String destinationArea;
+    private DiscreteCoordinates destinationCoordonates;
+    //boolenan changing set + get
+    //string destinationArea get
+    //corrdonne arrive get
+
+
+    public void setDestinationArea(String destinationArea) {
+        this.destinationArea = destinationArea;
+    }
+
+    public DiscreteCoordinates getDestinationCoordonates() {
+        return destinationCoordonates;
+    }
+
+    public void setisChanging(boolean changing) {
+        isChanging = changing;
+    }
+
+    public boolean getisChanging() {
+        return isChanging;
+    }
 
 
 
-    public ICMazePlayer(Area owner, Orientation orientation, DiscreteCoordinates coordinates, String spriteName, KeyBindings.PlayerKeyBindings key) {
+    public String getDestinationArea() {
+        return destinationArea;
+    }
+
+    public ICMazePlayer(Area owner, Orientation orientation, DiscreteCoordinates coordinates,
+                        String spriteName) {
         super(owner, orientation, coordinates);
         this.name = spriteName;
-        this.keys = key;
+        this.keys = KeyBindings.PLAYER_KEY_BINDINGS;
+
         final Vector anchor = new Vector(0, 0);
-        final Orientation[] orders = {Orientation.DOWN, Orientation.RIGHT, Orientation.UP, Orientation.LEFT}; //on peut faire ça comme ça ?
+        final Orientation[] orders = {Orientation.DOWN, Orientation.RIGHT, Orientation.UP, Orientation.LEFT};
         final int ANIMATION_DURATION = 4;
         final String prefix = "icmaze/player";
-        animation = new OrientedAnimation(prefix, ANIMATION_DURATION, this, anchor, orders, 4, 1, 2, 16, 32, true);
+
+        animation = new OrientedAnimation(prefix, ANIMATION_DURATION, this, anchor, orders,
+                4, 1, 2, 16, 32, true);
     }
 
     public enum PlayerState {
@@ -56,39 +81,47 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
         INTERACTING
     }
 
-    @Override //on dit que ce joueur n'est pas traversable, i.e il prend la place de la cellule
+    @Override
     public boolean takeCellSpace() {
         return true;
     }
 
     @Override
-    public void update(float deltaTime) { //vérifier que l'update est bon
+    public void update(float deltaTime) {
+
         switch (currentState) {
+
             case IDLE:
-                moveIfPressed(Orientation.DOWN, keyboard.get(keys.down()));// créer une méthode ici
+                moveIfPressed(Orientation.DOWN, keyboard.get(keys.down()));
                 moveIfPressed(Orientation.RIGHT, keyboard.get(keys.right()));
                 moveIfPressed(Orientation.UP, keyboard.get(keys.up()));
                 moveIfPressed(Orientation.LEFT, keyboard.get(keys.left()));
-                if (isDisplacementOccurs()) {
-                    animation.update(deltaTime); //on peut créer une méthde
-                } else {
-                    animation.reset();
+
+                if (isDisplacementOccurs()) animation.update(deltaTime);
+                else animation.reset();
+
+                // Entrer en mode INTERACTING
+                if (!isDisplacementOccurs() &&
+                        keyboard.get(keys.interact()).isPressed()) {
+                    currentState = PlayerState.INTERACTING;
                 }
                 break;
 
             case INTERACTING:
+                // Quitter mode INTERACTING
+                if (!keyboard.get(keys.interact()).isDown()) {
+                    currentState = PlayerState.IDLE;
+                }
                 break;
         }
 
         super.update(deltaTime);
     }
 
-    private void moveIfPressed(Orientation orientation, Button b) {//vérifier que c'est bien cette fonction qu'il fallait faire
-        if (b.isDown()) {
-            if (!isDisplacementOccurs()) {
-                orientate(orientation);
-                move(MOVE_DURATION);
-            }
+    private void moveIfPressed(Orientation orientation, Button b) {
+        if (b.isDown() && !isDisplacementOccurs()) {
+            orientate(orientation);
+            move(MOVE_DURATION);
         }
     }
 
@@ -97,30 +130,21 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
         animation.draw(canvas);
     }
 
-
     @Override
     public List<DiscreteCoordinates> getFieldOfViewCells() {
-        return Collections.singletonList(getCurrentMainCellCoordinates().jump(getOrientation().toVector()));
+        return Collections.singletonList(
+                getCurrentMainCellCoordinates().jump(getOrientation().toVector()));
     }
 
     @Override
-    public boolean wantsCellInteraction() {
-        return true;
-    }
+    public boolean wantsCellInteraction() { return true; }
 
     @Override
-    public boolean wantsViewInteraction() {
-        if (currentState == INTERACTING) {
-            return true;
-
-        } else
-            return false;
-    }
+    public boolean wantsViewInteraction() { return currentState == PlayerState.INTERACTING; }
 
     @Override
     public void interactWith(Interactable other, boolean isCellInteraction) {
         other.acceptInteraction(handler, isCellInteraction);
-
     }
 
     private class ICMazePlayerInteractionHandler implements ICMazeInteractionVisitor {
@@ -131,14 +155,11 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                 bag.add(pickaxe);
                 pickaxe.collect();
             }
-
         }
 
         @Override
         public void interactWith(Heart heart, boolean isCellInteraction) {
-            if (isCellInteraction) {
-                heart.collect();
-            }
+            if (isCellInteraction) heart.collect();
         }
 
         @Override
@@ -146,11 +167,18 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
             if (isCellInteraction) {
                 bag.add(key);
                 key.collect();
-                System.out.println(bag);
-
             }
-
         }
 
+        @Override
+        public void interactWith(Portal portal, boolean isCellInteraction) {
+            setisChanging(true);
+            setDestinationArea(portal.getDestinationAreaName());
+            destinationCoordonates = portal.getArrivalCoordinates();
+        }
     }
+
+
+
 }
+

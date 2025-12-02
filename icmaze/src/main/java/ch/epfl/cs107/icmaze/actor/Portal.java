@@ -1,7 +1,9 @@
 package ch.epfl.cs107.icmaze.actor;
 
+import ch.epfl.cs107.icmaze.handler.ICMazeInteractionVisitor;
 import ch.epfl.cs107.play.areagame.actor.Interactable;
 import ch.epfl.cs107.play.areagame.area.Area;
+import ch.epfl.cs107.play.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.engine.actor.Sprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Orientation;
@@ -11,7 +13,7 @@ import ch.epfl.cs107.play.window.Canvas;
 import java.util.List;
 
 public class Portal extends ICMazeActor implements Interactable {
-    public enum State {OPEN,LOCKED, INVISIBLE }
+
     private State state;
 
     private String destinationAreaName;
@@ -23,12 +25,16 @@ public class Portal extends ICMazeActor implements Interactable {
 
 
 
+    public enum State {
+        OPEN,
+        LOCKED,
+        INVISIBLE }
 
     public Portal(Area area, Orientation orientation,DiscreteCoordinates position,String destinationAreaName, DiscreteCoordinates arrivalCoordinates, int keyId, State state) {
 
         super(area, orientation, position);
 
-        this.state = State.INVISIBLE;
+        this.state = state;
         this.destinationAreaName = destinationAreaName;
         this.arrivalCoordinates = arrivalCoordinates;
         this.keyId = keyId;
@@ -48,14 +54,22 @@ public class Portal extends ICMazeActor implements Interactable {
 
     @Override
     public void draw(Canvas canvas) {
+        super.draw(canvas);
         switch(state){
-            case INVISIBLE : invisibleSprite.draw(canvas);
-            case LOCKED : lockedSprite.draw(canvas);
-            case OPEN :{ /* draw nothing */ }
+           case INVISIBLE : invisibleSprite.draw(canvas);
+            break;
+           case LOCKED : lockedSprite.draw(canvas);
+            break;
+           case OPEN :
+                    /* draw nothing */
+            break;
+
+            default: break;
         }
 
-        super.draw(canvas);
+       // super.draw(canvas);
     }
+
     @Override
     public boolean takeCellSpace() {
         return state != State.OPEN;
@@ -64,15 +78,45 @@ public class Portal extends ICMazeActor implements Interactable {
     public boolean isViewInteractable() { return true; }
 
     @Override
+    public boolean isCellInteractable() {
+        return state == State.OPEN;
+    }
+
+    @Override
     public List<DiscreteCoordinates> getCurrentCells() {
         DiscreteCoordinates coord = getCurrentMainCellCoordinates();
         return List.of(coord, coord.jump(new
                 Vector((getOrientation().ordinal()+1)%2,
                 getOrientation().ordinal()%2)));
     }
-    public void setState(State newState) {
-        this.state = newState;
+
+    public State getState() {
+        return state;
     }
 
+    public void open() {
 
+        if (state == State.LOCKED) {
+            state = State.OPEN;
+        }
+    }
+
+    public String getDestinationAreaName() {
+        return destinationAreaName;
+    }
+
+    public DiscreteCoordinates getArrivalCoordinates() {
+        return arrivalCoordinates;
+    }
+
+    public void setDestinationAreaName(String destinationAreaName) {
+        this.destinationAreaName = destinationAreaName;
+    }
+
+    @Override
+    public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteraction) {
+        if (v instanceof ICMazeInteractionVisitor visitor) {
+            visitor.interactWith(this,isCellInteraction);
+        }
+    }
 }

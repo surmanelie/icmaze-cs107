@@ -22,6 +22,11 @@ public class Spawn extends ICMazeArea {
     }
 
     @Override
+    public DiscreteCoordinates getplayerSpawnPosition() {
+        return new DiscreteCoordinates(5,7);
+    }
+
+    @Override
     public String getTitle(){
         return "icmaze/Spawn";
     }
@@ -29,10 +34,9 @@ public class Spawn extends ICMazeArea {
     @Override
     protected void createArea(){
         registerActor(new Background(this, getBehaviorName()));
-        //registerActor(new Background(this));
         //registerActor(new Foreground(this));
 
-        ICMazePlayer player  = new ICMazePlayer(this, Orientation.DOWN, new DiscreteCoordinates(5,7), "icmaze/player",KeyBindings.PLAYER_KEY_BINDINGS);
+
         Pickaxe pickaxe = new Pickaxe(this, Orientation.DOWN, new DiscreteCoordinates(5,4));
         Heart heart = new Heart(this,new DiscreteCoordinates(4,5) );
         // Clé 1 : identifiant MAX_VALUE en (6,5)
@@ -46,15 +50,20 @@ public class Spawn extends ICMazeArea {
         registerActor(pickaxe);
         registerActor(heart);
 
-        registerActor(player);
+
+        setEastState(Portal.State.INVISIBLE);
+        setNorthState(Portal.State.INVISIBLE);
+        setWestState(Portal.State.OPEN);
+        setSouthState(Portal.State.INVISIBLE);
         createPortals();
 
-        setEastState(Portal.State.OPEN);
-        setSouthState(Portal.State.OPEN);
-        setNorthState(Portal.State.OPEN);
-        setWestState(Portal.State.OPEN);
+
+
 
         setNorthDestination("icmaze/Boss");
+        setEastDestination("icmaze/Boss");
+        setWestDestination("icmaze/Boss");
+
 ;
 
 

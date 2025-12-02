@@ -23,26 +23,10 @@ public abstract class ICMazeArea extends Area {
     private String westDestination;
     private String eastDestination;
 
-
-
-    private  Portal.State northState;
-    private  Portal.State southState;
-    private  Portal.State eastState;
-    private  Portal.State weststate;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    private  Portal.State northState = Portal.State.INVISIBLE;
+    private  Portal.State southState = Portal.State.INVISIBLE;
+    private  Portal.State eastState = Portal.State.INVISIBLE;
+    private  Portal.State weststate = Portal.State.INVISIBLE;
 
 
     //extends Area ?
@@ -59,13 +43,17 @@ public abstract class ICMazeArea extends Area {
         return 20f;
     }
 
+    public abstract DiscreteCoordinates getplayerSpawnPosition();
+
     @Override
     public boolean begin(Window window, FileSystem fileSystem){
-        super.begin(window,fileSystem);
-        setBehavior(new ICMazeBehavior(window, behaviorName));
-        createArea();
-        createPortals();
-        return true;
+        if(super.begin(window,fileSystem)) {
+            setBehavior(new ICMazeBehavior(window, behaviorName));
+            createArea();
+            createPortals();
+
+        }return false;
+
     }
 
     protected  abstract void createArea();
@@ -73,27 +61,36 @@ public abstract class ICMazeArea extends Area {
 
 
     protected void setNorthState(Portal.State state) {
-        N.setState(state);
+       this.northState = state;
     }
 
     protected void setSouthState(Portal.State state) {
-        S.setState(state);
+        this.southState = state;
+
     }
 
     protected void setEastState(Portal.State state) {
-        E.setState(state);
+        this.eastState = state;
+
     }
 
     protected void setWestState(Portal.State state) {
-        W.setState(state);
+        this.weststate = state;
+
     }
 
     protected void setNorthDestination(String destination){
-        this.northDestination = destination;
+        N.setDestinationAreaName(destination);
     }
-
-
-
+    protected void setSouthDestination(String destination){
+        S.setDestinationAreaName(destination);
+    }
+    protected void setWestDestination(String destination){
+        W.setDestinationAreaName(destination);
+    }
+    protected void setEastDestination(String destination){
+        E.setDestinationAreaName(destination);
+    }
 
 
 
@@ -107,13 +104,12 @@ public abstract class ICMazeArea extends Area {
         N = new Portal( this, AreaPortals.N.getOrientation().opposite(),  new DiscreteCoordinates(size / 2, size + 1),northDestination,new DiscreteCoordinates(size/2+1,1),0, northState);
 
         // Portail Sud
-        S = new Portal( this, Orientation.UP, new DiscreteCoordinates(size / 2, 0),southDestination ,new DiscreteCoordinates(size / 2, 0), 0, southState);
+        S = new Portal( this, AreaPortals.S.getOrientation().opposite(), new DiscreteCoordinates(size / 2, 0),southDestination ,new DiscreteCoordinates(size / 2, 0), 0, southState);
 
         // Portail Ouest
-        W = new Portal( this, Orientation.RIGHT, new DiscreteCoordinates(0, size / 2), westDestination,new DiscreteCoordinates(0, size / 2) ,0,weststate);
-
+        W = new Portal( this, AreaPortals.W.getOrientation().opposite(), new DiscreteCoordinates(0, size / 2), westDestination,new DiscreteCoordinates(0, size / 2) ,0,weststate);
         // Portail Est
-        E = new Portal( this, Orientation.LEFT, new DiscreteCoordinates(size + 1, size / 2), eastDestination,new DiscreteCoordinates(size + 1, size / 2) , 0, eastState );
+        E = new Portal( this, AreaPortals.E.getOrientation().opposite(), new DiscreteCoordinates(size + 1, size / 2), eastDestination,new DiscreteCoordinates(size + 1, size / 2) , 0, eastState);
 
         // Enregistrer les portails comme acteurs
         registerActor(N);
@@ -121,9 +117,6 @@ public abstract class ICMazeArea extends Area {
         registerActor(E);
         registerActor(W);
     }
-
-
-
 
     public enum AreaPortals {
         N(Orientation.UP),
@@ -140,15 +133,12 @@ public abstract class ICMazeArea extends Area {
         public Orientation getOrientation() {
             return orientation;
         }
+
+
     }
-    public DiscreteCoordinates getArrivalCoordinates(AreaPortals portal) {
-        return switch (portal) {
-            case N -> new DiscreteCoordinates(size/2 + 1, size);
-            case S -> new DiscreteCoordinates(size/2 + 1, 1);
-            case W -> new DiscreteCoordinates(1, size/2 + 1);
-            case E -> new DiscreteCoordinates(size, size/2 + 1);
-        };
-    }
+
+
+
 
 
 
