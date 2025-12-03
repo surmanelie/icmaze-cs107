@@ -47,13 +47,15 @@ public abstract class ICMazeArea extends Area {
 
     @Override
     public boolean begin(Window window, FileSystem fileSystem){
-        if(super.begin(window,fileSystem)) {
-            setBehavior(new ICMazeBehavior(window, behaviorName));
-            createArea();
-            createPortals();
+        if(!super.begin(window,fileSystem)) { // on ne commence pas si c'est pas bon
+            return false; }
 
-        }return false;
+        setBehavior(new ICMazeBehavior(window, behaviorName)); // on installe le behavior adapté à l'air choisie
+        registerActor(new Background(this, behaviorName)); // on enregistre le background associé à l'aire
+        createArea();
+        createPortals();
 
+        return true; // car tout s'est bien passé
     }
 
     protected  abstract void createArea();
@@ -79,17 +81,24 @@ public abstract class ICMazeArea extends Area {
 
     }
 
+
+    // tous les prochains sont changés pour ne pas toucher aux objets Portal
+
     protected void setNorthDestination(String destination){
-        N.setDestinationAreaName(destination);
+        this.northDestination = destination;
+        //N.setDestinationAreaName(destination);
     }
     protected void setSouthDestination(String destination){
-        S.setDestinationAreaName(destination);
+        this.southDestination = destination;
+        //S.setDestinationAreaName(destination);
     }
     protected void setWestDestination(String destination){
-        W.setDestinationAreaName(destination);
+        this.westDestination = destination;
+        //W.setDestinationAreaName(destination);
     }
     protected void setEastDestination(String destination){
-        E.setDestinationAreaName(destination);
+        this.eastDestination = destination;
+        //c'est E.setDestinationAreaName(destination);
     }
 
 
@@ -101,15 +110,15 @@ public abstract class ICMazeArea extends Area {
     protected void createPortals() {// modifier cordonne arrivee
 
         // Portail Nord
-        N = new Portal( this, AreaPortals.N.getOrientation().opposite(),  new DiscreteCoordinates(size / 2, size + 1),northDestination,new DiscreteCoordinates(size/2+1,1),0, northState);
+        N = new Portal( this, AreaPortals.N.getOrientation().opposite(),  new DiscreteCoordinates(size / 2, size + 1),northDestination,new DiscreteCoordinates(size/2,0),0, northState);
 
         // Portail Sud
-        S = new Portal( this, AreaPortals.S.getOrientation().opposite(), new DiscreteCoordinates(size / 2, 0),southDestination ,new DiscreteCoordinates(size / 2, 0), 0, southState);
+        S = new Portal( this, AreaPortals.S.getOrientation().opposite(), new DiscreteCoordinates(size / 2, 0),southDestination ,new DiscreteCoordinates(size / 2, size+1), 0, southState);
 
         // Portail Ouest
-        W = new Portal( this, AreaPortals.W.getOrientation().opposite(), new DiscreteCoordinates(0, size / 2), westDestination,new DiscreteCoordinates(0, size / 2) ,0,weststate);
+        W = new Portal( this, AreaPortals.W.getOrientation().opposite(), new DiscreteCoordinates(0, size / 2), westDestination,new DiscreteCoordinates(size+1, size / 2) ,0,weststate);
         // Portail Est
-        E = new Portal( this, AreaPortals.E.getOrientation().opposite(), new DiscreteCoordinates(size + 1, size / 2), eastDestination,new DiscreteCoordinates(size + 1, size / 2) , 0, eastState);
+        E = new Portal( this, AreaPortals.E.getOrientation().opposite(), new DiscreteCoordinates(size + 1, size / 2), eastDestination,new DiscreteCoordinates(0, size / 2) , 0, eastState);
 
         // Enregistrer les portails comme acteurs
         registerActor(N);
@@ -136,18 +145,5 @@ public abstract class ICMazeArea extends Area {
 
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

@@ -17,7 +17,11 @@ public abstract class Equipement extends ICMazeObject{
 
     @Override
     public void draw(Canvas canvas){
-        sprite.draw(canvas);
+        if(sprite != null){ //juste on vérifie que le sprite n'est pas nul
+            sprite.draw(canvas);
+
+        }
+
     }
 
     public void setSprite(Sprite sprite){

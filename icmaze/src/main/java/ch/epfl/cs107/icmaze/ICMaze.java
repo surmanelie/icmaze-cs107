@@ -44,14 +44,12 @@ public class ICMaze extends AreaGame {
         if(player.getisChanging()){
             changeArea(player.getDestinationArea(), player.getDestinationCoordonates());
         }
-
-
-
     }
 
 
 
     private void changeArea(String destination,DiscreteCoordinates coordinates){
+        System.out.println("Teleport to " + destination + " at " + coordinates);
         player.leaveArea();
         ICMazeArea newArea = (ICMazeArea) setCurrentArea(destination,false);
         player.enterArea(newArea,coordinates);

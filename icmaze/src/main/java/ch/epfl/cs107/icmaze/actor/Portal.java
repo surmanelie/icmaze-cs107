@@ -72,10 +72,13 @@ public class Portal extends ICMazeActor implements Interactable {
 
     @Override
     public boolean takeCellSpace() {
-        return state != State.OPEN;
+        //return state != State.OPEN;
+        //on fait ce changement pour qu'on puisse passer sur un portail même s'il est invisible et paas que s'il est open
+        return state == State.LOCKED;
     }
     @Override
-    public boolean isViewInteractable() { return true; }
+    public boolean isViewInteractable() {
+        return true; }
 
     @Override
     public boolean isCellInteractable() {
@@ -94,12 +97,12 @@ public class Portal extends ICMazeActor implements Interactable {
         return state;
     }
 
-    public void open() {
-
-        if (state == State.LOCKED) {
-            state = State.OPEN;
-        }
-    }
+//    public void open() {
+//
+//        if (state == State.LOCKED) {
+//            state = State.OPEN;
+//        }
+//    }
 
     public String getDestinationAreaName() {
         return destinationAreaName;

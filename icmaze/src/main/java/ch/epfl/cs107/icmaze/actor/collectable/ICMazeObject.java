@@ -13,11 +13,12 @@ import java.util.List;
 
 public abstract class ICMazeObject extends CollectableAreaEntity {
 
-
+    private boolean isCollected;
 
 
     public ICMazeObject (Area area, Orientation orientation, DiscreteCoordinates position){
         super(area,orientation,position);
+        isCollected = false;
     }
 
     @Override
@@ -43,9 +44,13 @@ public abstract class ICMazeObject extends CollectableAreaEntity {
         return false;
     }
 
-    @Override
     public void collect() {
-        super.collect();
-        getOwnerArea().unregisterActor(this);
+        if (!isCollected) {
+            isCollected = true;
+            getOwnerArea().unregisterActor(this);
+        }
+
     }
+
+
 }

@@ -34,6 +34,36 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
     private boolean isChanging;
     private String destinationArea;
     private DiscreteCoordinates destinationCoordonates;
+
+    public boolean hasKey(int id){
+        for(ICMazeObject object : bag){
+            if(object instanceof Key key && key.getId() == id){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean useKey(int id){
+        for (int i = 0; i < bag.size(); i++) {
+            ICMazeObject object  = bag.get(i);
+            if (object instanceof Key key && key.getId() == id) {
+                bag.remove(i);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasPickaxe(){
+        for (ICMazeObject object : bag) {
+            if (object instanceof  Pickaxe) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     //boolenan changing set + get
     //string destinationArea get
     //corrdonne arrive get
@@ -61,8 +91,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
         return destinationArea;
     }
 
-    public ICMazePlayer(Area owner, Orientation orientation, DiscreteCoordinates coordinates,
-                        String spriteName) {
+    public ICMazePlayer(Area owner, Orientation orientation, DiscreteCoordinates coordinates, String spriteName) {
         super(owner, orientation, coordinates);
         this.name = spriteName;
         this.keys = KeyBindings.PLAYER_KEY_BINDINGS;
@@ -154,12 +183,19 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
             if (isCellInteraction) {
                 bag.add(pickaxe);
                 pickaxe.collect();
+                //getOwnerArea().unregisterActor(pickaxe); //à vérifier si c'est vraiment nécessaire
+                // j'ai vérifié et ça change rien si on appelle pas unregistor car le collect est bon mntn
+                //System.out.println("sdfghj");
+                //mntn il faut faire effacer l'objet de la map
+                //pickaxe.unregister(pickaxe);
             }
         }
 
         @Override
         public void interactWith(Heart heart, boolean isCellInteraction) {
             if (isCellInteraction) heart.collect();
+            //getOwnerArea().unregisterActor(heart);
+            //System.out.println("sdfghj");
         }
 
         @Override
@@ -167,6 +203,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
             if (isCellInteraction) {
                 bag.add(key);
                 key.collect();
+                //System.out.println("sdfghj");
             }
         }
 

@@ -17,6 +17,8 @@ import ch.epfl.cs107.play.window.Canvas;
 public class Spawn extends ICMazeArea {
 
 
+
+
     public Spawn(){
         super("SmallArea",8);
     }
@@ -33,17 +35,24 @@ public class Spawn extends ICMazeArea {
 
     @Override
     protected void createArea(){
-        registerActor(new Background(this, getBehaviorName()));
+        //on supprime ce qu'il y a en bas car ICMazeArea le fait déjà donc pas besoin de le refaire ici, il n'y a rien de spécifique à faire pour créer ue aire dans Spawn par rapport à la méthode dans Area
+        //registerActor(new Background(this, getBehaviorName()));
         //registerActor(new Foreground(this));
+
+        //ICMazePlayer player  = new ICMazePlayer(this, Orientation.DOWN, getplayerSpawnPosition(), "player");
+        //registerActor(player);
+
+        // il n'y avait pas besoin de remettre un joueur car on crée que un dans le begin, sinon à chaque fois qu'on revient dans le Spawn un nouveau joueur est crée et reokgister
 
 
         Pickaxe pickaxe = new Pickaxe(this, Orientation.DOWN, new DiscreteCoordinates(5,4));
         Heart heart = new Heart(this,new DiscreteCoordinates(4,5) );
+
         // Clé 1 : identifiant MAX_VALUE en (6,5)
         Key key1 = new Key(this, Orientation.DOWN, new DiscreteCoordinates(6, 5), Integer.MAX_VALUE);
         registerActor(key1);
 
-// Clé 2 : identifiant MAX_VALUE - 1 en (1,2)
+        // Clé 2 : identifiant MAX_VALUE - 1 en (1,2)
         Key key2 = new Key(this, Orientation.DOWN, new DiscreteCoordinates(1, 2), Integer.MAX_VALUE - 1);
         registerActor(key2);
 
@@ -51,22 +60,19 @@ public class Spawn extends ICMazeArea {
         registerActor(heart);
 
 
-        setEastState(Portal.State.INVISIBLE);
+        setEastState(Portal.State.OPEN);
         setNorthState(Portal.State.INVISIBLE);
-        setWestState(Portal.State.OPEN);
+        setWestState(Portal.State.INVISIBLE);
         setSouthState(Portal.State.INVISIBLE);
-        createPortals();
+        //createPortals();
+        //pas besoin de créer des portails ici care ICMazeArea le fait deja
 
 
-
-
-        setNorthDestination("icmaze/Boss");
+        //setNorthDestination("icmaze/Boss");
         setEastDestination("icmaze/Boss");
-        setWestDestination("icmaze/Boss");
-
-;
-
-
+        //setSouthDestination("icmaze/Boss");
+        // car pour l'instant on en a pas besoin
+        //setWestDestination("icmaze/Boss");
 
     }
 

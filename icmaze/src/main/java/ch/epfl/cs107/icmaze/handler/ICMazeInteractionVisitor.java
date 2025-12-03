@@ -45,9 +45,4 @@ public interface ICMazeInteractionVisitor extends AreaInteractionVisitor {
         }
         default void interactWith(Portal portal, boolean isCellInteraction) {}
 
-
-
-
-
-
 }

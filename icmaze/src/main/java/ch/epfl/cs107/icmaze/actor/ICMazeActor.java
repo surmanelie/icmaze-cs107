@@ -49,6 +49,7 @@ public abstract class ICMazeActor extends MovableAreaEntity implements Interacta
     public void leaveArea(){
         getOwnerArea().unregisterActor(this);
     }
+
     public void enterArea(Area area, DiscreteCoordinates position) {
         area.registerActor(this);
         area.setViewCandidate(this);
