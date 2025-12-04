@@ -12,6 +12,8 @@ import ch.epfl.cs107.play.engine.actor.Foreground;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Orientation;
 
+import static ch.epfl.cs107.icmaze.area.maps.AireLabyrinthique.keyIdL4;
+
 public class BossArea extends ICMazeArea {
 
 
@@ -41,8 +43,8 @@ public class BossArea extends ICMazeArea {
         setNorthState(Portal.State.INVISIBLE);
         setSouthState(Portal.State.INVISIBLE);
 
-        setWestDestination("icmaze/Spawn"); // il n'y a que pour west qu'on met une aire d'arrivée car les autres sont invisibles
-        //setEastDestination("icmaze/Spawn");
+        setWestDestination("icmaze/LargeArea["+ keyIdL4+"]"); // il n'y a que pour west qu'on met une aire d'arrivée car les autres sont invisibles
+        setEastDestination("icmaze/Spawn");
     }
 
     @Override

@@ -14,6 +14,10 @@ import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Orientation;
 import ch.epfl.cs107.play.window.Canvas;
 
+import static ch.epfl.cs107.icmaze.area.maps.AireLabyrinthique.keyIdL1;
+import static ch.epfl.cs107.icmaze.area.maps.AireLabyrinthique.keyIdL2;
+
+
 public class Spawn extends ICMazeArea {
 
 
@@ -71,7 +75,8 @@ public class Spawn extends ICMazeArea {
 
 
         //setNorthDestination("icmaze/Boss");
-        setEastDestination("icmaze/Boss");
+        setEastDestination("icmaze/SmallArea["+ keyIdL2 +"]");
+
         //setSouthDestination("icmaze/Boss");
         // car pour l'instant on en a pas besoin
         //setWestDestination("icmaze/Boss");
