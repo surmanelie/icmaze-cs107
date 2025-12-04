@@ -10,6 +10,7 @@ public class SmallArea extends AireLabyrinthique{
         super("SmallArea",8,AreaPortals.W,AreaPortals.E, keyId, Difficulty.HARDEST);
     }
 
+    @Override
     protected void createArea(){
         //super.createArea();
         //AregisterActor(new Background(this, getBehaviorName()));

@@ -22,14 +22,15 @@ public class ICMaze extends AreaGame {
     private FileSystem fileSystem;
 
     private void createAreas() {
+        generateHardCodedLevel();}
+
+
+    private  void generateHardCodedLevel(){
         addArea(new Spawn());
         addArea(new BossArea());
         addArea(new SmallArea(AireLabyrinthique.keyIdL2));
         addArea(new MediumArea(AireLabyrinthique.keyIdL3));
         addArea(new LargeArea(AireLabyrinthique.keyIdL4));
-        //addArea(new );
-
-
     }
 
     @Override
@@ -43,13 +44,7 @@ public class ICMaze extends AreaGame {
         }
 
         createAreas();
-
-//        addArea(new Spawn());
-//        addArea(new BossArea());
         initArea(INITIAL_AREA);
-
-
-//        setCurrentArea(INITIAL_AREA, true);
 
         return true;
     }
@@ -92,6 +87,6 @@ public class ICMaze extends AreaGame {
         player = new ICMazePlayer(area, Orientation.DOWN, spawnPosition, "icmaze/player");
         player.enterArea(area, spawnPosition);
 
-        // player.centerCamera();
+
     }
 }

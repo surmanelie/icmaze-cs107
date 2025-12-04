@@ -29,7 +29,7 @@ public class LargeArea extends AireLabyrinthique{
         setSouthState(Portal.State.INVISIBLE);
 
         setWestDestination("icmaze/MediumArea["+ keyIdL3+"]");
-        setEastDestination("icmaze/icmaze/Boss");
+        setEastDestination("icmaze/Boss");
 
 
         // il n'y a que pour west qu'on met une aire d'arrivée car les autres sont invisibles
