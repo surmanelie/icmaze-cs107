@@ -3,6 +3,7 @@ package ch.epfl.cs107.icmaze.area.maps;
 import ch.epfl.cs107.icmaze.KeyBindings;
 import ch.epfl.cs107.icmaze.actor.ICMazePlayer;
 import ch.epfl.cs107.icmaze.actor.Portal;
+import ch.epfl.cs107.icmaze.actor.Rock;
 import ch.epfl.cs107.icmaze.actor.collectable.Heart;
 import ch.epfl.cs107.icmaze.actor.collectable.Key;
 import ch.epfl.cs107.icmaze.actor.collectable.Pickaxe;
@@ -62,6 +63,10 @@ public class Spawn extends ICMazeArea {
 
         registerActor(pickaxe);
         registerActor(heart);
+
+        Rock rock = new Rock(this, new DiscreteCoordinates(3, 3));
+        registerActor(rock);
+
 
 
         setEastState(Portal.State.LOCKED);
