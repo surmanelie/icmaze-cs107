@@ -36,13 +36,13 @@ public class BossArea extends ICMazeArea {
         //ICMazePlayer player = new ICMazePlayer(this, Orientation.DOWN, getplayerSpawnPosition(),"player");
         //registerActor(player);
 
-        setWestState(Portal.State.INVISIBLE);
-        setEastState(Portal.State.OPEN);
+        setWestState(Portal.State.OPEN);
+        setEastState(Portal.State.INVISIBLE);
         setNorthState(Portal.State.INVISIBLE);
         setSouthState(Portal.State.INVISIBLE);
 
-        setWestDestination("icmaze/Spawn"); // il n'ya que pour west qu'on met une aire d'arrivée car les autres sont invisible
-        setEastDestination("icmaze/Spawn");
+        setWestDestination("icmaze/Spawn"); // il n'y a que pour west qu'on met une aire d'arrivée car les autres sont invisibles
+        //setEastDestination("icmaze/Spawn");
     }
 
     @Override

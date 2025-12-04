@@ -60,7 +60,9 @@ public class Spawn extends ICMazeArea {
         registerActor(heart);
 
 
-        setEastState(Portal.State.OPEN);
+        setEastState(Portal.State.LOCKED);
+        setEastKeyId(Integer.MAX_VALUE);
+
         setNorthState(Portal.State.INVISIBLE);
         setWestState(Portal.State.INVISIBLE);
         setSouthState(Portal.State.INVISIBLE);

@@ -28,6 +28,13 @@ public abstract class ICMazeArea extends Area {
     private  Portal.State eastState = Portal.State.INVISIBLE;
     private  Portal.State weststate = Portal.State.INVISIBLE;
 
+    // Id de clé requis pour chaque portail (par défaut : aucune clé)
+    private int northKeyId = Portal.NO_KEY_ID;
+    private int southKeyId = Portal.NO_KEY_ID;
+    private int eastKeyId  = Portal.NO_KEY_ID;
+    private int westKeyId  = Portal.NO_KEY_ID;
+
+
 
     //extends Area ?
 
@@ -102,6 +109,13 @@ public abstract class ICMazeArea extends Area {
     }
 
 
+    protected void setNorthKeyId(int id) { this.northKeyId = id; }
+    protected void setSouthKeyId(int id) { this.southKeyId = id; }
+    protected void setEastKeyId(int id)  { this.eastKeyId  = id; }
+    protected void setWestKeyId(int id)  { this.westKeyId  = id; }
+
+
+
 
     public String getBehaviorName() {
         return behaviorName;
@@ -110,15 +124,15 @@ public abstract class ICMazeArea extends Area {
     protected void createPortals() {// modifier cordonne arrivee
 
         // Portail Nord
-        N = new Portal( this, AreaPortals.N.getOrientation().opposite(),  new DiscreteCoordinates(size / 2, size + 1),northDestination,new DiscreteCoordinates(size/2,0),0, northState);
+        N = new Portal( this, AreaPortals.N.getOrientation().opposite(),  new DiscreteCoordinates(size / 2, size + 1),northDestination,new DiscreteCoordinates(size/2,size),northKeyId, northState);
 
         // Portail Sud
-        S = new Portal( this, AreaPortals.S.getOrientation().opposite(), new DiscreteCoordinates(size / 2, 0),southDestination ,new DiscreteCoordinates(size / 2, size+1), 0, southState);
+        S = new Portal( this, AreaPortals.S.getOrientation().opposite(), new DiscreteCoordinates(size / 2, 0),southDestination ,new DiscreteCoordinates(size / 2, 1), southKeyId, southState);
 
         // Portail Ouest
-        W = new Portal( this, AreaPortals.W.getOrientation().opposite(), new DiscreteCoordinates(0, size / 2), westDestination,new DiscreteCoordinates(size+1, size / 2) ,0,weststate);
+        W = new Portal( this, AreaPortals.W.getOrientation().opposite(), new DiscreteCoordinates(0, size / 2), westDestination,new DiscreteCoordinates(size, size / 2) ,westKeyId,weststate);
         // Portail Est
-        E = new Portal( this, AreaPortals.E.getOrientation().opposite(), new DiscreteCoordinates(size + 1, size / 2), eastDestination,new DiscreteCoordinates(0, size / 2) , 0, eastState);
+        E = new Portal( this, AreaPortals.E.getOrientation().opposite(), new DiscreteCoordinates(size + 1, size / 2), eastDestination,new DiscreteCoordinates(1, size / 2) , eastKeyId, eastState);
 
         // Enregistrer les portails comme acteurs
         registerActor(N);

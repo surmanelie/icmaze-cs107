@@ -104,6 +104,17 @@ public class Portal extends ICMazeActor implements Interactable {
 //        }
 //    }
 
+    public int getKeyId() {
+        return keyId;
+    }
+
+    // c'est pour ouvrir bien un portal
+    public void open() {
+        if(state == State.LOCKED){
+            state = State.OPEN;
+        }
+    }
+
     public String getDestinationAreaName() {
         return destinationAreaName;
     }

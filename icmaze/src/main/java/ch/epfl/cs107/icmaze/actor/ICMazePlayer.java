@@ -207,12 +207,43 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
             }
         }
 
+//        @Override
+//        public void interactWith(Portal portal, boolean isCellInteraction) {
+//            setisChanging(true);
+//            setDestinationArea(portal.getDestinationAreaName());
+//            destinationCoordonates = portal.getArrivalCoordinates();
+//        }
         @Override
         public void interactWith(Portal portal, boolean isCellInteraction) {
-            setisChanging(true);
-            setDestinationArea(portal.getDestinationAreaName());
-            destinationCoordonates = portal.getArrivalCoordinates();
+            if (isCellInteraction) {
+                // Interaction de cellule : on marche sur un portail OUVERT -> téléportation
+                if (portal.getState() == Portal.State.OPEN) {
+                    setisChanging(true);
+                    setDestinationArea(portal.getDestinationAreaName());
+                    destinationCoordonates = portal.getArrivalCoordinates();
+                    //DiscreteCoordinates inside = arrival.jump(portal.getOrientation().opposite().toVector());
+                }
+            } else {
+                // Interaction de vue : on est en mode INTERACTING et on regarde le portail
+                if (portal.getState() == Portal.State.LOCKED) {
+                    int id = portal.getKeyId();
+
+                    // Si le portail n'utilise pas de clé (id spécial), on ne fait rien
+                    if (id == Portal.NO_KEY_ID) {
+                        return;
+                    }
+
+                    // Si on a la bonne clé, on la consomme et on ouvre le portail
+                    if (hasKey(id) && useKey(id)) {
+                        portal.open();
+                        // On choisit de ne PAS téléporter tout de suite :
+                        // le joueur devra ensuite passer dessus pour se téléporter.
+                    }
+                }
+                // Si le portail est INVISIBLE ou déjà OPEN : rien à faire en view interaction.
+            }
         }
+
     }
 
 
