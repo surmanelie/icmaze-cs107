@@ -131,6 +131,7 @@ public abstract class ICMazeArea extends Area {
 
         // Portail Ouest
         W = new Portal( this, AreaPortals.W.getOrientation().opposite(), new DiscreteCoordinates(0, size / 2), westDestination,new DiscreteCoordinates(size, size / 2) ,westKeyId,weststate);
+
         // Portail Est
         E = new Portal( this, AreaPortals.E.getOrientation().opposite(), new DiscreteCoordinates(size + 1, size / 2), eastDestination,new DiscreteCoordinates(1, size / 2) , eastKeyId, eastState);
 
