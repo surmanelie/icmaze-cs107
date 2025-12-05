@@ -6,12 +6,32 @@ import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
 public class LargeArea extends AireLabyrinthique{
 
-    public LargeArea ( int keyId){
+//    private int sizeLarge;
+//    public int getsSizeLarge(){
+//        return sizeLarge;    }
+
+//    @Override
+//    public DiscreteCoordinates arrivalCoordinates(int size) {
+//        return ;
+//    }
+//
+//    @Override
+//    public DiscreteCoordinates startingCoordinates(int size) {
+//        return ;
+//    }
+
+
+    @Override
+    public int getSize() {
+        return 32;
+    }
+
+    public LargeArea (int keyId){
         super("MediumArea",16,AreaPortals.W,AreaPortals.E, keyId, Difficulty.HARDEST);
     }
 
     protected void createArea(){
-        //super.createArea();
+        super.createArea();
         //AregisterActor(new Background(this, getBehaviorName()));
         //maintenant on configure des portails pour BossArea
 
@@ -28,8 +48,8 @@ public class LargeArea extends AireLabyrinthique{
         setNorthState(Portal.State.INVISIBLE);
         setSouthState(Portal.State.INVISIBLE);
 
-        setWestDestination("icmaze/MediumArea["+ keyIdL3+"]");
-        setEastDestination("icmaze/Boss");
+//        setWestDestination("icmaze/MediumArea["+ keyIdL3+"]");
+//        setEastDestination("icmaze/Boss");
 
 
         // il n'y a que pour west qu'on met une aire d'arrivée car les autres sont invisibles

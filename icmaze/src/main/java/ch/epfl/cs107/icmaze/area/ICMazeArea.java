@@ -18,21 +18,21 @@ public abstract class ICMazeArea extends Area {
     private Portal N;
     protected final int size;
 
-    private String northDestination ;
-    private String southDestination ;
-    private String westDestination;
-    private String eastDestination;
-
-    private  Portal.State northState = Portal.State.INVISIBLE;
-    private  Portal.State southState = Portal.State.INVISIBLE;
-    private  Portal.State eastState = Portal.State.INVISIBLE;
-    private  Portal.State weststate = Portal.State.INVISIBLE;
-
-    // Id de clé requis pour chaque portail (par défaut : aucune clé)
-    private int northKeyId = Portal.NO_KEY_ID;
-    private int southKeyId = Portal.NO_KEY_ID;
-    private int eastKeyId  = Portal.NO_KEY_ID;
-    private int westKeyId  = Portal.NO_KEY_ID;
+//    private String northDestination ;
+//    private String southDestination ;
+//    private String westDestination;
+//    private String eastDestination;
+//
+//    private  Portal.State northState = Portal.State.INVISIBLE;
+//    private  Portal.State southState = Portal.State.INVISIBLE;
+//    private  Portal.State eastState = Portal.State.INVISIBLE;
+//    private  Portal.State weststate = Portal.State.INVISIBLE;
+//
+//    // Id de clé requis pour chaque portail (par défaut : aucune clé)
+//    private int northKeyId = Portal.NO_KEY_ID;
+//    private int southKeyId = Portal.NO_KEY_ID;
+//    private int eastKeyId  = 1;
+//    private int westKeyId  = Portal.NO_KEY_ID;
 
 
 
@@ -43,6 +43,7 @@ public abstract class ICMazeArea extends Area {
         super();
         this.behaviorName = behaviorName;
         this.size = size;
+        createPortals();
     }
 
     @Override
@@ -60,7 +61,12 @@ public abstract class ICMazeArea extends Area {
         setBehavior(new ICMazeBehavior(window, behaviorName)); // on installe le behavior adapté à l'air choisie
         registerActor(new Background(this, behaviorName)); // on enregistre le background associé à l'aire
         createArea();
-        createPortals();
+        // Enregistrer les portails comme acteurs
+        registerActor(N);
+        registerActor(S);
+        registerActor(E);
+        registerActor(W);
+
 
         return true; // car tout s'est bien passé
     }
@@ -69,50 +75,60 @@ public abstract class ICMazeArea extends Area {
 
 
 
-    protected void setNorthState(Portal.State state) {
-       this.northState = state;
+    public void setNorthState(Portal.State state) {
+        this.N.setState(state);
     }
 
-    protected void setSouthState(Portal.State state) {
-        this.southState = state;
-
+    public void setSouthState(Portal.State state) {
+        this.S.setState(state);
     }
 
-    protected void setEastState(Portal.State state) {
-        this.eastState = state;
-
+    public void setEastState(Portal.State state) {
+        this.E.setState(state);
     }
 
-    protected void setWestState(Portal.State state) {
-        this.weststate = state;
-
+    public void setWestState(Portal.State state) {
+        this.W.setState(state);
     }
 
 
     // tous les prochains sont changés pour ne pas toucher aux objets Portal
 
-    protected void setNorthDestination(String destination){
-        this.northDestination = destination;
-        //N.setDestinationAreaName(destination);
+    public void setNorthDestination(String destination,int nextSize ){
+        //this.northDestination = destination;
+        this.N.setDestinationArea(destination);
+        this.N.setArrivalCoordinates(new DiscreteCoordinates(nextSize/2,1));
     }
-    protected void setSouthDestination(String destination){
-        this.southDestination = destination;
-        //S.setDestinationAreaName(destination);
+    public void setSouthDestination(String destination,int nextSize){
+        //this.southDestination = destination;
+        this.S.setDestinationArea(destination);
+        this.S.setArrivalCoordinates(new DiscreteCoordinates(nextSize/2,nextSize));
     }
-    protected void setWestDestination(String destination){
-        this.westDestination = destination;
-        //W.setDestinationAreaName(destination);
-    }
-    protected void setEastDestination(String destination){
-        this.eastDestination = destination;
-        //c'est E.setDestinationAreaName(destination);
-    }
+    public void setWestDestination(String destination,int nextSize){
+        //this.westDestination = destination;
+        this.W.setDestinationArea(destination);
+        this.W.setArrivalCoordinates(new DiscreteCoordinates(nextSize,nextSize/2));
 
 
-    protected void setNorthKeyId(int id) { this.northKeyId = id; }
-    protected void setSouthKeyId(int id) { this.southKeyId = id; }
-    protected void setEastKeyId(int id)  { this.eastKeyId  = id; }
-    protected void setWestKeyId(int id)  { this.westKeyId  = id; }
+    }
+    public void setEastDestination(String destination, int nextSize){
+        //this.eastDestination = destination;
+        this.E.setDestinationArea(destination);
+        this.E.setArrivalCoordinates(new DiscreteCoordinates(1,nextSize/2));
+    }
+
+    //    public void setDestination(int sizeNext){
+//        N.setArrivalCoordinates(new DiscreteCoordinates(sizeNext/2, 1));
+//        S.setArrivalCoordinates(new DiscreteCoordinates(sizeNext/2, sizeNext));
+//        W.setArrivalCoordinates(new DiscreteCoordinates(sizeNext, sizeNext/2));
+//        E.setArrivalCoordinates(new DiscreteCoordinates(1,sizeNext/2));
+//    }
+
+
+    public void setNorthKeyId(int id) { this.N.setKeyId(id);  }
+    protected void setSouthKeyId(int id) { this.S.setKeyId(id); }
+    protected void setEastKeyId(int id)  { this.E.setKeyId(id); }
+    protected void setWestKeyId(int id)  { this.W.setKeyId(id); }
 
 
 
@@ -121,26 +137,50 @@ public abstract class ICMazeArea extends Area {
         return behaviorName;
     }
 
+//    public abstract DiscreteCoordinates startingCoordinates(int sizeStart);
+//
+//    public abstract DiscreteCoordinates arrivalCoordinates(int sizeArrival);
+
+    public abstract int getSize();
+
+//    public void setDestination(DiscreteCoordinates coord){
+//        N.setArrivalCoordinates(coord.jump(0,1));
+//    }
+
+    // ici l'objectif c'est de dire où tu vas arriver par rapport à la tu pars
+    // et du coup ici ce qui est bien c'est que on prend en paramètre la size de l'aire d'après
+    // ce qui permet d'arriver à des coordonnées qui correspondent bien à l'aire d'arrivée
+    // par exemple si je prends le portail Nord, alors le but c'est d'arriver par le portail
+    // sud, donc on prend la coordonnée du portail sud, et on lui rajoute 1 en y.
+    // du coup s'il prend en sud, il arrive par le nord mais en y-1
+    //s'il prend le portail ouest, alors il arrive en est x-1
+    // s'il prend le poratil est, alors il arrive par l'ouest du porchain en x+1
+
+
+
+
+
+
+
     protected void createPortals() {// modifier cordonne arrivee
 
         // Portail Nord
-        N = new Portal( this, AreaPortals.N.getOrientation().opposite(),  new DiscreteCoordinates(size / 2, size + 1),northDestination,new DiscreteCoordinates(size/2,size),northKeyId, northState);
+        N = new Portal( this, AreaPortals.N.getOrientation().opposite(),new DiscreteCoordinates(getSize() / 2 , getSize() + 1),null,Portal.NO_KEY_ID, Portal.State.INVISIBLE);
 
         // Portail Sud
-        S = new Portal( this, AreaPortals.S.getOrientation().opposite(), new DiscreteCoordinates(size / 2, 0),southDestination ,new DiscreteCoordinates(size / 2, 1), southKeyId, southState);
+        S = new Portal( this, AreaPortals.S.getOrientation().opposite(), new DiscreteCoordinates(getSize() / 2, 0),null,Portal.NO_KEY_ID, Portal.State.INVISIBLE);
 
         // Portail Ouest
-        W = new Portal( this, AreaPortals.W.getOrientation().opposite(), new DiscreteCoordinates(0, size / 2), westDestination,new DiscreteCoordinates(size, size / 2) ,westKeyId,weststate);
+        W = new Portal( this, AreaPortals.W.getOrientation().opposite(), new DiscreteCoordinates(0, getSize() / 2),null,Portal.NO_KEY_ID, Portal.State.INVISIBLE);
 
         // Portail Est
-        E = new Portal( this, AreaPortals.E.getOrientation().opposite(), new DiscreteCoordinates(size + 1, size / 2), eastDestination,new DiscreteCoordinates(1, size / 2) , eastKeyId, eastState);
+        E = new Portal( this, AreaPortals.E.getOrientation().opposite(), new DiscreteCoordinates(getSize() + 1, getSize() / 2), null,Portal.NO_KEY_ID, Portal.State.INVISIBLE);
 
-        // Enregistrer les portails comme acteurs
-        registerActor(N);
-        registerActor(S);
-        registerActor(E);
-        registerActor(W);
+
+
+
     }
+
 
     public enum AreaPortals {
         N(Orientation.UP),
@@ -157,8 +197,8 @@ public abstract class ICMazeArea extends Area {
         public Orientation getOrientation() {
             return orientation;
         }
-
-
     }
+
+
 
 }

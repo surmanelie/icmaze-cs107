@@ -17,6 +17,7 @@ public class Portal extends ICMazeActor implements Interactable {
     private State state;
 
     private String destinationAreaName;
+
     private DiscreteCoordinates arrivalCoordinates;
     public static final int NO_KEY_ID = Integer.MIN_VALUE;
     private int keyId;
@@ -25,12 +26,13 @@ public class Portal extends ICMazeActor implements Interactable {
 
 
 
+
     public enum State {
         OPEN,
         LOCKED,
         INVISIBLE }
 
-    public Portal(Area area, Orientation orientation,DiscreteCoordinates position,String destinationAreaName, DiscreteCoordinates arrivalCoordinates, int keyId, State state) {
+    public Portal(Area area, Orientation orientation,DiscreteCoordinates position,String destinationAreaName, int keyId, State state) {
 
         super(area, orientation, position);
 
@@ -50,6 +52,10 @@ public class Portal extends ICMazeActor implements Interactable {
                 (orientation.ordinal()+1)%2+1,
                 orientation.ordinal()%2+1,
                 this);
+    }
+
+    public void setArrivalCoordinates(DiscreteCoordinates arrivalCoordinates) {
+        this.arrivalCoordinates = arrivalCoordinates;
     }
 
     @Override
@@ -72,9 +78,9 @@ public class Portal extends ICMazeActor implements Interactable {
 
     @Override
     public boolean takeCellSpace() {
-        //return state != State.OPEN;
+        return state != State.OPEN;
         //on fait ce changement pour qu'on puisse passer sur un portail même s'il est invisible et paas que s'il est open
-        return state == State.LOCKED;
+        //return state == State.LOCKED;
     }
     @Override
     public boolean isViewInteractable() {
@@ -96,13 +102,10 @@ public class Portal extends ICMazeActor implements Interactable {
     public State getState() {
         return state;
     }
+    public void setState(State state){
+        this.state = state;
+    }
 
-//    public void open() {
-//
-//        if (state == State.LOCKED) {
-//            state = State.OPEN;
-//        }
-//    }
 
     public int getKeyId() {
         return keyId;
@@ -123,8 +126,12 @@ public class Portal extends ICMazeActor implements Interactable {
         return arrivalCoordinates;
     }
 
-    public void setDestinationAreaName(String destinationAreaName) {
+    public void setDestinationArea(String destinationAreaName) {
         this.destinationAreaName = destinationAreaName;
+    }
+
+    public void setKeyId(int keyId) {
+        this.keyId = keyId;
     }
 
     @Override

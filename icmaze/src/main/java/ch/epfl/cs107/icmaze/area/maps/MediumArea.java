@@ -6,12 +6,38 @@ import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
 public class MediumArea extends AireLabyrinthique{
 
-    public MediumArea ( int keyId){
+//    private int sizeMedium;
+//    public int getsSizeMedium(){
+//        return sizeMedium;    }
+
+//    @Override
+//    public DiscreteCoordinates arrivalCoordinates(int size) {
+//        return ;
+//    }
+//
+//    @Override
+//    public DiscreteCoordinates startingCoordinates(int size) {
+//        return ;
+//    }
+
+
+    @Override
+    public int getSize() {
+        return 16;
+    }
+
+    public MediumArea (int keyId){
         super("MediumArea",16,AreaPortals.W,AreaPortals.E, keyId, Difficulty.HARDEST);
     }
 
     protected void createArea(){
         //super.createArea();
+        //AregisterActor(new Background(this, getBehaviorName()));
+        //maintenant on configure des portails pour BossArea
+
+        //ICMazePlayer player = new ICMazePlayer(this, Orientation.DOWN, getplayerSpawnPosition(),"player");
+        //registerActor(player);
+        super.createArea();
         //AregisterActor(new Background(this, getBehaviorName()));
         //maintenant on configure des portails pour BossArea
 
@@ -28,8 +54,17 @@ public class MediumArea extends AireLabyrinthique{
         setNorthState(Portal.State.INVISIBLE);
         setSouthState(Portal.State.INVISIBLE);
 
-        setWestDestination("icmaze/SmallArea["+ keyIdL2+"]");
-        setEastDestination("icmaze/LargeArea["+ keyIdL4+"]");
+
+
+
+
+        setWestState(Portal.State.OPEN);
+        setEastState(Portal.State.OPEN);
+        setNorthState(Portal.State.INVISIBLE);
+        setSouthState(Portal.State.INVISIBLE);
+
+//        setWestDestination("icmaze/SmallArea["+ keyIdL2+"]");
+//        setEastDestination("icmaze/LargeArea["+ keyIdL4+"]");
 
 
         // il n'y a que pour west qu'on met une aire d'arrivée car les autres sont invisibles

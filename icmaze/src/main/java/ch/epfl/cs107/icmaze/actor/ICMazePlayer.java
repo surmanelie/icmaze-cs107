@@ -10,6 +10,7 @@ import ch.epfl.cs107.play.areagame.actor.Interactable;
 import ch.epfl.cs107.play.areagame.actor.Interactor;
 import ch.epfl.cs107.play.areagame.area.Area;
 import ch.epfl.cs107.play.engine.actor.OrientedAnimation;
+import ch.epfl.cs107.play.engine.actor.Sprite;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.*;
 import ch.epfl.cs107.play.math.*;
@@ -107,7 +108,8 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
 
     public enum PlayerState {
         IDLE,
-        INTERACTING
+        INTERACTING,
+        ATTACKING_WITH_PICKAXE,
     }
 
     @Override
@@ -134,6 +136,18 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                         keyboard.get(keys.interact()).isPressed()) {
                     currentState = PlayerState.INTERACTING;
                 }
+
+                // Lancer animation d’attaque
+                if (!isDisplacementOccurs()
+                        && hasPickaxe()
+                        && keyboard.get(keys.pickaxe()).isPressed()) {
+
+                    currentState = PlayerState.ATTACKING_WITH_PICKAXE;
+
+                    //animation = pickaxeAnimation; // ⚠️ tu dois l’ajouter dans ton constructeur
+                    animation.reset();
+                }
+
                 break;
 
             case INTERACTING:
@@ -141,6 +155,23 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                 if (!keyboard.get(keys.interact()).isDown()) {
                     currentState = PlayerState.IDLE;
                 }
+                break;
+
+            case ATTACKING_WITH_PICKAXE:
+                // --- On joue l’animation d’attaque ---
+                animation.update(deltaTime);
+                System.out.println("entre en intercation ");
+
+                // --- Quand l’animation finit, on revient à l’IDLE ---
+                if (animation.isCompleted()) {
+                    System.out.println("redepaprt");
+                    currentState = PlayerState.IDLE;
+
+                    // remettre l'animation normale
+
+                    animation.reset();
+                }
+
                 break;
         }
 
@@ -243,6 +274,19 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                 // Si le portail est INVISIBLE ou déjà OPEN : rien à faire en view interaction.
             }
         }
+        @Override
+        public void interactWith(Rock rock, boolean isCellInteraction) {
+
+            // Le joueur doit être en train d’attaquer AVEC la pioche
+            if (isCellInteraction && currentState == PlayerState.ATTACKING_WITH_PICKAXE) {
+
+                rock.weaken(); // inflige 1 dégât au rocher
+
+                // ATTENTION : le rock gère déjà vanish + drop + suppression
+                // donc tu n’as rien d’autre à faire ici
+            }
+        }
+
 
     }
 

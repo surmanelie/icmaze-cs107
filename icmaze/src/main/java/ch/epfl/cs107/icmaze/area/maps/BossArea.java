@@ -16,6 +16,25 @@ import static ch.epfl.cs107.icmaze.area.maps.AireLabyrinthique.keyIdL4;
 
 public class BossArea extends ICMazeArea {
 
+//    private int sizeBoss;
+//    public int getsSizeBoss(){
+//        return sizeBoss;    }
+
+//    @Override
+//    public DiscreteCoordinates arrivalCoordinates(int size) {
+//        return ;
+//    }
+//
+//    @Override
+//    public DiscreteCoordinates startingCoordinates(int size) {
+//        return ;
+//    }
+
+
+    @Override
+    public int getSize() {
+        return 8;
+    }
 
     AreaPortals areaPortals;
 
@@ -43,8 +62,8 @@ public class BossArea extends ICMazeArea {
         setNorthState(Portal.State.INVISIBLE);
         setSouthState(Portal.State.INVISIBLE);
 
-        setWestDestination("icmaze/LargeArea["+ keyIdL4+"]"); // il n'y a que pour west qu'on met une aire d'arrivée car les autres sont invisibles
-        setEastDestination("icmaze/Spawn");
+//        setWestDestination("icmaze/LargeArea["+ keyIdL4+"]"); // il n'y a que pour west qu'on met une aire d'arrivée car les autres sont invisibles
+//        setEastDestination("icmaze/Spawn");
     }
 
     @Override

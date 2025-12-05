@@ -13,11 +13,19 @@ public  class Heart extends ICMazeObject{
     private final static int ANIMATION_DURATION = 24;
 
 
-    public Heart (Area area, DiscreteCoordinates position){//est ce qu'il faut faire un autre spriteName et une autre position qui correspond au coeur ?
-        super(area, Orientation.DOWN, position);
+    public Heart(Area area, Orientation orientation, DiscreteCoordinates position) {
+        super(area, orientation, position);
 
-        animation  = new Animation("icmaze/heart", 4,1,1,this,16,16, ANIMATION_DURATION/4, true);
+        animation = new Animation(
+                "icmaze/heart",
+                4, 1, 1,
+                this,
+                16, 16,
+                ANIMATION_DURATION / 4,
+                true
+        );
     }
+
     @Override
     public  void draw (Canvas canvas){
         animation.draw(canvas);

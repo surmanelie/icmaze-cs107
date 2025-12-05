@@ -12,6 +12,8 @@ import ch.epfl.cs107.play.window.Window;
 import ch.epfl.cs107.icmaze.KeyBindings;
 import ch.epfl.cs107.play.window.Keyboard;
 
+import static ch.epfl.cs107.icmaze.area.maps.AireLabyrinthique.*;
+
 public class ICMaze extends AreaGame {
 
 
@@ -21,16 +23,49 @@ public class ICMaze extends AreaGame {
     private Window window;
     private FileSystem fileSystem;
 
+
+
     private void createAreas() {
-        generateHardCodedLevel();}
+        generateHardCodedLevel();
+
+    }
 
 
     private  void generateHardCodedLevel(){
-        addArea(new Spawn());
-        addArea(new BossArea());
-        addArea(new SmallArea(AireLabyrinthique.keyIdL2));
-        addArea(new MediumArea(AireLabyrinthique.keyIdL3));
-        addArea(new LargeArea(AireLabyrinthique.keyIdL4));
+        Spawn a0 = new Spawn();
+        addArea(a0);
+        SmallArea a1 = new SmallArea(AireLabyrinthique.keyIdL2);
+        addArea(a1);
+        MediumArea a2 = new MediumArea(AireLabyrinthique.keyIdL3);
+        addArea(a2);
+        LargeArea a3 = new LargeArea(AireLabyrinthique.keyIdL4);
+        addArea(a3);
+        BossArea a4 = new BossArea();
+        addArea(a4);
+
+//        addArea(new SmallArea(AireLabyrinthique.keyIdL2));
+//        addArea(new MediumArea(AireLabyrinthique.keyIdL3));
+//        addArea(new LargeArea(AireLabyrinthique.keyIdL4));
+        a0.setEastDestination("icmaze/SmallArea["+ keyIdL2 +"]",8);
+        a1.setEastDestination("icmaze/MediumArea["+ keyIdL3 +"]",16);
+        a1.setWestDestination("icmaze/SpawnArea",8);
+        a2.setEastDestination("icmaze/LargeArea["+ keyIdL4+"]",32);
+        a2.setWestDestination("icmaze/SmallArea["+ keyIdL2 +"]",8);
+        a3.setEastDestination("icmaze/boss",8);
+        a3.setWestDestination("icmaze/MediumArea["+ keyIdL3 +"]",16);
+        a4.setEastDestination("icmaze/SpawnArea",8);
+        a4.setWestDestination("icmaze/LargeArea["+ keyIdL4+"]",32);
+
+
+//        a0.setEState(lock)
+//
+//        a0.setEastDestination //car Spawn envoie dans Small
+//        a1.setDestination(16); // car Small envoie dans Medium
+//        a2.setDestination(32); //  car Medium envoie dans Large
+//        a3.setDestination(8); // car Large envoie dans Boss
+//        a4.setDestination(8); // car Boss envoie dans Spawn
+
+
     }
 
     @Override
@@ -45,6 +80,8 @@ public class ICMaze extends AreaGame {
 
         createAreas();
         initArea(INITIAL_AREA);
+
+
 
         return true;
     }

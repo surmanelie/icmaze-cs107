@@ -3,16 +3,19 @@ package ch.epfl.cs107.icmaze.area.maps;
 import ch.epfl.cs107.icmaze.MazeGenerator;
 import ch.epfl.cs107.icmaze.actor.Rock;
 import ch.epfl.cs107.icmaze.area.ICMazeArea;
+import ch.epfl.cs107.play.io.FileSystem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
+import ch.epfl.cs107.play.window.Window;
 
 public abstract class AireLabyrinthique extends ICMazeArea {
     private AreaPortals portalEnter; // il permet d entrer dans  le labyrinthe associé
     private AreaPortals portalExit;
-    private  int keyId;
+    protected int keyId;
     public final static int keyIdL1 = Integer.MAX_VALUE;
     public final static int keyIdL2= Integer.MAX_VALUE -1;
     public final static int keyIdL3= Integer.MAX_VALUE -2;
     public final static int keyIdL4 = Integer.MAX_VALUE-3;
+    //private final String gridName;
 
     /** Matrice du labyrinthe : 0 = chemin, 1 = mur */
     protected int[][] mazeGrid;
@@ -25,12 +28,14 @@ public abstract class AireLabyrinthique extends ICMazeArea {
         this.portalExit = portalExit;
         this.keyId = Keyid;
         this.difficulty = difficulty;
+//        this.gridName = gridName;
     }
 
 
     @Override
     protected void createArea() {
         mazeGrid = MazeGenerator.createMaze(size, size, difficulty);
+        MazeGenerator.printMaze(mazeGrid, getEntryArrivalCoordinates(), getExitArrivalCoordinates());
         placeRocks();
 
 
@@ -47,12 +52,9 @@ public abstract class AireLabyrinthique extends ICMazeArea {
 
                 if (mazeGrid[y][x] == 1) {
 
-                    DiscreteCoordinates pos = new DiscreteCoordinates(x, y);
+                    DiscreteCoordinates pos = new DiscreteCoordinates(x+1,y+1);
+                    registerActor(new Rock(this, pos));
 
-                    // On ne bloque jamais entrée/sortie
-                    if (!pos.equals(entry) && !pos.equals(exit)) {
-                        registerActor(new Rock(this, pos));
-                    }
                 }
             }
         }
@@ -84,6 +86,5 @@ public abstract class AireLabyrinthique extends ICMazeArea {
             case E -> new DiscreteCoordinates(1, size / 2);
         };
     }
-
 
 }

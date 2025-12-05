@@ -20,8 +20,25 @@ import static ch.epfl.cs107.icmaze.area.maps.AireLabyrinthique.keyIdL2;
 
 
 public class Spawn extends ICMazeArea {
+//    @Override
+//    public DiscreteCoordinates arrivalCoordinates(int size) {
+//        return ;
+//    }
+//
+//    @Override
+//    public DiscreteCoordinates startingCoordinates(int size) {
+//        return ;
+//    }
 
 
+    //    public int getSizeSpawn(){
+//        return sizeSpawn;    }
+
+
+    @Override
+    public int getSize() {
+        return 8;
+    }
 
 
     public Spawn(){
@@ -51,14 +68,15 @@ public class Spawn extends ICMazeArea {
 
 
         Pickaxe pickaxe = new Pickaxe(this, Orientation.DOWN, new DiscreteCoordinates(5,4));
-        Heart heart = new Heart(this,new DiscreteCoordinates(4,5) );
+        Heart heart = new Heart(this, Orientation.DOWN, new DiscreteCoordinates(4, 5));
+
 
         // Clé 1 : identifiant MAX_VALUE en (6,5)
-        Key key1 = new Key(this, Orientation.DOWN, new DiscreteCoordinates(6, 5), Integer.MAX_VALUE);
+        Key key1 = new Key(this, Orientation.DOWN, new DiscreteCoordinates(6, 5), 1);
         registerActor(key1);
 
         // Clé 2 : identifiant MAX_VALUE - 1 en (1,2)
-        Key key2 = new Key(this, Orientation.DOWN, new DiscreteCoordinates(1, 2), Integer.MAX_VALUE - 1);
+        Key key2 = new Key(this, Orientation.DOWN, new DiscreteCoordinates(1, 2), 2);
         registerActor(key2);
 
         registerActor(pickaxe);
@@ -70,7 +88,7 @@ public class Spawn extends ICMazeArea {
 
 
         setEastState(Portal.State.LOCKED);
-        setEastKeyId(Integer.MAX_VALUE);
+        setEastKeyId(1);
 
         setNorthState(Portal.State.INVISIBLE);
         setWestState(Portal.State.INVISIBLE);
@@ -80,7 +98,7 @@ public class Spawn extends ICMazeArea {
 
 
         //setNorthDestination("icmaze/Boss");
-        setEastDestination("icmaze/SmallArea["+ keyIdL2 +"]");
+        setEastDestination("icmaze/SmallArea["+ keyIdL2 +"]", 8);
 
         //setSouthDestination("icmaze/Boss");
         // car pour l'instant on en a pas besoin
