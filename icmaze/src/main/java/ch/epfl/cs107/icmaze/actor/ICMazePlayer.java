@@ -18,6 +18,8 @@ import ch.epfl.cs107.icmaze.actor.Portal;
 
 import java.util.*;
 
+import static ch.epfl.cs107.play.math.Orientation.*;
+
 public class ICMazePlayer extends ICMazeActor implements Interactor {
 
     private final static int MOVE_DURATION = 4;
@@ -29,12 +31,51 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
     private Keyboard keyboard = getOwnerArea().getKeyboard();
 
     private OrientedAnimation animation;
+
+    private OrientedAnimation pickaxeAnimation;
+    private static final int PICKAXE_ANIMATION_DURATION = 5;
+// animation d’attaque à la pioche
+
     private final ICMazePlayerInteractionHandler handler = new ICMazePlayerInteractionHandler();
 
     private final List<ICMazeObject> bag = new ArrayList<>();
     private boolean isChanging;
     private String destinationArea;
     private DiscreteCoordinates destinationCoordonates;
+
+
+    public ICMazePlayer(Area owner, Orientation orientation, DiscreteCoordinates coordinates, String spriteName) {
+        super(owner, orientation, coordinates);
+        this.name = spriteName;
+        this.keys = KeyBindings.PLAYER_KEY_BINDINGS;
+
+        final Vector anchor = new Vector(0, 0);
+        final Orientation[] orders = {DOWN, RIGHT, UP, Orientation.LEFT};
+        final int ANIMATION_DURATION = 4;
+        final String prefix = "icmaze/player";
+
+        animation = new OrientedAnimation(prefix, ANIMATION_DURATION, this, anchor, orders,
+                4, 1, 2, 16, 32, true);
+
+
+        // création de l'animation d'attaque
+        final Vector anchor2 = new Vector(-.5f, 0);
+        final Orientation[] orders2 = {DOWN , UP, RIGHT , LEFT};
+        pickaxeAnimation= new  OrientedAnimation("icmaze/player.pickaxe",
+                PICKAXE_ANIMATION_DURATION , this ,
+                anchor2 , orders2 , 4, 2, 2, 32, 32);
+        // // création de l'animation d'attaque
+        //
+        //        pickaxeAttackAnimation= new  OrientedAnimation("icmaze/player.pickaxe",
+        //                PICKAXE_ANIMATION_DURATION , this ,
+        //                anchor2 , orders2 , 4, 2, 2, 32, 32);
+    }
+
+    public enum PlayerState {
+        IDLE,
+        INTERACTING,
+        ATTACKING_WITH_PICKAXE,
+    }
 
     public boolean hasKey(int id){
         for(ICMazeObject object : bag){
@@ -65,13 +106,19 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
         return false;
     }
 
-    //boolenan changing set + get
-    //string destinationArea get
-    //corrdonne arrive get
 
 
     public void setDestinationArea(String destinationArea) {
         this.destinationArea = destinationArea;
+    }
+    @Override
+    public void draw(ch.epfl.cs107.play.window.Canvas canvas) {
+        if(currentState == PlayerState.ATTACKING_WITH_PICKAXE){
+            pickaxeAnimation.draw(canvas);
+        }else{
+            animation.draw(canvas);
+        }
+//        healthBar.draw(canvas);
     }
 
     public DiscreteCoordinates getDestinationCoordonates() {
@@ -92,25 +139,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
         return destinationArea;
     }
 
-    public ICMazePlayer(Area owner, Orientation orientation, DiscreteCoordinates coordinates, String spriteName) {
-        super(owner, orientation, coordinates);
-        this.name = spriteName;
-        this.keys = KeyBindings.PLAYER_KEY_BINDINGS;
 
-        final Vector anchor = new Vector(0, 0);
-        final Orientation[] orders = {Orientation.DOWN, Orientation.RIGHT, Orientation.UP, Orientation.LEFT};
-        final int ANIMATION_DURATION = 4;
-        final String prefix = "icmaze/player";
-
-        animation = new OrientedAnimation(prefix, ANIMATION_DURATION, this, anchor, orders,
-                4, 1, 2, 16, 32, true);
-    }
-
-    public enum PlayerState {
-        IDLE,
-        INTERACTING,
-        ATTACKING_WITH_PICKAXE,
-    }
 
     @Override
     public boolean takeCellSpace() {
@@ -123,9 +152,9 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
         switch (currentState) {
 
             case IDLE:
-                moveIfPressed(Orientation.DOWN, keyboard.get(keys.down()));
-                moveIfPressed(Orientation.RIGHT, keyboard.get(keys.right()));
-                moveIfPressed(Orientation.UP, keyboard.get(keys.up()));
+                moveIfPressed(DOWN, keyboard.get(keys.down()));
+                moveIfPressed(RIGHT, keyboard.get(keys.right()));
+                moveIfPressed(UP, keyboard.get(keys.up()));
                 moveIfPressed(Orientation.LEFT, keyboard.get(keys.left()));
 
                 if (isDisplacementOccurs()) animation.update(deltaTime);
@@ -138,13 +167,9 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                 }
 
                 // Lancer animation d’attaque
-                if (!isDisplacementOccurs()
-                        && hasPickaxe()
-                        && keyboard.get(keys.pickaxe()).isPressed()) {
-
+                if (!isDisplacementOccurs() && hasPickaxe() && keyboard.get(keys.pickaxe()).isPressed()) {
                     currentState = PlayerState.ATTACKING_WITH_PICKAXE;
-
-                    //animation = pickaxeAnimation; // ⚠️ tu dois l’ajouter dans ton constructeur
+                    animation = pickaxeAnimation;
                     animation.reset();
                 }
 
@@ -159,11 +184,11 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
 
             case ATTACKING_WITH_PICKAXE:
                 // --- On joue l’animation d’attaque ---
-                animation.update(deltaTime);
+                pickaxeAnimation.update(deltaTime);
                 System.out.println("entre en intercation ");
 
                 // --- Quand l’animation finit, on revient à l’IDLE ---
-                if (animation.isCompleted()) {
+                if (pickaxeAnimation.isCompleted()) {
                     System.out.println("redepaprt");
                     currentState = PlayerState.IDLE;
 
@@ -185,10 +210,6 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
         }
     }
 
-    @Override
-    public void draw(Canvas canvas) {
-        animation.draw(canvas);
-    }
 
     @Override
     public List<DiscreteCoordinates> getFieldOfViewCells() {
@@ -200,7 +221,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
     public boolean wantsCellInteraction() { return true; }
 
     @Override
-    public boolean wantsViewInteraction() { return currentState == PlayerState.INTERACTING; }
+    public boolean wantsViewInteraction() { return currentState == PlayerState.INTERACTING ||currentState == PlayerState.ATTACKING_WITH_PICKAXE; }
 
     @Override
     public void interactWith(Interactable other, boolean isCellInteraction) {
