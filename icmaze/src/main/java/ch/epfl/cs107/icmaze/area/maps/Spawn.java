@@ -72,11 +72,11 @@ public class Spawn extends ICMazeArea {
 
 
         // Clé 1 : identifiant MAX_VALUE en (6,5)
-        Key key1 = new Key(this, Orientation.DOWN, new DiscreteCoordinates(6, 5), 1);//Integer.MAX_VALUE);
+        Key key1 = new Key(this, Orientation.DOWN, new DiscreteCoordinates(6, 5), Integer.MAX_VALUE);
         registerActor(key1);
 
         // Clé 2 : identifiant MAX_VALUE - 1 en (1,2)
-        Key key2 = new Key(this, Orientation.DOWN, new DiscreteCoordinates(1, 2), 2);//Integer.MAX_VALUE-1);
+        Key key2 = new Key(this, Orientation.DOWN, new DiscreteCoordinates(1, 2),Integer.MAX_VALUE-1);
         registerActor(key2);
 
         registerActor(pickaxe);
@@ -88,7 +88,8 @@ public class Spawn extends ICMazeArea {
 
 
         setEastState(Portal.State.LOCKED);
-        setEastKeyId(1);
+        // ici faire attention à changer avec un getter ou un setter dans le cas ou par exemple on veut modifier la valeur de l'id
+        setEastKeyId(Integer.MAX_VALUE);
 
         setNorthState(Portal.State.INVISIBLE);
         setWestState(Portal.State.INVISIBLE);
