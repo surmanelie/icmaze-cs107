@@ -72,11 +72,11 @@ public class Spawn extends ICMazeArea {
 
 
         // Clé 1 : identifiant MAX_VALUE en (6,5)
-        Key key1 = new Key(this, Orientation.DOWN, new DiscreteCoordinates(6, 5), 1);
+        Key key1 = new Key(this, Orientation.DOWN, new DiscreteCoordinates(6, 5), 1);//Integer.MAX_VALUE);
         registerActor(key1);
 
         // Clé 2 : identifiant MAX_VALUE - 1 en (1,2)
-        Key key2 = new Key(this, Orientation.DOWN, new DiscreteCoordinates(1, 2), 2);
+        Key key2 = new Key(this, Orientation.DOWN, new DiscreteCoordinates(1, 2), 2);//Integer.MAX_VALUE-1);
         registerActor(key2);
 
         registerActor(pickaxe);

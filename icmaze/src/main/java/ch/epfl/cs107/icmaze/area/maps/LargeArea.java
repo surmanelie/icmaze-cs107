@@ -27,7 +27,7 @@ public class LargeArea extends AireLabyrinthique{
     }
 
     public LargeArea (int keyId){
-        super("MediumArea",16,AreaPortals.W,AreaPortals.E, keyId, Difficulty.HARDEST);
+        super("LargeArea",16,AreaPortals.W,AreaPortals.E, keyId, Difficulty.HARDEST);
     }
 
     protected void createArea(){
@@ -38,11 +38,6 @@ public class LargeArea extends AireLabyrinthique{
         //ICMazePlayer player = new ICMazePlayer(this, Orientation.DOWN, getplayerSpawnPosition(),"player");
         //registerActor(player);
 
-
-
-
-
-
         setWestState(Portal.State.OPEN);
         setEastState(Portal.State.OPEN);
         setNorthState(Portal.State.INVISIBLE);
@@ -51,13 +46,8 @@ public class LargeArea extends AireLabyrinthique{
 //        setWestDestination("icmaze/MediumArea["+ keyIdL3+"]");
 //        setEastDestination("icmaze/Boss");
 
-
         // il n'y a que pour west qu'on met une aire d'arrivée car les autres sont invisibles
         //setEastDestination("icmaze/Spawn");
-
-
-
-
     }
     @Override
     public DiscreteCoordinates getplayerSpawnPosition() {

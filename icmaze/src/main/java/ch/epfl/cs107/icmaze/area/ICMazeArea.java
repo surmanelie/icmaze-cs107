@@ -109,7 +109,6 @@ public abstract class ICMazeArea extends Area {
         this.W.setDestinationArea(destination);
         this.W.setArrivalCoordinates(new DiscreteCoordinates(nextSize,nextSize/2));
 
-
     }
     public void setEastDestination(String destination, int nextSize){
         //this.eastDestination = destination;

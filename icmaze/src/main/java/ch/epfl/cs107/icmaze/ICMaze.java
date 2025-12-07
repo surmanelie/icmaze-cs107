@@ -47,13 +47,17 @@ public class ICMaze extends AreaGame {
 //        addArea(new MediumArea(AireLabyrinthique.keyIdL3));
 //        addArea(new LargeArea(AireLabyrinthique.keyIdL4));
         a0.setEastDestination("icmaze/SmallArea["+ keyIdL2 +"]",8);
+
         a1.setEastDestination("icmaze/MediumArea["+ keyIdL3 +"]",16);
-        a1.setWestDestination("icmaze/SpawnArea",8);
+        a1.setWestDestination("icmaze/Spawn",8);
+
         a2.setEastDestination("icmaze/LargeArea["+ keyIdL4+"]",32);
         a2.setWestDestination("icmaze/SmallArea["+ keyIdL2 +"]",8);
-        a3.setEastDestination("icmaze/boss",8);
+
+        a3.setEastDestination("icmaze/Boss",8);
         a3.setWestDestination("icmaze/MediumArea["+ keyIdL3 +"]",16);
-        a4.setEastDestination("icmaze/SpawnArea",8);
+
+        a4.setEastDestination("icmaze/Spawn",8);
         a4.setWestDestination("icmaze/LargeArea["+ keyIdL4+"]",32);
 
 

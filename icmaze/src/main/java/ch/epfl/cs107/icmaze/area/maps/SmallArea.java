@@ -67,8 +67,11 @@ public class SmallArea extends AireLabyrinthique{
 
     @Override
     public String getTitle(){
-        return "icmaze/SmallArea["+ keyIdL2+"]";
+        return "icmaze/SmallArea["+ this.getKeyId()+"]";
     }
 
-
+    @Override
+    public int getKeyId() {
+        return super.getKeyId();
+    }
 }

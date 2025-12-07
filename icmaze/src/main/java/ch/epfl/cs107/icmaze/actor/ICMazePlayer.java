@@ -169,8 +169,8 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                 // Lancer animation d’attaque
                 if (!isDisplacementOccurs() && hasPickaxe() && keyboard.get(keys.pickaxe()).isPressed()) {
                     currentState = PlayerState.ATTACKING_WITH_PICKAXE;
-                    animation = pickaxeAnimation;
-                    animation.reset();
+//                    animation = pickaxeAnimation;
+                    pickaxeAnimation.reset();
                 }
 
                 break;
@@ -290,6 +290,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                         portal.open();
                         // On choisit de ne PAS téléporter tout de suite :
                         // le joueur devra ensuite passer dessus pour se téléporter.
+
                     }
                 }
                 // Si le portail est INVISIBLE ou déjà OPEN : rien à faire en view interaction.
@@ -299,7 +300,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
         public void interactWith(Rock rock, boolean isCellInteraction) {
 
             // Le joueur doit être en train d’attaquer AVEC la pioche
-            if (isCellInteraction && currentState == PlayerState.ATTACKING_WITH_PICKAXE) {
+            if (!isCellInteraction && currentState == PlayerState.ATTACKING_WITH_PICKAXE) {
 
                 rock.weaken(); // inflige 1 dégât au rocher
 

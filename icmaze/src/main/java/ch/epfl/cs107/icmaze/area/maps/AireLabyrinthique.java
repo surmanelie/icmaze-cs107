@@ -17,6 +17,8 @@ public abstract class AireLabyrinthique extends ICMazeArea {
     public final static int keyIdL4 = Integer.MAX_VALUE-3;
     //private final String gridName;
 
+
+
     /** Matrice du labyrinthe : 0 = chemin, 1 = mur */
     protected int[][] mazeGrid;
 
@@ -31,6 +33,9 @@ public abstract class AireLabyrinthique extends ICMazeArea {
 //        this.gridName = gridName;
     }
 
+    public int getKeyId() {
+        return keyId;
+    }
 
     @Override
     protected void createArea() {

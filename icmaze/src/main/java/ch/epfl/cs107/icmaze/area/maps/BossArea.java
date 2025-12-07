@@ -12,7 +12,7 @@ import ch.epfl.cs107.play.engine.actor.Foreground;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Orientation;
 
-import static ch.epfl.cs107.icmaze.area.maps.AireLabyrinthique.keyIdL4;
+//import static ch.epfl.cs107.icmaze.area.maps.AireLabyrinthique.//keyIdL4;
 
 public class BossArea extends ICMazeArea {
 
@@ -58,7 +58,7 @@ public class BossArea extends ICMazeArea {
         //registerActor(player);
 
         setWestState(Portal.State.OPEN);
-        setEastState(Portal.State.INVISIBLE);
+        setEastState(Portal.State.OPEN);
         setNorthState(Portal.State.INVISIBLE);
         setSouthState(Portal.State.INVISIBLE);
 
