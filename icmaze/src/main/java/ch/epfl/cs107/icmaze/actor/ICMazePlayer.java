@@ -41,7 +41,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
     private final List<ICMazeObject> bag = new ArrayList<>();
     private boolean isChanging;
     private String destinationArea;
-    private DiscreteCoordinates destinationCoordonates;
+    private DiscreteCoordinates destinationCoordinates;
 
 
     public ICMazePlayer(Area owner, Orientation orientation, DiscreteCoordinates coordinates, String spriteName) {
@@ -122,7 +122,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
     }
 
     public DiscreteCoordinates getDestinationCoordonates() {
-        return destinationCoordonates;
+        return destinationCoordinates;
     }
 
     public void setisChanging(boolean changing) {
@@ -155,7 +155,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                 moveIfPressed(DOWN, keyboard.get(keys.down()));
                 moveIfPressed(RIGHT, keyboard.get(keys.right()));
                 moveIfPressed(UP, keyboard.get(keys.up()));
-                moveIfPressed(Orientation.LEFT, keyboard.get(keys.left()));
+                moveIfPressed(LEFT, keyboard.get(keys.left()));
 
                 if (isDisplacementOccurs()) animation.update(deltaTime);
                 else animation.reset();
@@ -272,10 +272,16 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                 if (portal.getState() == Portal.State.OPEN) {
                     setisChanging(true);
                     setDestinationArea(portal.getDestinationAreaName());
-                    destinationCoordonates = portal.getArrivalCoordinates();
+                    destinationCoordinates = portal.getArrivalCoordinates();
                     //DiscreteCoordinates inside = arrival.jump(portal.getOrientation().opposite().toVector());
                 }
             } else {
+
+                //on doit d'abord vérifier qu'on ne fait rien si on attaque avec la pioche
+                if (currentState != PlayerState.INTERACTING) {
+                    return;
+                }
+
                 // Interaction de vue : on est en mode INTERACTING et on regarde le portail
                 if (portal.getState() == Portal.State.LOCKED) {
                     int id = portal.getKeyId();

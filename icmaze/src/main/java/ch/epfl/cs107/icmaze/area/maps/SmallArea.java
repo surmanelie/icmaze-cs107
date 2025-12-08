@@ -45,9 +45,11 @@ public class SmallArea extends AireLabyrinthique{
 
 
         setWestState(Portal.State.OPEN);
-        setEastState(Portal.State.OPEN);
+        setEastState(Portal.State.LOCKED);
         setNorthState(Portal.State.INVISIBLE);
         setSouthState(Portal.State.INVISIBLE);
+
+        setEastKeyId(getKeyId());
 
 //        setWestDestination("icmaze/Spawn");
 //        setEastDestination("icmaze/MediumArea["+ keyId +"]");

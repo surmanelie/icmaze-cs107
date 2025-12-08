@@ -2,6 +2,7 @@ package ch.epfl.cs107.icmaze.area;
 
 import ch.epfl.cs107.icmaze.ICMazeBehavior;
 import ch.epfl.cs107.icmaze.actor.Portal;
+import ch.epfl.cs107.play.areagame.AreaGraph;
 import ch.epfl.cs107.play.areagame.area.Area;
 import ch.epfl.cs107.play.engine.actor.Background;
 import ch.epfl.cs107.play.engine.actor.Foreground;
@@ -196,6 +197,12 @@ public abstract class ICMazeArea extends Area {
         public Orientation getOrientation() {
             return orientation;
         }
+    }
+
+    protected AreaGraph graph = new AreaGraph() ;
+
+    public AreaGraph getGraph(){
+        return graph;
     }
 
 

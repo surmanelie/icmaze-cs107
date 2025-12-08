@@ -27,7 +27,7 @@ public class LargeArea extends AireLabyrinthique{
     }
 
     public LargeArea (int keyId){
-        super("LargeArea",16,AreaPortals.W,AreaPortals.E, keyId, Difficulty.HARDEST);
+        super("LargeArea",32,AreaPortals.W,AreaPortals.E, keyId, Difficulty.HARDEST);
     }
 
     protected void createArea(){
@@ -39,9 +39,11 @@ public class LargeArea extends AireLabyrinthique{
         //registerActor(player);
 
         setWestState(Portal.State.OPEN);
-        setEastState(Portal.State.OPEN);
+        setEastState(Portal.State.LOCKED);
         setNorthState(Portal.State.INVISIBLE);
         setSouthState(Portal.State.INVISIBLE);
+
+        setEastKeyId(getKeyId());
 
 //        setWestDestination("icmaze/MediumArea["+ keyIdL3+"]");
 //        setEastDestination("icmaze/Boss");

@@ -50,18 +50,20 @@ public class MediumArea extends AireLabyrinthique{
 
 
         setWestState(Portal.State.OPEN);
-        setEastState(Portal.State.OPEN);
+        setEastState(Portal.State.LOCKED);
         setNorthState(Portal.State.INVISIBLE);
         setSouthState(Portal.State.INVISIBLE);
 
+        setEastKeyId(getKeyId());
 
 
 
 
-        setWestState(Portal.State.OPEN);
-        setEastState(Portal.State.OPEN);
-        setNorthState(Portal.State.INVISIBLE);
-        setSouthState(Portal.State.INVISIBLE);
+
+//        setWestState(Portal.State.OPEN);
+//        setEastState(Portal.State.OPEN);
+//        setNorthState(Portal.State.INVISIBLE);
+//        setSouthState(Portal.State.INVISIBLE);
 
 //        setWestDestination("icmaze/SmallArea["+ keyIdL2+"]");
 //        setEastDestination("icmaze/LargeArea["+ keyIdL4+"]");
