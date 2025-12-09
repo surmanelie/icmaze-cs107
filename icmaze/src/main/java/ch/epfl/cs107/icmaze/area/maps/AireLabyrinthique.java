@@ -69,8 +69,10 @@ public abstract class AireLabyrinthique extends ICMazeArea {
                 if (mazeGrid[y][x] == 1) {
 
                     DiscreteCoordinates pos = new DiscreteCoordinates(x+1,y+1);
-                    registerActor(new Rock(this, pos));
 
+                    if (!pos.equals(entry) && !pos.equals(exit)) {
+                        registerActor(new Rock(this, pos));
+                    }
                 }
             }
         }
