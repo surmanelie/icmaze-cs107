@@ -146,6 +146,8 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
         return true;
     }
 
+    private boolean hasHitThisAttack = false;
+
     @Override
     public void update(float deltaTime) {
 
@@ -171,6 +173,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                     currentState = PlayerState.ATTACKING_WITH_PICKAXE;
 //                    animation = pickaxeAnimation;
                     pickaxeAnimation.reset();
+                    hasHitThisAttack = false;
                 }
 
                 break;
@@ -195,6 +198,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                     // remettre l'animation normale
 
                     animation.reset();
+                    hasHitThisAttack = false; // prêt pour la prochaine attaque
                 }
 
                 break;
@@ -306,9 +310,10 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
         public void interactWith(Rock rock, boolean isCellInteraction) {
 
             // Le joueur doit être en train d’attaquer AVEC la pioche
-            if (!isCellInteraction && currentState == PlayerState.ATTACKING_WITH_PICKAXE) {
+            if (!isCellInteraction && currentState == PlayerState.ATTACKING_WITH_PICKAXE && !hasHitThisAttack) {
 
                 rock.weaken(); // inflige 1 dégât au rocher
+                hasHitThisAttack = true; // c'est ça qui permet de ne pas retaper pendant la même animation.
 
                 // ATTENTION : le rock gère déjà vanish + drop + suppression
                 // donc tu n’as rien d’autre à faire ici

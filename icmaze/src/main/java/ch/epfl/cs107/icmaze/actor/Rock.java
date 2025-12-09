@@ -25,6 +25,8 @@ public class Rock  extends AreaEntity implements Interactable, Updatable {
     // Points de vie restants (le rocher disparaît à 0)
     private int hP = 3;
 
+    //private boolean recentlyHit = false;
+
     // Indique si le rocher est en train de disparaître
     private boolean vanishing = false;
 
@@ -35,32 +37,33 @@ public class Rock  extends AreaEntity implements Interactable, Updatable {
 
     // Initialise le rocher, son sprite et l’animation de disparition
 
-    public Rock(Area area, DiscreteCoordinates coordinates){
-        super(area, Orientation.DOWN,coordinates);
-        sprite = new Sprite(
-                "rock.2",
-                1f,
-                1f,
-                this);
+    public Rock(Area area, DiscreteCoordinates coordinates){//,int hitPoints){
 
-        vanishAnimation = new Animation(
-                "icmaze/vanish",
-                7, 2, 2,
-                this,
-                32, 32,
-                new Vector(-0.5f, 0f),
-                ANIMATION_DURATION / 7,
-                false
-        );
+        super(area, Orientation.DOWN,coordinates);
+        sprite = new Sprite("rock.2", 1f, 1f, this);
+
+        vanishAnimation = new Animation("icmaze/vanish", 7, 2, 2, this, 32, 32, new Vector(-0.5f, 0f), ANIMATION_DURATION / 7, false);
     }
 
 
     public void weaken() {
+
+//        if(recentlyHit || vanishing ){
+//            return;
+//        }
+//        recentlyHit = true;
+
         hP -= 1;
+        System.out.println("Rock hit ! remaining"+hP);
+
         if (hP <= 0) {
             vanishing = true;
         }
     }
+
+//    public void resetHitFlag(){
+//        recentlyHit = false;
+//    }
 
     private void handleVanish(float dt) {
         vanishAnimation.update(dt);
