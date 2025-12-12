@@ -1,6 +1,5 @@
 package ch.epfl.cs107.icmaze.actor;
 
-import ch.epfl.cs107.icmaze.actor.ICMazeActor;
 import ch.epfl.cs107.play.areagame.actor.Interactable;
 import ch.epfl.cs107.play.areagame.actor.Interactor;
 import ch.epfl.cs107.play.areagame.area.Area;
@@ -9,7 +8,7 @@ import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Orientation;
 import ch.epfl.cs107.play.window.Canvas;
 
-public abstract class Enemy extends ICMazeActor implements Interactor, Interactable {
+public abstract class Ennemy extends ICMazeActor implements Interactor, Interactable {
 
     // --- Attributs privés (encapsulation stricte) ---
     private int currentHealth;
@@ -21,10 +20,10 @@ public abstract class Enemy extends ICMazeActor implements Interactor, Interacta
     private final Animation deathAnimation;
 
     // --- Constructeur ---
-    protected Enemy(Area area,
-                    Orientation orientation,
-                    DiscreteCoordinates position,
-                    int maxHealth) {
+    protected Ennemy(Area area,
+                     Orientation orientation,
+                     DiscreteCoordinates position,
+                     int maxHealth) {
         super(area, orientation, position);
 
         // Le sujet dit : on ne fixe pas le max ici => on le reçoit en paramètre

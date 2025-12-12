@@ -5,6 +5,7 @@ import ch.epfl.cs107.icmaze.actor.Portal;
 import ch.epfl.cs107.icmaze.area.ICMazeArea;
 import ch.epfl.cs107.icmaze.area.maps.*;
 import ch.epfl.cs107.play.areagame.AreaGame;
+import ch.epfl.cs107.play.areagame.area.Area;
 import ch.epfl.cs107.play.io.FileSystem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Orientation;
@@ -83,11 +84,24 @@ public class ICMaze extends AreaGame {
         }
 
         createAreas();
+
+//        // ce qui est juste après je suis pas sur du tout
+//        for (Area area :areas) {
+//            if(area instanceof ICMazeArea icArea){
+//                icArea.setGame(this);
+//            }
+//        }
+
+
         initArea(INITIAL_AREA);
 
 
 
         return true;
+    }
+
+    public void resetGame(){
+        begin(window, fileSystem);
     }
 
     @Override
@@ -96,8 +110,13 @@ public class ICMaze extends AreaGame {
         //on vérifie ici la touche reset
         Keyboard keyboard = getCurrentArea().getKeyboard();
         if (keyboard.get(KeyBindings.RESET_GAME).isPressed()){
-            begin(window, fileSystem);
+            resetGame();
             return ;
+        }
+
+        if (player.isDead()){
+            resetGame();
+            return;
         }
 
         super.update(deltaTime);

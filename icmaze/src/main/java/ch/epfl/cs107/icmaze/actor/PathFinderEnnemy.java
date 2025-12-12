@@ -8,16 +8,16 @@ import ch.epfl.cs107.play.math.Orientation;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class PathFinderEnemy  extends Enemy implements Interactor {
+public abstract class PathFinderEnnemy extends Ennemy implements Interactor {
     private final int perceptionRadius;
     private final static int MOVE_DURATION = 4; // ou autre valeur
 
 
-    protected PathFinderEnemy(Area area,
-                              Orientation orientation,
-                              DiscreteCoordinates position,
-                              int maxHealth,
-                              int perceptionRadius) {
+    protected PathFinderEnnemy(Area area,
+                               Orientation orientation,
+                               DiscreteCoordinates position,
+                               int maxHealth,
+                               int perceptionRadius) {
         super(area, orientation, position, maxHealth);
         this.perceptionRadius = perceptionRadius;
     }
@@ -37,6 +37,7 @@ public abstract class PathFinderEnemy  extends Enemy implements Interactor {
     public boolean wantsViewInteraction() {
         return true;  // demandeur à distance
     }
+
     @Override
     public void  updateAlive(float deltaTime) {
         super.updateAlive(deltaTime);

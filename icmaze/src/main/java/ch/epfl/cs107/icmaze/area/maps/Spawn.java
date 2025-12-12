@@ -89,7 +89,7 @@ public class Spawn extends ICMazeArea {
 
         setEastState(Portal.State.LOCKED);
         // ici faire attention à changer avec un getter ou un setter dans le cas ou par exemple on veut modifier la valeur de l'id
-        setEastKeyId(Integer.MAX_VALUE);
+        setEastKeyId(keyIdL1);
 
         setNorthState(Portal.State.INVISIBLE);
         setWestState(Portal.State.INVISIBLE);

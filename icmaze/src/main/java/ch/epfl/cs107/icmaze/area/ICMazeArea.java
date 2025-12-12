@@ -1,5 +1,6 @@
 package ch.epfl.cs107.icmaze.area;
 
+import ch.epfl.cs107.icmaze.ICMaze;
 import ch.epfl.cs107.icmaze.ICMazeBehavior;
 import ch.epfl.cs107.icmaze.actor.Portal;
 import ch.epfl.cs107.play.areagame.AreaGraph;
@@ -9,7 +10,10 @@ import ch.epfl.cs107.play.engine.actor.Foreground;
 import ch.epfl.cs107.play.io.FileSystem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Orientation;
+import ch.epfl.cs107.play.signal.logic.Or;
 import ch.epfl.cs107.play.window.Window;
+
+import java.util.Queue;
 
 public abstract class ICMazeArea extends Area {
     private final String behaviorName;
@@ -199,11 +203,31 @@ public abstract class ICMazeArea extends Area {
         }
     }
 
+
     protected AreaGraph graph = new AreaGraph() ;
 
-    public AreaGraph getGraph(){
-        return graph;
+    //le get ci dessous est intrusif
+//    public AreaGraph getGraph(){
+//        return graph;
+//    }
+
+    public Queue<Orientation> getShortestPath(DiscreteCoordinates from, DiscreteCoordinates to) {
+        return graph.shortestPath(from, to);
     }
+
+
+//    // ce qui arrive je suis pas sûr
+//
+//    private ICMaze game;
+//
+//    public void setGame(ICMaze game) {
+//        this.game = game;
+//    }
+//
+//    public ICMaze getGame() {
+//        return game;
+//    }
+
 
 
 

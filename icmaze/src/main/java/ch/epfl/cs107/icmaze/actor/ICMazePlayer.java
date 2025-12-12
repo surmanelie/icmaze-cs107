@@ -1,14 +1,17 @@
 package ch.epfl.cs107.icmaze.actor;
 
+import ch.epfl.cs107.icmaze.ICMaze;
 import ch.epfl.cs107.icmaze.KeyBindings;
 import ch.epfl.cs107.icmaze.actor.collectable.Heart;
 import ch.epfl.cs107.icmaze.actor.collectable.ICMazeObject;
 import ch.epfl.cs107.icmaze.actor.collectable.Key;
 import ch.epfl.cs107.icmaze.actor.collectable.Pickaxe;
+import ch.epfl.cs107.icmaze.area.ICMazeArea;
 import ch.epfl.cs107.icmaze.handler.ICMazeInteractionVisitor;
 import ch.epfl.cs107.play.areagame.actor.Interactable;
 import ch.epfl.cs107.play.areagame.actor.Interactor;
 import ch.epfl.cs107.play.areagame.area.Area;
+import ch.epfl.cs107.play.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.engine.actor.OrientedAnimation;
 import ch.epfl.cs107.play.engine.actor.Sprite;
 import ch.epfl.cs107.play.math.Vector;
@@ -42,6 +45,9 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
     private boolean isChanging;
     private String destinationArea;
     private DiscreteCoordinates destinationCoordinates;
+
+    private static final int MAX_LIFE = 5;
+    private int life = MAX_LIFE;
 
 
     public ICMazePlayer(Area owner, Orientation orientation, DiscreteCoordinates coordinates, String spriteName) {
@@ -148,6 +154,31 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
 
     private boolean hasHitThisAttack = false;
 
+    private boolean dead = false;
+    public boolean isDead(){
+        return dead;
+    }
+
+
+
+
+    public void sufferHit(){
+
+        life--;
+        System.out.println("ICMAzePLayer a été touché par un LogMonster ! Vie = "+life);
+
+        if (life <= 0) {
+            System.out.println("ICMazePlayer est mort ");
+            dead = true;
+
+//            ICMazeArea area = (ICMazeArea) getOwnerArea();
+//            ICMaze game = (ICMaze) area.getOwner();
+//
+//            game.resetGame();
+
+        }
+    }
+
     @Override
     public void update(float deltaTime) {
 
@@ -214,6 +245,19 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
         }
     }
 
+    //pour que le joueur puisse être vu par les monster
+
+    @Override
+    public boolean isViewInteractable() {
+        return true;
+    }
+
+    @Override
+    public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteraction) {
+        if (v instanceof ICMazeInteractionVisitor visitor) {
+            visitor.interactWith(this, isCellInteraction);
+        }
+    }
 
     @Override
     public List<DiscreteCoordinates> getFieldOfViewCells() {
@@ -320,6 +364,14 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
             }
         }
 
+//        @Override
+//        public void interactWith(LogMonster monster , boolean isCellInteraction) {
+//
+//            if(!isCellInteraction) {
+//                monster.setLastKnowPlayerPosition(getCurrentMainCellCoordinates());
+//                return;
+//            }
+//        }
 
     }
 
