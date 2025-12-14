@@ -8,11 +8,13 @@ import ch.epfl.cs107.icmaze.area.maps.AireLabyrinthique;
 import ch.epfl.cs107.icmaze.handler.ICMazeInteractionVisitor;
 import ch.epfl.cs107.play.areagame.actor.Interactable;
 import ch.epfl.cs107.play.areagame.area.Area;
+import ch.epfl.cs107.play.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.engine.actor.Animation;
 import ch.epfl.cs107.play.engine.actor.OrientedAnimation;
 import ch.epfl.cs107.play.engine.actor.Path;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Orientation;
+import ch.epfl.cs107.play.math.Transform;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
@@ -51,6 +53,19 @@ public class LogMonster  extends PathFinderEnnemy{
     private OrientedAnimation sleepingAnimation;
 
     private Path graphicPath;
+
+    private static final float IMMUNITY_DURATION = 1.0f;
+    private final Cooldown immunityCd = new Cooldown(IMMUNITY_DURATION);
+    private boolean immune = false;
+    private int blinkTick = 0;
+
+    private final Health healthBar = new Health(this, Transform.I.translated(0, 1.75f), MAX_HEALTH, false);
+
+    private void triggerImmunity(){
+        immune = true;
+        blinkTick = 0;
+        immunityCd.reset();
+    }
 
 
     private final LogMonsterInteractionHandler handler = new LogMonsterInteractionHandler();
@@ -184,6 +199,13 @@ public class LogMonster  extends PathFinderEnnemy{
         }
         System.out.println("State = "+state);
 
+        if(immune){
+            blinkTick++;
+            if(immunityCd.ready(deltaTime)){
+                immune = false;
+            }
+        }
+
 //        // on met à jour l'orientation planifiée en fonction de la dernière position connue du joueur
 //        plannedOrientation = computeTargetOrientation();
 
@@ -258,14 +280,26 @@ public class LogMonster  extends PathFinderEnnemy{
             }
 
             if(!isCellInteraction) {
-                lastKnowPlayerPosition = player.getCurrentMainCellCoordinates();
-                System.out.println("LogMonster a vu le joueur en "+ lastKnowPlayerPosition);
 
+                DiscreteCoordinates playerPos = player.getCurrentMainCellCoordinates();
                 DiscreteCoordinates front = getCurrentMainCellCoordinates().jump(getOrientation().toVector());
 
-                if (player.getCurrentMainCellCoordinates().equals(front)) {
+                if (playerPos.equals(front)){
                     player.sufferHit();
+                    //triggerImmunity(); //temporaire
+                }else {
+                    lastKnowPlayerPosition = playerPos; //comme ça il mémorise la position du joueur
                 }
+//                lastKnowPlayerPosition = player.getCurrentMainCellCoordinates();
+//                System.out.println("LogMonster a vu le joueur en "+ lastKnowPlayerPosition);
+//
+//                DiscreteCoordinates front = getCurrentMainCellCoordinates().jump(getOrientation().toVector());
+//
+//                if (player.getCurrentMainCellCoordinates().equals(front)) { //front pour être sûr que le player est devant le monster (pas face à face)
+//                    player.sufferHit();
+//                }
+
+
             }
 
 
@@ -290,16 +324,51 @@ public class LogMonster  extends PathFinderEnnemy{
         this.state = state;
     }
 
+    public void sufferHit(){
+
+        if(immune || isDead()){
+            return;
+        }
+
+        loseHealth(1);
+        healthBar.decrease(1);
+        triggerImmunity();
+//        if(healthBar.isOff()){
+//            /*death flow*/
+//        }
+    }
+
+    @Override
+    public void acceptInteraction (AreaInteractionVisitor v, boolean isCellInteraction) {
+        if(v instanceof ICMazeInteractionVisitor visitor){
+            visitor.interactWith(this, isCellInteraction);
+        }
+    }
+
     @Override
     public void draw(Canvas canvas) {
-        switch (state) {
-            case SLEEPING -> sleepingAnimation.draw(canvas);
-            case RANDOM -> randomAnimation.draw(canvas);
-            case TARGETING -> targetingAnimation.draw(canvas);
+
+        if(isDead()){
+            super.draw(canvas);
+            return;
+        }
+
+        boolean visible = !immune || (blinkTick % 2 == 0);
+
+        if(visible){
+            switch (state) {
+                case SLEEPING -> sleepingAnimation.draw(canvas);
+                case RANDOM -> randomAnimation.draw(canvas);
+                case TARGETING -> targetingAnimation.draw(canvas);
+            }
         }
 
         if (graphicPath != null) {
             graphicPath.draw(canvas);
+        }
+
+        if(!immune && healthBar.isOn()){
+            healthBar.draw(canvas);
         }
     }
 }

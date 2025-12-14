@@ -2,6 +2,7 @@ package ch.epfl.cs107.icmaze.actor;
 
 import ch.epfl.cs107.icmaze.RandomGenerator;
 import ch.epfl.cs107.icmaze.actor.collectable.Heart;
+import ch.epfl.cs107.icmaze.actor.util.Cooldown;
 import ch.epfl.cs107.icmaze.handler.ICMazeInteractionVisitor;
 import ch.epfl.cs107.play.areagame.actor.AreaEntity;
 import ch.epfl.cs107.play.areagame.actor.Interactable;
@@ -12,6 +13,7 @@ import ch.epfl.cs107.play.engine.actor.Animation;
 import ch.epfl.cs107.play.engine.actor.Sprite;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Orientation;
+import ch.epfl.cs107.play.math.Transform;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
@@ -23,7 +25,7 @@ public class Rock  extends AreaEntity implements Interactable, Updatable {
     private Sprite sprite;
 
     // Points de vie restants (le rocher disparaît à 0)
-    private int hP = 3;
+    //private int hP = 3;
 
     //private boolean recentlyHit = false;
 
@@ -33,6 +35,9 @@ public class Rock  extends AreaEntity implements Interactable, Updatable {
     // Animation de disparition
     private static final int ANIMATION_DURATION = 24;
     private final Animation vanishAnimation;
+
+    private final Health healthBar = new Health(this, Transform.I.translated(0,1.0f), 3, false);
+
 
 
     // Initialise le rocher, son sprite et l’animation de disparition
@@ -45,6 +50,18 @@ public class Rock  extends AreaEntity implements Interactable, Updatable {
         vanishAnimation = new Animation("icmaze/vanish", 7, 2, 2, this, 32, 32, new Vector(-0.5f, 0f), ANIMATION_DURATION / 7, false);
     }
 
+    private static final float IMMUNITY_DURATION = 1.0f; // même valeur que player/logmonster pour l’instant
+    private final Cooldown immunityCd = new Cooldown(IMMUNITY_DURATION);
+    private boolean immune = false;
+    private int blinkTick = 0;
+
+    private void triggerImmunity() {
+        immune = true;
+        blinkTick = 0;
+        immunityCd.reset();
+    }
+
+
 
     public void weaken() {
 
@@ -53,12 +70,30 @@ public class Rock  extends AreaEntity implements Interactable, Updatable {
 //        }
 //        recentlyHit = true;
 
-        hP -= 1;
-        System.out.println("Rock hit ! remaining"+hP);
-
-        if (hP <= 0) {
-            vanishing = true;
+        if (vanishing || immune){
+            return;
         }
+
+        healthBar.decrease(1);
+
+        if(healthBar.isOff()){
+            vanishing = true;
+            return;
+        }
+
+//        if (vanishing) return;
+//        if(immune);
+
+//        hP -= 1;
+//        System.out.println("Rock hit ! remaining"+hP);
+
+//        if (hP <= 0) {
+//            vanishing = true;
+//            return;
+//        }
+
+        triggerImmunity();
+
     }
 
 //    public void resetHitFlag(){
@@ -87,18 +122,56 @@ public class Rock  extends AreaEntity implements Interactable, Updatable {
 
     @Override
     public void draw(Canvas canvas) {
-        if (vanishing) {
+
+        boolean visible = !immune || (blinkTick % 2 == 0);
+
+        if(!visible) return;
+
+        if(vanishing){
             vanishAnimation.draw(canvas);
         } else {
             sprite.draw(canvas);
+            if (healthBar.isOn()) {
+                healthBar.draw(canvas);
+            }
         }
+
+//        if(visible){
+//            if(vanishing) vanishAnimation.draw(canvas);
+//            else sprite.draw(canvas);
+//        }
+//
+//        if(!vanishing && healthBar.isOn()){
+//            healthBar.draw(canvas);
+//        }
+//
+//        if (!visible) {
+//            return;
+//            // ton draw actuel du Rock (sprite/animation)
+//        }
+//
+//        if (vanishing) {
+//            vanishAnimation.draw(canvas);
+//        } else {
+//            sprite.draw(canvas);
+//        }
     }
 
     @Override
     public void update(float dt) {
+
         if (vanishing) {
             handleVanish(dt);
+            return;
         }
+
+        if (immune) {
+            blinkTick++;
+            if (immunityCd.ready(dt)) {
+                immune = false;
+            }
+        }
+        //super.update(dt);
     }
 
 

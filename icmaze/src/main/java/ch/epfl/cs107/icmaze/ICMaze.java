@@ -104,6 +104,25 @@ public class ICMaze extends AreaGame {
         begin(window, fileSystem);
     }
 
+    public void resetCurrentArea(){
+        String currentAreaKey = getCurrentArea().getTitle();
+        player.leaveArea();
+
+        ICMazeArea area = (ICMazeArea) setCurrentArea(currentAreaKey, true);
+        area.setGame(this); //on recharge l'aire courante
+
+        // on recrée le joueur
+        DiscreteCoordinates spawnPosition = area.getplayerSpawnPosition();
+        player.resetAfterAreaReset();
+        // justement on ne crée pas de nouveau player = new ICMazePlayer(area, Orientation.DOWN, spawnPosition, "icmaze/player");
+        player.enterArea(area, spawnPosition);
+
+//        System.out.println("ResetCurrentArea: area=" + currentAreaKey);
+//        System.out.println("SpawnPosition=" + spawnPosition);
+    }
+
+
+
     @Override
     public void update(float deltaTime) {
 
@@ -114,10 +133,10 @@ public class ICMaze extends AreaGame {
             return ;
         }
 
-        if (player.isDead()){
-            resetGame();
-            return;
-        }
+//        if (player.isDead()){
+//            resetGame();
+//            return;
+//        }
 
         super.update(deltaTime);
 
@@ -132,6 +151,7 @@ public class ICMaze extends AreaGame {
         System.out.println("Teleport to " + destination + " at " + coordinates);
         player.leaveArea();
         ICMazeArea newArea = (ICMazeArea) setCurrentArea(destination,false);
+        newArea.setGame(this);
         player.enterArea(newArea,coordinates);
         player.setisChanging(false); //ici on change l etat de changement
     }
@@ -143,6 +163,8 @@ public class ICMaze extends AreaGame {
 
     private void initArea(String areaKey) {
         ICMazeArea area = (ICMazeArea) setCurrentArea(areaKey, false);
+        area.setGame(this);
+
         DiscreteCoordinates spawnPosition = area.getplayerSpawnPosition();
         player = new ICMazePlayer(area, Orientation.DOWN, spawnPosition, "icmaze/player");
         player.enterArea(area, spawnPosition);

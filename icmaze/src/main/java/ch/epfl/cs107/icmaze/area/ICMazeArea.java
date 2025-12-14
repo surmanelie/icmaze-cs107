@@ -23,6 +23,8 @@ public abstract class ICMazeArea extends Area {
     private Portal N;
     protected final int size;
 
+    private ICMaze game;
+
 //    private String northDestination ;
 //    private String southDestination ;
 //    private String westDestination;
@@ -220,10 +222,14 @@ public abstract class ICMazeArea extends Area {
 //
 //    private ICMaze game;
 //
-//    public void setGame(ICMaze game) {
-//        this.game = game;
-//    }
-//
+    public void setGame(ICMaze game) {
+        this.game = game;
+    }
+
+    public void requestReset(){
+        if (game != null)game.resetCurrentArea();
+    }
+
 //    public ICMaze getGame() {
 //        return game;
 //    }

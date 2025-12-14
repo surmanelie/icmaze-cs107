@@ -6,6 +6,7 @@ import ch.epfl.cs107.icmaze.actor.collectable.Heart;
 import ch.epfl.cs107.icmaze.actor.collectable.ICMazeObject;
 import ch.epfl.cs107.icmaze.actor.collectable.Key;
 import ch.epfl.cs107.icmaze.actor.collectable.Pickaxe;
+import ch.epfl.cs107.icmaze.actor.util.Cooldown;
 import ch.epfl.cs107.icmaze.area.ICMazeArea;
 import ch.epfl.cs107.icmaze.handler.ICMazeInteractionVisitor;
 import ch.epfl.cs107.play.areagame.actor.Interactable;
@@ -31,7 +32,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
     private PlayerState currentState = PlayerState.IDLE;
 
     private final KeyBindings.PlayerKeyBindings keys;
-    private Keyboard keyboard = getOwnerArea().getKeyboard();
+    //private Keyboard keyboard = getOwnerArea().getKeyboard();
 
     private OrientedAnimation animation;
 
@@ -46,8 +47,18 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
     private String destinationArea;
     private DiscreteCoordinates destinationCoordinates;
 
-    private static final int MAX_LIFE = 5;
-    private int life = MAX_LIFE;
+    //private static final int MAX_LIFE = 5;
+    private final Health healthBar = new Health(this, Transform.I.translated(0,1.75f),5, true);
+
+    //private int life = MAX_LIFE;
+
+    private static final float IMMUNITY_DURATION = 1.0f;
+    private final Cooldown immunityCd = new Cooldown(IMMUNITY_DURATION);
+    private boolean immune = false;
+    private int blinkTick = 0;
+
+    //private float immunityTimer = 0f;
+
 
 
     public ICMazePlayer(Area owner, Orientation orientation, DiscreteCoordinates coordinates, String spriteName) {
@@ -117,14 +128,22 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
     public void setDestinationArea(String destinationArea) {
         this.destinationArea = destinationArea;
     }
+
     @Override
-    public void draw(ch.epfl.cs107.play.window.Canvas canvas) {
-        if(currentState == PlayerState.ATTACKING_WITH_PICKAXE){
-            pickaxeAnimation.draw(canvas);
-        }else{
-            animation.draw(canvas);
+    public void draw(Canvas canvas) {
+
+        boolean visible = !immune || (blinkTick% 2 == 0);
+
+        if(visible) {
+            if(currentState == PlayerState.ATTACKING_WITH_PICKAXE){
+                pickaxeAnimation.draw(canvas);
+            }else{
+                animation.draw(canvas);
+            }
         }
-//        healthBar.draw(canvas);
+        if(healthBar.isOn()){
+            healthBar.draw(canvas);
+        }
     }
 
     public DiscreteCoordinates getDestinationCoordonates() {
@@ -154,33 +173,70 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
 
     private boolean hasHitThisAttack = false;
 
-    private boolean dead = false;
-    public boolean isDead(){
-        return dead;
-    }
+//    private boolean dead = false;
+//    public boolean isDead(){
+//        return dead;
+//    }
 
 
 
 
     public void sufferHit(){
 
-        life--;
-        System.out.println("ICMAzePLayer a été touché par un LogMonster ! Vie = "+life);
+        if(immune) return;
 
-        if (life <= 0) {
-            System.out.println("ICMazePlayer est mort ");
-            dead = true;
+        healthBar.decrease(1);
 
-//            ICMazeArea area = (ICMazeArea) getOwnerArea();
-//            ICMaze game = (ICMaze) area.getOwner();
-//
-//            game.resetGame();
+        immune = true;
+        blinkTick = 0;
+        immunityCd.reset();
+//        immunityTimer = IMMUNITY_DURATION;
 
+        if(healthBar.isOff()){
+            //ça veut dire que le player est mort
+            ((ICMazeArea) getOwnerArea()).requestReset();
         }
+
+//        life--;
+//        System.out.println("ICMAzePLayer a été touché par un LogMonster ! Vie = "+life);
+
+//        if (life <= 0) {
+//            System.out.println("ICMazePlayer est mort ");
+//            dead = true;
+//
+////            ICMazeArea area = (ICMazeArea) getOwnerArea();
+////            ICMaze game = (ICMaze) area.getOwner();
+////
+////            game.resetGame();
+//
+//        }
+    }
+
+//    private boolean isImmune(){
+//        return immunityTimer > 0f;
+//    }
+
+    public void resetAfterAreaReset(){
+        healthBar.resetHealth();
+
+        immune = false;
+        blinkTick = 0;
+        immunityCd.reset();
+
+        currentState = PlayerState.IDLE;
+        animation.reset();
+        pickaxeAnimation.reset();
+        hasHitThisAttack = false;
+
+        isChanging = false;
+        destinationArea = null;
+        destinationCoordinates = null;
     }
 
     @Override
     public void update(float deltaTime) {
+
+        Keyboard keyboard = getOwnerArea().getKeyboard();
 
         switch (currentState) {
 
@@ -206,6 +262,14 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                     pickaxeAnimation.reset();
                     hasHitThisAttack = false;
                 }
+
+                if (keyboard.get(keys.pickaxe()).isPressed()) {
+                    System.out.println("PICKAXE pressed, hasPickaxe=" + hasPickaxe());
+                }
+                if (keyboard.get(keys.interact()).isPressed()) {
+                    System.out.println("INTERACT pressed");
+                }
+
 
                 break;
 
@@ -235,6 +299,13 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                 break;
         }
 
+        //immunityTimer = Math.max(0f, immunityTimer-deltaTime); // comme ça son temps d'immunité évolue à chaque update
+        if (immune) {
+            blinkTick++;
+            if(immunityCd.ready(deltaTime)){ // ça vérifie si le temps d'immunité est terminé ou pass
+                immune = false;
+            }
+        }
         super.update(deltaTime);
     }
 
@@ -293,7 +364,11 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
 
         @Override
         public void interactWith(Heart heart, boolean isCellInteraction) {
-            if (isCellInteraction) heart.collect();
+            if (isCellInteraction){
+                heart.collect();
+                healthBar.increase(1);
+            }
+
             //getOwnerArea().unregisterActor(heart);
             //System.out.println("sdfghj");
         }
@@ -362,17 +437,21 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                 // ATTENTION : le rock gère déjà vanish + drop + suppression
                 // donc tu n’as rien d’autre à faire ici
             }
+
+            System.out.println("Player -> Rock interaction, cell="+isCellInteraction+", state="+currentState);
         }
 
-//        @Override
-//        public void interactWith(LogMonster monster , boolean isCellInteraction) {
-//
-//            if(!isCellInteraction) {
-//                monster.setLastKnowPlayerPosition(getCurrentMainCellCoordinates());
-//                return;
-//            }
-//        }
+       @Override
+       public void interactWith(LogMonster monster , boolean isCellInteraction) {
 
+           if(!isCellInteraction && currentState == PlayerState.ATTACKING_WITH_PICKAXE && !hasHitThisAttack) {
+
+               monster.sufferHit();
+               hasHitThisAttack = true;
+           }
+
+           System.out.println("Player -> LogMonster interaction, cell="+isCellInteraction+", state="+currentState);
+        }
     }
 
 

@@ -2,15 +2,13 @@ package ch.epfl.cs107.icmaze.handler;
 
 import ch.epfl.cs107.icmaze.ICMaze;
 import ch.epfl.cs107.icmaze.ICMazeBehavior;
-import ch.epfl.cs107.icmaze.actor.Health;
-import ch.epfl.cs107.icmaze.actor.ICMazePlayer;
-import ch.epfl.cs107.icmaze.actor.Portal;
-import ch.epfl.cs107.icmaze.actor.Rock;
+import ch.epfl.cs107.icmaze.actor.*;
 import ch.epfl.cs107.icmaze.actor.collectable.Heart;
 import ch.epfl.cs107.icmaze.actor.collectable.Key;
 import ch.epfl.cs107.icmaze.actor.collectable.Pickaxe;
 import ch.epfl.cs107.play.areagame.actor.Interactable;
 import ch.epfl.cs107.play.areagame.handler.AreaInteractionVisitor;
+import ch.epfl.cs107.icmaze.actor.LogMonster;
 /**
  * InteractionVisitor for the ICMaze entities
  */
@@ -49,6 +47,10 @@ public interface ICMazeInteractionVisitor extends AreaInteractionVisitor {
         }
 
         default void interactWith(Rock rock , boolean isCellInteraction){
+
+        }
+
+        default void interactWith(LogMonster monster, boolean isCellInteraction){
 
         }
 
