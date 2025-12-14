@@ -169,7 +169,12 @@ public final class LevelGenerator {
                 }
                 from.setEastDestination(to.getTitle(), to.getSize());
                 to.setWestDestination(from.getTitle(), from.getSize());
-                to.setWestState(Portal.State.OPEN);
+                if (to instanceof BossArea) {
+                    to.setWestKeyId(999);
+                    to.setWestState(Portal.State.LOCKED);
+                } else {
+                    to.setWestState(Portal.State.OPEN);
+                }
             }
             case W -> {
                 if (from instanceof AireLabyrinthique) {
@@ -181,7 +186,12 @@ public final class LevelGenerator {
                 }
                 from.setWestDestination(to.getTitle(), to.getSize());
                 to.setEastDestination(from.getTitle(), from.getSize());
-                to.setEastState(Portal.State.OPEN);
+                if (to instanceof BossArea) {
+                    to.setEastKeyId(999);
+                    to.setEastState(Portal.State.LOCKED);
+                } else {
+                    to.setEastState(Portal.State.OPEN);
+                }
             }
             case N -> {
                 if (from instanceof AireLabyrinthique) {
@@ -195,7 +205,12 @@ public final class LevelGenerator {
                 }
                 from.setNorthDestination(to.getTitle(), to.getSize());
                 to.setSouthDestination(from.getTitle(), from.getSize());
-                to.setSouthState(Portal.State.OPEN);
+                if (to instanceof BossArea) {
+                    to.setSouthKeyId(999);
+                    to.setSouthState(Portal.State.LOCKED);
+                } else {
+                    to.setSouthState(Portal.State.OPEN);
+                }
             }
             case S -> {
                 if (from instanceof AireLabyrinthique) {
@@ -209,7 +224,12 @@ public final class LevelGenerator {
                 }
                 from.setSouthDestination(to.getTitle(), to.getSize());
                 to.setNorthDestination(from.getTitle(), from.getSize());
-                to.setNorthState(Portal.State.OPEN);
+                if (to instanceof BossArea) {
+                    to.setNorthKeyId(999);
+                    to.setNorthState(Portal.State.LOCKED);
+                } else {
+                    to.setNorthState(Portal.State.OPEN);
+                }
             }
         }
     }

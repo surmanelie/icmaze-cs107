@@ -25,7 +25,7 @@ public class ICMaze extends AreaGame {
 
     private void createAreas() {
         // generateHardCodedLevel();
-        ICMazeArea[] areas = LevelGenerator.generateLine(this, 3);
+        ICMazeArea[] areas = LevelGenerator.generateLine(this, 0);
         for (ICMazeArea area : areas) {
             addArea(area);
         }
@@ -111,6 +111,7 @@ public class ICMaze extends AreaGame {
         // justement on ne crée pas de nouveau player = new ICMazePlayer(area,
         // Orientation.DOWN, spawnPosition, "icmaze/player");
         player.enterArea(area, spawnPosition);
+        area.setViewCandidate(player);
 
         // System.out.println("ResetCurrentArea: area=" + currentAreaKey);
         // System.out.println("SpawnPosition=" + spawnPosition);
@@ -144,6 +145,7 @@ public class ICMaze extends AreaGame {
         ICMazeArea newArea = (ICMazeArea) setCurrentArea(destination, false);
         newArea.setGame(this);
         player.enterArea(newArea, coordinates);
+        newArea.setViewCandidate(player);
         player.setisChanging(false); // ici on change l etat de changement
     }
 
@@ -159,6 +161,7 @@ public class ICMaze extends AreaGame {
         DiscreteCoordinates spawnPosition = area.getplayerSpawnPosition();
         player = new ICMazePlayer(area, Orientation.DOWN, spawnPosition, "icmaze/player");
         player.enterArea(area, spawnPosition);
+        area.setViewCandidate(player);
 
     }
 }

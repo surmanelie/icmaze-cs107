@@ -9,49 +9,52 @@ import ch.epfl.cs107.icmaze.actor.collectable.Pickaxe;
 import ch.epfl.cs107.play.areagame.actor.Interactable;
 import ch.epfl.cs107.play.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.icmaze.actor.LogMonster;
+
 /**
  * InteractionVisitor for the ICMaze entities
  */
 
 public interface ICMazeInteractionVisitor extends AreaInteractionVisitor {
-  /// Add Interaction method with all non Abstract Interactable
+    /// Add Interaction method with all non Abstract Interactable
 
+    // Interaction avec une cellule
+    default void interactWith(ICMazeBehavior.ICMazeCell cell, boolean isCellInteraction) {
+        // rien par défaut
+    }
 
+    // Interaction avec le joueur
+    default void interactWith(ICMazePlayer player, boolean isCellInteraction) {
+        // rien par défaut
+    }
 
+    // Interaction avec une pioche
+    default void interactWith(Pickaxe pickaxe, boolean isCellInteraction) {
+        // rien par défaut
+    }
 
-        // Interaction avec une cellule
-        default void interactWith(ICMazeBehavior.ICMazeCell cell, boolean isCellInteraction) {
-            // rien par défaut
-        }
+    // Interaction avec un cœur
+    default void interactWith(Heart heart, boolean isCellInteraction) {
+        // rien par défaut
+    }
 
-        // Interaction avec le joueur
-        default void interactWith(ICMazePlayer player, boolean isCellInteraction) {
-            // rien par défaut
-        }
+    default void interactWith(Key key, boolean isCellInteraction) {
 
-        // Interaction avec une pioche
-        default void interactWith(Pickaxe pickaxe, boolean isCellInteraction) {
-            // rien par défaut
-        }
+    }
 
-        // Interaction avec un cœur
-        default void interactWith(Heart heart, boolean isCellInteraction) {
-            // rien par défaut
-        }
+    default void interactWith(Portal portal, boolean isCellInteraction) {
 
-        default void interactWith(Key key, boolean isCellInteraction) {
+    }
 
-        }
-        default void interactWith(Portal portal, boolean isCellInteraction) {
+    default void interactWith(Rock rock, boolean isCellInteraction) {
 
-        }
+    }
 
-        default void interactWith(Rock rock , boolean isCellInteraction){
+    default void interactWith(LogMonster monster, boolean isCellInteraction) {
 
-        }
+    }
 
-        default void interactWith(LogMonster monster, boolean isCellInteraction){
+    default void interactWith(Boss boss, boolean isCellInteraction) {
 
-        }
+    }
 
 }

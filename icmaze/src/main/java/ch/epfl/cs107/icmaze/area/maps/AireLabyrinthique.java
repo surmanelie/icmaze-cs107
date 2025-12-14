@@ -239,30 +239,6 @@ public abstract class AireLabyrinthique extends ICMazeArea {
         }
     }
 
-    // protected DiscreteCoordinates getRandomFreeCell (Random rng){
-    //
-    // DiscreteCoordinates entry = getEntryArrivalCoordinates();
-    // DiscreteCoordinates exit = getExitArrivalCoordinates();
-    //
-    // List<DiscreteCoordinates> freeCells = new ArrayList<>();
-    //
-    // for (int y = 0; y < size ; y++ ){
-    // for (int x = 0; x <size ; x++){
-    //
-    // if (mazeGrid[y][x] == 0) {
-    // DiscreteCoordinates pos = new DiscreteCoordinates(x+1, y+1);
-    //
-    // if(!pos.equals(entry) && !pos.equals(exit)){
-    // freeCells.add(pos);
-    // }
-    // }
-    // }
-    // }
-    //
-    // if (freeCells.isEmpty()) {
-    // return new DiscreteCoordinates(size/2, size/2);
-    // }
-    // return freeCells.get(rng.nextInt(freeCells.size()));
-    // }
+
 
 }
