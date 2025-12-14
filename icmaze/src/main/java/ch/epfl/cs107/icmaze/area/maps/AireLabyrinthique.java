@@ -18,39 +18,52 @@ import java.util.List;
 import java.util.Random;
 
 public abstract class AireLabyrinthique extends ICMazeArea {
-    private AreaPortals portalEnter; // il permet d entrer dans  le labyrinthe associé
+    private AreaPortals portalEnter; // il permet d entrer dans le labyrinthe associé
     private AreaPortals portalExit;
     protected int keyId;
     public final static int keyIdL1 = Integer.MAX_VALUE;
-    public final static int keyIdL2= Integer.MAX_VALUE -1;
-    public final static int keyIdL3= Integer.MAX_VALUE -2;
-    public final static int keyIdL4 = Integer.MAX_VALUE-3;
-    //private final String gridName;
-
-
+    public final static int keyIdL2 = Integer.MAX_VALUE - 1;
+    public final static int keyIdL3 = Integer.MAX_VALUE - 2;
+    public final static int keyIdL4 = Integer.MAX_VALUE - 3;
+    // private final String gridName;
 
     /** Matrice du labyrinthe : 0 = chemin, 1 = mur */
     protected int[][] mazeGrid;
 
     private int difficulty;
 
-
-
-    public int getDifficulty(){
-        return  difficulty;
+    public int getDifficulty() {
+        return difficulty;
     }
 
-    public AireLabyrinthique(String behaviorName, int size, AreaPortals portalEnter, AreaPortals portalExit, int Keyid, int difficulty) {
+    public void setDifficulty(int difficulty) {
+        this.difficulty = difficulty;
+    }
+
+    public void setPortalEnter(AreaPortals portalEnter) {
+        this.portalEnter = portalEnter;
+    }
+
+    public void setPortalExit(AreaPortals portalExit) {
+        this.portalExit = portalExit;
+    }
+
+    public AireLabyrinthique(String behaviorName, int size, AreaPortals portalEnter, AreaPortals portalExit, int Keyid,
+            int difficulty) {
         super(behaviorName, size);
         this.portalEnter = portalEnter;
         this.portalExit = portalExit;
         this.keyId = Keyid;
         this.difficulty = difficulty;
-//        this.gridName = gridName;
+        // this.gridName = gridName;
     }
 
     public int getKeyId() {
         return keyId;
+    }
+
+    public void setKeyId(int keyId) {
+        this.keyId = keyId;
     }
 
     @Override
@@ -68,31 +81,30 @@ public abstract class AireLabyrinthique extends ICMazeArea {
 
         placeLogMonsters(rng);
 
-
     }
 
     private void buildGraphFromMaze() {
         graph.getNodes().clear();
 
         for (int y = 0; y < size; y++) {
-            for (int x = 0; x<size; x++) {
+            for (int x = 0; x < size; x++) {
 
-                if(mazeGrid[y][x] == 0){
-                    DiscreteCoordinates c = new DiscreteCoordinates(x+1, y+1);
+                if (mazeGrid[y][x] == 0) {
+                    DiscreteCoordinates c = new DiscreteCoordinates(x + 1, y + 1);
 
-                    boolean left = (x>0 && mazeGrid[y][x-1] == 0);
-                    boolean right = (x<size - 1 && mazeGrid[y][x+1] == 0);
-                    boolean down = (y>0  && mazeGrid[y-1][x] == 0);
-                    boolean up = (y<size-1 && mazeGrid[y+1][x] == 0);
+                    boolean left = (x > 0 && mazeGrid[y][x - 1] == 0);
+                    boolean right = (x < size - 1 && mazeGrid[y][x + 1] == 0);
+                    boolean down = (y > 0 && mazeGrid[y - 1][x] == 0);
+                    boolean up = (y < size - 1 && mazeGrid[y + 1][x] == 0);
 
-                    graph.addNode(c, left, up, right, down );
+                    graph.addNode(c, left, up, right, down);
                 }
             }
         }
 
     }
 
-    protected void placeRandomKey(Random rng){
+    protected void placeRandomKey(Random rng) {
 
         List<DiscreteCoordinates> candidates = new ArrayList<>(graph.keySet());
 
@@ -109,27 +121,27 @@ public abstract class AireLabyrinthique extends ICMazeArea {
 
         DiscreteCoordinates pos = candidates.get(0);
 
-        System.out.println("Key for "+getTitle()+" at "+ pos);
+        System.out.println("Key for " + getTitle() + " at " + pos);
 
         Key key = new Key(this, Orientation.DOWN, pos, keyId);
         registerActor(key);
-//        DiscreteCoordinates pos = getRandomFreeCell(rng);
-//        Key key = new Key(this, Orientation.DOWN, pos, keyId);
-//        registerActor(key);
+        // DiscreteCoordinates pos = getRandomFreeCell(rng);
+        // Key key = new Key(this, Orientation.DOWN, pos, keyId);
+        // registerActor(key);
     }
 
     /** Placement des rochers en fonction de mazeGrid */
     private void placeRocks() {
 
         DiscreteCoordinates entry = getEntryArrivalCoordinates();
-        DiscreteCoordinates exit  = getExitArrivalCoordinates();
+        DiscreteCoordinates exit = getExitArrivalCoordinates();
 
         for (int y = 0; y < size; y++) {
             for (int x = 0; x < size; x++) {
 
                 if (mazeGrid[y][x] == 1) {
 
-                    DiscreteCoordinates pos = new DiscreteCoordinates(x+1,y+1);
+                    DiscreteCoordinates pos = new DiscreteCoordinates(x + 1, y + 1);
 
                     if (!pos.equals(entry) && !pos.equals(exit)) {
                         registerActor(new Rock(this, pos));
@@ -166,7 +178,7 @@ public abstract class AireLabyrinthique extends ICMazeArea {
         };
     }
 
-    protected void placeLogMonsters (Random rng) {
+    protected void placeLogMonsters(Random rng) {
 
         double diffRatio = Math.min(1.0, (double) Difficulty.HARDEST / (double) difficulty);
 
@@ -177,30 +189,30 @@ public abstract class AireLabyrinthique extends ICMazeArea {
 
         // c'est ça qui permet d'ajouter des ennemis sinon il y en a toujours 0oui
 
-        for(int i=0; i < maxEnnemies; i++) {
+        for (int i = 0; i < maxEnnemies; i++) {
             if (rng.nextDouble() < pEnnemy) {
                 ennemyCount++;
             }
         }
 
-        if (ennemyCount == 0){
+        if (ennemyCount == 0) {
             return; // aucun
         }
 
         List<DiscreteCoordinates> candidates = new ArrayList<>(graph.keySet());
 
-        DiscreteCoordinates entry  = getEntryArrivalCoordinates();
+        DiscreteCoordinates entry = getEntryArrivalCoordinates();
         DiscreteCoordinates exit = getExitArrivalCoordinates();
         candidates.remove(entry);
         candidates.remove(exit);
 
-        if(candidates.isEmpty()){
+        if (candidates.isEmpty()) {
             return;
         }
 
         Collections.shuffle(candidates, rng);
 
-        for (int i = 0; i < ennemyCount && i < candidates.size(); i++){
+        for (int i = 0; i < ennemyCount && i < candidates.size(); i++) {
             DiscreteCoordinates pos = candidates.get(i);
 
             LogMonster.State initialState = chooseInitialState(rng, diffRatio);
@@ -216,9 +228,9 @@ public abstract class AireLabyrinthique extends ICMazeArea {
         double pRandom = 0.20;
         double pSleeping = 1.0 - pTarget - pRandom;
 
-        double r = rng.nextDouble(); //valeur aléatoire
+        double r = rng.nextDouble(); // valeur aléatoire
 
-        if(r < pSleeping) {
+        if (r < pSleeping) {
             return LogMonster.State.SLEEPING;
         } else if (r < pSleeping + pRandom) {
             return LogMonster.State.RANDOM;
@@ -227,32 +239,30 @@ public abstract class AireLabyrinthique extends ICMazeArea {
         }
     }
 
-//    protected DiscreteCoordinates getRandomFreeCell (Random rng){
-//
-//        DiscreteCoordinates entry = getEntryArrivalCoordinates();
-//        DiscreteCoordinates exit = getExitArrivalCoordinates();
-//
-//        List<DiscreteCoordinates> freeCells = new ArrayList<>();
-//
-//        for (int y = 0; y < size ; y++ ){
-//            for (int x = 0; x <size ; x++){
-//
-//                if (mazeGrid[y][x] == 0) {
-//                    DiscreteCoordinates pos = new DiscreteCoordinates(x+1, y+1);
-//
-//                    if(!pos.equals(entry) && !pos.equals(exit)){
-//                        freeCells.add(pos);
-//                    }
-//                }
-//            }
-//        }
-//
-//        if (freeCells.isEmpty()) {
-//            return new DiscreteCoordinates(size/2, size/2);
-//        }
-//        return freeCells.get(rng.nextInt(freeCells.size()));
-//    }
-
-
+    // protected DiscreteCoordinates getRandomFreeCell (Random rng){
+    //
+    // DiscreteCoordinates entry = getEntryArrivalCoordinates();
+    // DiscreteCoordinates exit = getExitArrivalCoordinates();
+    //
+    // List<DiscreteCoordinates> freeCells = new ArrayList<>();
+    //
+    // for (int y = 0; y < size ; y++ ){
+    // for (int x = 0; x <size ; x++){
+    //
+    // if (mazeGrid[y][x] == 0) {
+    // DiscreteCoordinates pos = new DiscreteCoordinates(x+1, y+1);
+    //
+    // if(!pos.equals(entry) && !pos.equals(exit)){
+    // freeCells.add(pos);
+    // }
+    // }
+    // }
+    // }
+    //
+    // if (freeCells.isEmpty()) {
+    // return new DiscreteCoordinates(size/2, size/2);
+    // }
+    // return freeCells.get(rng.nextInt(freeCells.size()));
+    // }
 
 }

@@ -4,62 +4,56 @@ import ch.epfl.cs107.icmaze.Difficulty;
 import ch.epfl.cs107.icmaze.actor.Portal;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
-public class LargeArea extends AireLabyrinthique{
+public class LargeArea extends AireLabyrinthique {
 
-//    private int sizeLarge;
-//    public int getsSizeLarge(){
-//        return sizeLarge;    }
+    // private int sizeLarge;
+    // public int getsSizeLarge(){
+    // return sizeLarge; }
 
-//    @Override
-//    public DiscreteCoordinates arrivalCoordinates(int size) {
-//        return ;
-//    }
-//
-//    @Override
-//    public DiscreteCoordinates startingCoordinates(int size) {
-//        return ;
-//    }
-
+    // @Override
+    // public DiscreteCoordinates arrivalCoordinates(int size) {
+    // return ;
+    // }
+    //
+    // @Override
+    // public DiscreteCoordinates startingCoordinates(int size) {
+    // return ;
+    // }
 
     @Override
     public int getSize() {
         return 32;
     }
 
-    public LargeArea (int keyId){
-        super("LargeArea",32,AreaPortals.W,AreaPortals.E, keyId, Difficulty.HARDEST);
+    public LargeArea(int keyId) {
+        super("LargeArea", 32, AreaPortals.W, AreaPortals.E, keyId, Difficulty.HARDEST);
     }
 
-    protected void createArea(){
+    protected void createArea() {
         super.createArea();
-        //AregisterActor(new Background(this, getBehaviorName()));
-        //maintenant on configure des portails pour BossArea
+        // AregisterActor(new Background(this, getBehaviorName()));
+        // maintenant on configure des portails pour BossArea
 
-        //ICMazePlayer player = new ICMazePlayer(this, Orientation.DOWN, getplayerSpawnPosition(),"player");
-        //registerActor(player);
+        // ICMazePlayer player = new ICMazePlayer(this, Orientation.DOWN,
+        // getplayerSpawnPosition(),"player");
+        // registerActor(player);
 
-        setWestState(Portal.State.OPEN);
-        setEastState(Portal.State.LOCKED);
-        setNorthState(Portal.State.INVISIBLE);
-        setSouthState(Portal.State.INVISIBLE);
+        // setWestDestination("icmaze/MediumArea["+ keyIdL3+"]");
+        // setEastDestination("icmaze/Boss");
 
-        setEastKeyId(getKeyId());
-
-//        setWestDestination("icmaze/MediumArea["+ keyIdL3+"]");
-//        setEastDestination("icmaze/Boss");
-
-        // il n'y a que pour west qu'on met une aire d'arrivée car les autres sont invisibles
-        //setEastDestination("icmaze/Spawn");
+        // il n'y a que pour west qu'on met une aire d'arrivée car les autres sont
+        // invisibles
+        // setEastDestination("icmaze/Spawn");
     }
+
     @Override
     public DiscreteCoordinates getplayerSpawnPosition() {
-        return new DiscreteCoordinates(5,7);
+        return new DiscreteCoordinates(5, 7);
     }
 
     @Override
-    public String getTitle(){
-        return "icmaze/LargeArea["+ keyIdL4+"]";
+    public String getTitle() {
+        return "icmaze/LargeArea[" + getKeyId() + "]";
     }
-
 
 }

@@ -18,65 +18,64 @@ import ch.epfl.cs107.play.window.Canvas;
 import static ch.epfl.cs107.icmaze.area.maps.AireLabyrinthique.keyIdL1;
 import static ch.epfl.cs107.icmaze.area.maps.AireLabyrinthique.keyIdL2;
 
-
 public class Spawn extends ICMazeArea {
-//    @Override
-//    public DiscreteCoordinates arrivalCoordinates(int size) {
-//        return ;
-//    }
-//
-//    @Override
-//    public DiscreteCoordinates startingCoordinates(int size) {
-//        return ;
-//    }
+    // @Override
+    // public DiscreteCoordinates arrivalCoordinates(int size) {
+    // return ;
+    // }
+    //
+    // @Override
+    // public DiscreteCoordinates startingCoordinates(int size) {
+    // return ;
+    // }
 
-
-    //    public int getSizeSpawn(){
-//        return sizeSpawn;    }
-
+    // public int getSizeSpawn(){
+    // return sizeSpawn; }
 
     @Override
     public int getSize() {
         return 8;
     }
 
-
-    public Spawn(){
-        super("SmallArea",8);
+    public Spawn() {
+        super("SmallArea", 8);
     }
 
     @Override
     public DiscreteCoordinates getplayerSpawnPosition() {
-        return new DiscreteCoordinates(5,7);
+        return new DiscreteCoordinates(5, 7);
     }
 
     @Override
-    public String getTitle(){
+    public String getTitle() {
         return "icmaze/Spawn";
     }
 
     @Override
-    protected void createArea(){
-        //on supprime ce qu'il y a en bas car ICMazeArea le fait déjà donc pas besoin de le refaire ici, il n'y a rien de spécifique à faire pour créer ue aire dans Spawn par rapport à la méthode dans Area
-        //registerActor(new Background(this, getBehaviorName()));
-        //registerActor(new Foreground(this));
+    protected void createArea() {
+        // on supprime ce qu'il y a en bas car ICMazeArea le fait déjà donc pas besoin
+        // de le refaire ici, il n'y a rien de spécifique à faire pour créer ue aire
+        // dans Spawn par rapport à la méthode dans Area
+        // registerActor(new Background(this, getBehaviorName()));
+        // registerActor(new Foreground(this));
 
-        //ICMazePlayer player  = new ICMazePlayer(this, Orientation.DOWN, getplayerSpawnPosition(), "player");
-        //registerActor(player);
+        // ICMazePlayer player = new ICMazePlayer(this, Orientation.DOWN,
+        // getplayerSpawnPosition(), "player");
+        // registerActor(player);
 
-        // il n'y avait pas besoin de remettre un joueur car on crée que un dans le begin, sinon à chaque fois qu'on revient dans le Spawn un nouveau joueur est crée et reokgister
+        // il n'y avait pas besoin de remettre un joueur car on crée que un dans le
+        // begin, sinon à chaque fois qu'on revient dans le Spawn un nouveau joueur est
+        // crée et reokgister
 
-
-        Pickaxe pickaxe = new Pickaxe(this, Orientation.DOWN, new DiscreteCoordinates(5,4));
+        Pickaxe pickaxe = new Pickaxe(this, Orientation.DOWN, new DiscreteCoordinates(5, 4));
         Heart heart = new Heart(this, Orientation.DOWN, new DiscreteCoordinates(4, 5));
-
 
         // Clé 1 : identifiant MAX_VALUE en (6,5)
         Key key1 = new Key(this, Orientation.DOWN, new DiscreteCoordinates(6, 5), keyIdL1);
         registerActor(key1);
 
         // Clé 2 : identifiant MAX_VALUE - 1 en (1,2)
-        Key key2 = new Key(this, Orientation.DOWN, new DiscreteCoordinates(1, 2),keyIdL2);
+        Key key2 = new Key(this, Orientation.DOWN, new DiscreteCoordinates(1, 2), keyIdL2);
         registerActor(key2);
 
         registerActor(pickaxe);
@@ -85,25 +84,14 @@ public class Spawn extends ICMazeArea {
         Rock rock = new Rock(this, new DiscreteCoordinates(3, 3));
         registerActor(rock);
 
+        // createPortals();
+        // pas besoin de créer des portails ici care ICMazeArea le fait deja
 
+        // setNorthDestination("icmaze/Boss");
 
-        setEastState(Portal.State.LOCKED);
-        // ici faire attention à changer avec un getter ou un setter dans le cas ou par exemple on veut modifier la valeur de l'id
-        setEastKeyId(keyIdL1);
-
-        setNorthState(Portal.State.INVISIBLE);
-        setWestState(Portal.State.INVISIBLE);
-        setSouthState(Portal.State.INVISIBLE);
-        //createPortals();
-        //pas besoin de créer des portails ici care ICMazeArea le fait deja
-
-
-        //setNorthDestination("icmaze/Boss");
-        setEastDestination("icmaze/SmallArea["+ keyIdL2 +"]", 8);
-
-        //setSouthDestination("icmaze/Boss");
+        // setSouthDestination("icmaze/Boss");
         // car pour l'instant on en a pas besoin
-        //setWestDestination("icmaze/Boss");
+        // setWestDestination("icmaze/Boss");
 
     }
 
