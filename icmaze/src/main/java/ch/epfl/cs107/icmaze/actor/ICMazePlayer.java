@@ -6,16 +6,26 @@ import ch.epfl.cs107.icmaze.actor.collectable.Heart;
 import ch.epfl.cs107.icmaze.actor.collectable.ICMazeObject;
 import ch.epfl.cs107.icmaze.actor.collectable.Key;
 import ch.epfl.cs107.icmaze.actor.collectable.Pickaxe;
+import ch.epfl.cs107.icmaze.actor.collectable.Coin;
 import ch.epfl.cs107.icmaze.actor.util.Cooldown;
 import ch.epfl.cs107.icmaze.area.ICMazeArea;
 import ch.epfl.cs107.icmaze.handler.ICMazeInteractionVisitor;
 import ch.epfl.cs107.play.areagame.actor.Interactable;
 import ch.epfl.cs107.play.areagame.actor.Interactor;
+import ch.epfl.cs107.play.areagame.actor.MovableAreaEntity;
 import ch.epfl.cs107.play.areagame.area.Area;
 import ch.epfl.cs107.play.areagame.handler.AreaInteractionVisitor;
+import ch.epfl.cs107.play.engine.actor.Dialog;
+import ch.epfl.cs107.play.engine.actor.ImageGraphics;
 import ch.epfl.cs107.play.engine.actor.OrientedAnimation;
 import ch.epfl.cs107.play.engine.actor.Sprite;
+import ch.epfl.cs107.play.math.DiscreteCoordinates;
+import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.math.Vector;
+import ch.epfl.cs107.play.window.Button;
+import ch.epfl.cs107.play.window.Canvas;
+import ch.epfl.cs107.play.window.Keyboard;
+import ch.epfl.cs107.play.window.Mouse;
 import ch.epfl.cs107.play.window.*;
 import ch.epfl.cs107.play.math.*;
 import ch.epfl.cs107.icmaze.actor.Portal;
@@ -139,6 +149,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
         if (healthBar.isOn()) {
             healthBar.draw(canvas);
         }
+        drawHUD(canvas);
     }
 
     public DiscreteCoordinates getDestinationCoordonates() {
@@ -176,30 +187,18 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
 
         healthBar.decrease(1);
 
-        immune = true;
-        blinkTick = 0;
-        immunityCd.reset();
-        // immunityTimer = IMMUNITY_DURATION;
+        triggerVisualEffect();
 
         if (healthBar.isOff()) {
             // ça veut dire que le player est mort
             ((ICMazeArea) getOwnerArea()).requestReset();
         }
+    }
 
-        // life--;
-        // System.out.println("ICMAzePLayer a été touché par un LogMonster ! Vie =
-        // "+life);
-
-        // if (life <= 0) {
-        // System.out.println("ICMazePlayer est mort ");
-        // dead = true;
-        //
-        //// ICMazeArea area = (ICMazeArea) getOwnerArea();
-        //// ICMaze game = (ICMaze) area.getOwner();
-        ////
-        //// game.resetGame();
-        //
-        // }
+    public void triggerVisualEffect() {
+        immune = true;
+        blinkTick = 0;
+        immunityCd.reset();
     }
 
     // private boolean isImmune(){
@@ -274,11 +273,10 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
             case ATTACKING_WITH_PICKAXE:
                 // --- On joue l’animation d’attaque ---
                 pickaxeAnimation.update(deltaTime);
-                System.out.println("entre en intercation ");
 
                 // --- Quand l’animation finit, on revient à l’IDLE ---
                 if (pickaxeAnimation.isCompleted()) {
-                    System.out.println("redepaprt");
+
                     currentState = PlayerState.IDLE;
 
                     // remettre l'animation normale
@@ -354,7 +352,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                 // nécessaire
                 // j'ai vérifié et ça change rien si on appelle pas unregistor car le collect
                 // est bon mntn
-                // System.out.println("sdfghj");
+
                 // mntn il faut faire effacer l'objet de la map
                 // pickaxe.unregister(pickaxe);
             }
@@ -365,10 +363,11 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
             if (isCellInteraction) {
                 heart.collect();
                 healthBar.increase(1);
+                triggerVisualEffect();
             }
 
             // getOwnerArea().unregisterActor(heart);
-            // System.out.println("sdfghj");
+
         }
 
         @Override
@@ -376,7 +375,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
             if (isCellInteraction) {
                 bag.add(key);
                 key.collect();
-                // System.out.println("sdfghj");
+
             }
         }
 
@@ -438,7 +437,6 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                 // donc tu n’as rien d’autre à faire ici
             }
 
-            System.out.println("Player -> Rock interaction, cell=" + isCellInteraction + ", state=" + currentState);
         }
 
         @Override
@@ -461,6 +459,89 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                 hasHitThisAttack = true;
             }
         }
+
+        @Override
+        public void interactWith(Coin coin, boolean isCellInteraction) {
+            if (isCellInteraction) {
+                bag.add(coin);
+                coin.collect();
+            }
+        }
     }
 
+    private void drawHUD(Canvas canvas) {
+        int coinCount = 0;
+        for (ICMazeObject obj : bag) {
+            if (obj instanceof Coin)
+                coinCount++;
+        }
+
+        // HUD Fixed Position (Screen Space)
+        // Canvas.getPosition() returns the camera center
+        float width = (float) canvas.getScaledWidth();
+        float height = (float) canvas.getScaledHeight();
+        Vector viewCenter = canvas.getPosition();
+        Vector topLeft = viewCenter.add(new Vector(-width / 2, height / 2));
+
+        // HUD size is 4x2 units. Anchor is center of image.
+        // We place it at Top Left + margin.
+        Vector anchor = topLeft.add(new Vector(2f + 0.5f, -1f - 0.5f));
+
+        // 1. Coin Display (64x32 px -> 4x2 units)
+        ImageGraphics coinIcon = new ImageGraphics(
+                ch.epfl.cs107.play.io.ResourcePath.getSprite("icmaze/coinsDisplay"),
+                4f, 2f, new RegionOfInterest(0, 0, 64, 32),
+                anchor, 1f, 2000f);
+        coinIcon.draw(canvas);
+
+        // 2. Digits
+        // Display in the right half of the 4x2 area.
+        // Right half center relative to anchor: (+1, 0).
+        // Digits size 0.5x0.5 ?
+        // 3 digits max. Total width 1.5. Fits in 2.0.
+
+        String countStr = String.valueOf(coinCount);
+        float digitSize = 0.5f;
+
+        // Start drawing digits centered in the right half
+        // Right half x range: [0, 2] relative to HUD center? No, HUD is [-2, 2].
+        // Right half is [0, 2].
+        // Center of right half is x=1.
+
+        // Let's center the string of digits around x=1 relative to anchor.
+        float totalWidth = countStr.length() * digitSize;
+        float startX = 1f - (totalWidth / 2) + (digitSize / 2);
+        // Logic: if 1 digit (width 0.5), center at 1. Start at 1.
+        // Wait, anchor is center of digit? ImageGraphics anchor is center.
+        // So we place digit centers.
+
+        // Let's simplify: Start at x = 0.5 (left of right half) + margin
+        // Right half starts at anchor.x (since anchor is center of 4-wide image).
+        // Correct.
+
+        for (int i = 0; i < countStr.length(); i++) {
+            int digit = Character.getNumericValue(countStr.charAt(i));
+
+            int regionX = 0;
+            int regionY = 0;
+
+            if (digit == 0) {
+                regionX = 16;
+                regionY = 32;
+            } else {
+                int n = digit - 1;
+                int col = n % 4;
+                int row = n / 4;
+                regionX = col * 16;
+                regionY = row * 16;
+            }
+
+            ImageGraphics digitGraphics = new ImageGraphics(
+                    ch.epfl.cs107.play.io.ResourcePath.getSprite("icmaze/digits"),
+                    digitSize, digitSize, new RegionOfInterest(regionX, regionY, 16, 16),
+                    anchor.add(new Vector(0.4f + i * 0.6f, 0)), // Manual offset into right half
+                    1f, 2001f);
+            digitGraphics.draw(canvas);
+        }
+    }
 }

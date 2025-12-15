@@ -13,6 +13,7 @@ import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Orientation;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
+import ch.epfl.cs107.play.math.Transform;
 
 import ch.epfl.cs107.icmaze.handler.DialogHandler;
 import ch.epfl.cs107.play.engine.actor.Dialog;
@@ -26,6 +27,8 @@ public class Boss extends Ennemy {
     private static final int MAX_HEALTH = 5;
     private static final int BOSS_DAMAGE = 1;
     private boolean activated = false;
+    private final Health healthBar = new Health(this, Transform.I.translated(0, 1.75f), MAX_HEALTH, false);
+    private boolean hasTakenDamage = false;
 
     private final OrientedAnimation idleAnimation;
     private final Cooldown barrageCooldown;
@@ -34,6 +37,16 @@ public class Boss extends Ennemy {
     private boolean keyDropped = false;
 
     private final BossInteractionHandler handler = new BossInteractionHandler();
+
+    private Key droppedKey;
+
+    public boolean isDefeated() {
+        return isDead();
+    }
+
+    public Key getDroppedKey() {
+        return droppedKey;
+    }
 
     public Boss(Area area, Orientation orientation, DiscreteCoordinates position) {
         super(area, orientation, position, MAX_HEALTH);
@@ -70,6 +83,9 @@ public class Boss extends Ennemy {
     public void draw(Canvas canvas) {
         if (!isDead()) {
             idleAnimation.draw(canvas);
+            if (hasTakenDamage) {
+                healthBar.draw(canvas);
+            }
         }
         super.draw(canvas);
     }
@@ -88,6 +104,8 @@ public class Boss extends Ennemy {
             teleport();
         } else {
             loseHealth(BOSS_DAMAGE);
+            healthBar.decrease(BOSS_DAMAGE);
+            hasTakenDamage = true;
             if (!isDead()) {
                 teleport();
             } else {
@@ -106,6 +124,7 @@ public class Boss extends Ennemy {
         }
 
         Key key = new Key(getOwnerArea(), getOrientation(), getCurrentMainCellCoordinates(), 999);
+        this.droppedKey = key;
         getOwnerArea().registerActor(key);
         // Position and Owner are set in constructor
     }
@@ -132,26 +151,9 @@ public class Boss extends Ennemy {
     }
 
     private void respawnAt(Area area, TeleportDest dest) {
-        // Create new Boss instance to avoid grid ghosting issues with deferred
-        // unregistration
-        Boss newBoss = new Boss(area, dest.orientation, dest.coords);
-
-        // Transfer state
-        newBoss.activated = true;
-        int damageTaken = MAX_HEALTH - this.getCurrentHealth();
-        if (damageTaken > 0) {
-            newBoss.silentDamage(damageTaken);
-        }
-
-        // Switch actors
         this.leaveArea();
-        newBoss.enterArea(area, dest.coords);
-    }
-
-    // Helper to apply damage without triggering side effects/animations if needed
-    private void silentDamage(int amount) {
-        // Direct call to super loseHealth is safe as it only updates health/state
-        super.loseHealth(amount);
+        this.enterArea(area, dest.coords);
+        this.orientate(dest.orientation);
     }
 
     private void shootBarrage() {

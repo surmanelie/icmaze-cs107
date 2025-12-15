@@ -5,14 +5,16 @@ import java.util.Random;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
 /**
- * Utility class for generating rectangular mazes using the recursive division algorithm.
+ * Utility class for generating rectangular mazes using the recursive division
+ * algorithm.
  * Provides additional helpers to ensure solvability and visualize the maze.
  */
 public final class MazeGenerator {
     private static final int WALL = 1;
     private static final Random random = RandomGenerator.rng;
 
-    private MazeGenerator(){}
+    private MazeGenerator() {
+    }
 
     /**
      * Print the maze
@@ -32,9 +34,12 @@ public final class MazeGenerator {
         for (int y = 0; y < height; y++) {
             System.out.print("│");
             for (int x = 0; x < width; x++) {
-                if (x == start.x && y == start.y) System.out.print(" S ");
-                else if (x == end.x && y == end.y) System.out.print(" E ");
-                else System.out.print(grid[y][x] == WALL ? "███" : "   ");
+                if (x == start.x && y == start.y)
+                    System.out.print(" S ");
+                else if (x == end.x && y == end.y)
+                    System.out.print(" E ");
+                else
+                    System.out.print(grid[y][x] == WALL ? "███" : "   ");
             }
             System.out.println("│");
         }
@@ -75,13 +80,17 @@ public final class MazeGenerator {
     private static void recursiveDivide(int[][] grid, int x, int y, int width, int height, int difficulty) {
 
         // Cas d’arrêt : la région est trop petite pour être subdivisée
-        if (width <= difficulty || height <= difficulty) return;
+        if (width <= difficulty || height <= difficulty)
+            return;
 
         // Choix de l’orientation du mur
         boolean verticalWall;
-        if (width > height) verticalWall = true;          // Région plus large → mur vertical
-        else if (height > width) verticalWall = false;    // Région plus haute → mur horizontal
-        else verticalWall = random.nextBoolean();         // Carré → orientation aléatoire
+        if (width > height)
+            verticalWall = true; // Région plus large → mur vertical
+        else if (height > width)
+            verticalWall = false; // Région plus haute → mur horizontal
+        else
+            verticalWall = random.nextBoolean(); // Carré → orientation aléatoire
 
         if (verticalWall) {
 
@@ -102,7 +111,7 @@ public final class MazeGenerator {
             int widthRight = x + width - (wallX + 1);
 
             // Appel récursif sur chaque sous-région
-            recursiveDivide(grid, x, y, widthLeft, height, difficulty);          // Région gauche
+            recursiveDivide(grid, x, y, widthLeft, height, difficulty); // Région gauche
             recursiveDivide(grid, wallX + 1, y, widthRight, height, difficulty); // Région droite
 
         } else {
@@ -124,10 +133,9 @@ public final class MazeGenerator {
             int heightDown = y + height - (wallY + 1);
 
             // Appels récursifs
-            recursiveDivide(grid, x, y, width, heightUp, difficulty);          // Région du haut
+            recursiveDivide(grid, x, y, width, heightUp, difficulty); // Région du haut
             recursiveDivide(grid, x, wallY + 1, width, heightDown, difficulty); // Région du bas
         }
     }
 
 }
-

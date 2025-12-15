@@ -18,6 +18,7 @@ import ch.epfl.cs107.play.window.Canvas;
 import ch.epfl.cs107.icmaze.ICMaze;
 import ch.epfl.cs107.icmaze.handler.DialogHandler;
 import ch.epfl.cs107.play.engine.actor.Dialog;
+import ch.epfl.cs107.icmaze.actor.collectable.Coin;
 
 import static ch.epfl.cs107.icmaze.area.maps.AireLabyrinthique.keyIdL1;
 import static ch.epfl.cs107.icmaze.area.maps.AireLabyrinthique.keyIdL2;
@@ -90,6 +91,8 @@ public class Spawn extends ICMazeArea {
 
         Rock rock = new Rock(this, new DiscreteCoordinates(3, 3));
         registerActor(rock);
+
+        registerActor(new Coin(this, Orientation.DOWN, new DiscreteCoordinates(5, 7), getValidationSignal()));
 
         // createPortals();
         // pas besoin de créer des portails ici care ICMazeArea le fait deja

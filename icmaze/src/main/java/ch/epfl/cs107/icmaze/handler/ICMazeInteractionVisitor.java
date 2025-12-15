@@ -57,4 +57,6 @@ public interface ICMazeInteractionVisitor extends AreaInteractionVisitor {
 
     }
 
+    default void interactWith(ch.epfl.cs107.icmaze.actor.collectable.Coin coin, boolean isCellInteraction) {
+    }
 }

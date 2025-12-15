@@ -10,7 +10,9 @@ import ch.epfl.cs107.play.engine.actor.Foreground;
 import ch.epfl.cs107.play.io.FileSystem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Orientation;
+import ch.epfl.cs107.play.math.Orientation;
 import ch.epfl.cs107.play.window.Window;
+import ch.epfl.cs107.play.signal.logic.Logic;
 
 import ch.epfl.cs107.icmaze.handler.DialogHandler;
 import ch.epfl.cs107.play.engine.actor.Dialog;
@@ -47,7 +49,7 @@ public abstract class ICMazeArea extends Area implements DialogHandler {
 
     @Override
     public float getCameraScaleFactor() {
-        return 20f;
+        return (float) Math.min(getSize() * 1.375, 30);
     }
 
     public abstract DiscreteCoordinates getplayerSpawnPosition();
@@ -228,5 +230,15 @@ public abstract class ICMazeArea extends Area implements DialogHandler {
     // public ICMaze getGame() {
     // return game;
     // }
+
+    private Logic validationSignal = Logic.FALSE;
+
+    public void setValidationSignal(Logic signal) {
+        this.validationSignal = signal;
+    }
+
+    protected Logic getValidationSignal() {
+        return validationSignal;
+    }
 
 }

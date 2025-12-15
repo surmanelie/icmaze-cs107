@@ -45,10 +45,17 @@ public class ICMaze extends AreaGame implements DialogHandler {
 
     private void createAreas() {
         // generateHardCodedLevel();
-        ICMazeArea[] areas = LevelGenerator.generateLine(this, 0);
+        ICMazeArea[] areas = LevelGenerator.generateLine(this, 1);
 
-        for (ICMazeArea area : areas) {
-            addArea(area);
+        if (areas.length > 0) {
+            // Le dernier est BossArea qui est le signal logique
+            ch.epfl.cs107.play.signal.logic.Logic bossSignal = (ch.epfl.cs107.play.signal.logic.Logic) areas[areas.length
+                    - 1];
+
+            for (ICMazeArea area : areas) {
+                area.setValidationSignal(bossSignal);
+                addArea(area);
+            }
         }
     }
 
@@ -127,7 +134,7 @@ public class ICMaze extends AreaGame implements DialogHandler {
     // ... helper methods ...
 
     private void changeArea(String destination, DiscreteCoordinates coordinates) {
-        System.out.println("Teleport to " + destination + " at " + coordinates);
+
         player.leaveArea();
         ICMazeArea newArea = (ICMazeArea) setCurrentArea(destination, false);
         newArea.setGame(this);

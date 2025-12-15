@@ -1,5 +1,6 @@
 package ch.epfl.cs107.icmaze.actor;
 
+import ch.epfl.cs107.play.signal.logic.Logic;
 import ch.epfl.cs107.icmaze.Difficulty;
 import ch.epfl.cs107.icmaze.RandomGenerator;
 import ch.epfl.cs107.icmaze.actor.util.Cooldown;
@@ -57,6 +58,9 @@ public class LogMonster extends PathFinderEnnemy {
     private final Cooldown immunityCd = new Cooldown(IMMUNITY_DURATION);
     private boolean immune = false;
     private int blinkTick = 0;
+    private boolean hasTakenDamage = false;
+
+    private final Logic signal;
 
     private final Health healthBar = new Health(this, Transform.I.translated(0, 1.75f), MAX_HEALTH, false);
 
@@ -68,10 +72,12 @@ public class LogMonster extends PathFinderEnnemy {
 
     private final LogMonsterInteractionHandler handler = new LogMonsterInteractionHandler();
 
-    public LogMonster(Area area, Orientation orientation, DiscreteCoordinates position, State initialState) {
+    public LogMonster(Area area, Orientation orientation, DiscreteCoordinates position, State initialState,
+            Logic signal) {
 
         super(area, orientation, position, MAX_HEALTH, PERCEPTION_RADIUS);
         this.state = initialState;
+        this.signal = signal;
 
         this.reorientCooldown = new Cooldown(0.75f);
         this.stateCooldown = new Cooldown(3.0f);
@@ -83,8 +89,6 @@ public class LogMonster extends PathFinderEnnemy {
         }
 
         this.pTransition = (double) Difficulty.HARDEST / (double) difficulty;
-
-        // System.out.println("New LogMonster at "+position+" | state = "+initialState);
 
         Vector anchor = new Vector(-0.5f, 0.25f);
 
@@ -138,6 +142,10 @@ public class LogMonster extends PathFinderEnnemy {
 
     @Override
     public void updateAlive(float deltaTime) {
+
+        if (signal != null && signal.isOn()) {
+            state = State.SLEEPING;
+        }
 
         boolean canReorient = reorientCooldown.ready(deltaTime);
         boolean canChangeState = stateCooldown.ready(deltaTime);
@@ -195,7 +203,6 @@ public class LogMonster extends PathFinderEnnemy {
             case RANDOM -> randomAnimation.update(deltaTime);
             case TARGETING -> targetingAnimation.update(deltaTime);
         }
-        System.out.println("State = " + state);
 
         if (immune) {
             blinkTick++;
@@ -289,7 +296,7 @@ public class LogMonster extends PathFinderEnnemy {
                     lastKnowPlayerPosition = playerPos; // comme ça il mémorise la position du joueur
                 }
                 // lastKnowPlayerPosition = player.getCurrentMainCellCoordinates();
-                // System.out.println("LogMonster a vu le joueur en "+ lastKnowPlayerPosition);
+
                 //
                 // DiscreteCoordinates front =
                 // getCurrentMainCellCoordinates().jump(getOrientation().toVector());
@@ -330,6 +337,7 @@ public class LogMonster extends PathFinderEnnemy {
 
         loseHealth(1);
         healthBar.decrease(1);
+        hasTakenDamage = true;
         triggerImmunity();
         // if(healthBar.isOff()){
         // /*death flow*/
@@ -365,7 +373,7 @@ public class LogMonster extends PathFinderEnnemy {
             graphicPath.draw(canvas);
         }
 
-        if (!immune && healthBar.isOn()) {
+        if (!immune && hasTakenDamage && healthBar.isOn()) {
             healthBar.draw(canvas);
         }
     }

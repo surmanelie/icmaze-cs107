@@ -71,14 +71,13 @@ public final class LevelGenerator {
         // 3) BossArea à la fin
         BossArea boss = new BossArea();
 
+        ICMazeArea.AreaPortals bossDir = chooseFreeDirection(current, occupied);
+
         if (previous instanceof AireLabyrinthique al) {
-            al.setPortalExit(ICMazeArea.AreaPortals.E);
+            al.setPortalExit(bossDir);
         }
 
-        // On connecte la dernière aire vers l’Est par convention
-        connectAreas(previous,
-                ICMazeArea.AreaPortals.E,
-                boss);
+        connectAreas(previous, bossDir, boss);
 
         areas[length + 1] = boss;
 

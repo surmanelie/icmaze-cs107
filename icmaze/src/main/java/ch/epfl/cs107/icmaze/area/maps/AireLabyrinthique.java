@@ -121,8 +121,6 @@ public abstract class AireLabyrinthique extends ICMazeArea {
 
         DiscreteCoordinates pos = candidates.get(0);
 
-        System.out.println("Key for " + getTitle() + " at " + pos);
-
         Key key = new Key(this, Orientation.DOWN, pos, keyId);
         registerActor(key);
         // DiscreteCoordinates pos = getRandomFreeCell(rng);
@@ -144,7 +142,7 @@ public abstract class AireLabyrinthique extends ICMazeArea {
                     DiscreteCoordinates pos = new DiscreteCoordinates(x + 1, y + 1);
 
                     if (!pos.equals(entry) && !pos.equals(exit)) {
-                        registerActor(new Rock(this, pos));
+                        registerActor(new Rock(this, Orientation.DOWN, pos, getValidationSignal()));
                     }
                 }
             }
@@ -217,7 +215,7 @@ public abstract class AireLabyrinthique extends ICMazeArea {
 
             LogMonster.State initialState = chooseInitialState(rng, diffRatio);
 
-            LogMonster monster = new LogMonster(this, Orientation.DOWN, pos, initialState);
+            LogMonster monster = new LogMonster(this, Orientation.DOWN, pos, initialState, getValidationSignal());
 
             registerActor(monster);
         }
@@ -238,7 +236,5 @@ public abstract class AireLabyrinthique extends ICMazeArea {
             return LogMonster.State.TARGETING;
         }
     }
-
-
 
 }
