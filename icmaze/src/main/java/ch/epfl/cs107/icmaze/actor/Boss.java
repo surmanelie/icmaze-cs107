@@ -14,6 +14,9 @@ import ch.epfl.cs107.play.math.Orientation;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
 
+import ch.epfl.cs107.icmaze.handler.DialogHandler;
+import ch.epfl.cs107.play.engine.actor.Dialog;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -97,6 +100,11 @@ public class Boss extends Ennemy {
         if (keyDropped)
             return;
         keyDropped = true;
+
+        if (getOwnerArea() instanceof DialogHandler handler) {
+            handler.publish(new Dialog("victory"));
+        }
+
         Key key = new Key(getOwnerArea(), getOrientation(), getCurrentMainCellCoordinates(), 999);
         getOwnerArea().registerActor(key);
         // Position and Owner are set in constructor

@@ -19,15 +19,15 @@ import ch.epfl.cs107.play.window.Canvas;
 
 import java.util.List;
 
-public class Rock  extends AreaEntity implements Interactable, Updatable {
+public class Rock extends AreaEntity implements Interactable, Updatable {
 
     // Sprite principal du rocher
     private Sprite sprite;
 
     // Points de vie restants (le rocher disparaît à 0)
-    //private int hP = 3;
+    // private int hP = 3;
 
-    //private boolean recentlyHit = false;
+    // private boolean recentlyHit = false;
 
     // Indique si le rocher est en train de disparaître
     private boolean vanishing = false;
@@ -36,18 +36,17 @@ public class Rock  extends AreaEntity implements Interactable, Updatable {
     private static final int ANIMATION_DURATION = 24;
     private final Animation vanishAnimation;
 
-    private final Health healthBar = new Health(this, Transform.I.translated(0,1.0f), 3, false);
-
-
+    private final Health healthBar = new Health(this, Transform.I.translated(0, 1.0f), 3, false);
 
     // Initialise le rocher, son sprite et l’animation de disparition
 
-    public Rock(Area area, DiscreteCoordinates coordinates){//,int hitPoints){
+    public Rock(Area area, DiscreteCoordinates coordinates) {// ,int hitPoints){
 
-        super(area, Orientation.DOWN,coordinates);
+        super(area, Orientation.DOWN, coordinates);
         sprite = new Sprite("rock.2", 1f, 1f, this);
 
-        vanishAnimation = new Animation("icmaze/vanish", 7, 2, 2, this, 32, 32, new Vector(-0.5f, 0f), ANIMATION_DURATION / 7, false);
+        vanishAnimation = new Animation("icmaze/vanish", 7, 2, 2, this, 32, 32, new Vector(-0.5f, 0f),
+                ANIMATION_DURATION / 7, false);
     }
 
     private static final float IMMUNITY_DURATION = 1.0f; // même valeur que player/logmonster pour l’instant
@@ -61,44 +60,42 @@ public class Rock  extends AreaEntity implements Interactable, Updatable {
         immunityCd.reset();
     }
 
-
-
     public void weaken() {
 
-//        if(recentlyHit || vanishing ){
-//            return;
-//        }
-//        recentlyHit = true;
+        // if(recentlyHit || vanishing ){
+        // return;
+        // }
+        // recentlyHit = true;
 
-        if (vanishing || immune){
+        if (vanishing || immune) {
             return;
         }
 
         healthBar.decrease(1);
 
-        if(healthBar.isOff()){
+        if (healthBar.isOff()) {
             vanishing = true;
             return;
         }
 
-//        if (vanishing) return;
-//        if(immune);
+        // if (vanishing) return;
+        // if(immune);
 
-//        hP -= 1;
-//        System.out.println("Rock hit ! remaining"+hP);
+        // hP -= 1;
+        // System.out.println("Rock hit ! remaining"+hP);
 
-//        if (hP <= 0) {
-//            vanishing = true;
-//            return;
-//        }
+        // if (hP <= 0) {
+        // vanishing = true;
+        // return;
+        // }
 
         triggerImmunity();
 
     }
 
-//    public void resetHitFlag(){
-//        recentlyHit = false;
-//    }
+    // public void resetHitFlag(){
+    // recentlyHit = false;
+    // }
 
     private void handleVanish(float dt) {
         vanishAnimation.update(dt);
@@ -108,7 +105,8 @@ public class Rock  extends AreaEntity implements Interactable, Updatable {
 
             // 1 chance sur 2 de drop un cœur
             if (RandomGenerator.rng.nextBoolean()) {
-                getOwnerArea().registerActor(new Heart(getOwnerArea(),Orientation.DOWN,getCurrentMainCellCoordinates()));
+                getOwnerArea()
+                        .registerActor(new Heart(getOwnerArea(), Orientation.DOWN, getCurrentMainCellCoordinates()));
 
             }
 
@@ -117,17 +115,15 @@ public class Rock  extends AreaEntity implements Interactable, Updatable {
         }
     }
 
-
-
-
     @Override
     public void draw(Canvas canvas) {
 
         boolean visible = !immune || (blinkTick % 2 == 0);
 
-        if(!visible) return;
+        if (!visible)
+            return;
 
-        if(vanishing){
+        if (vanishing) {
             vanishAnimation.draw(canvas);
         } else {
             sprite.draw(canvas);
@@ -136,25 +132,25 @@ public class Rock  extends AreaEntity implements Interactable, Updatable {
             }
         }
 
-//        if(visible){
-//            if(vanishing) vanishAnimation.draw(canvas);
-//            else sprite.draw(canvas);
-//        }
-//
-//        if(!vanishing && healthBar.isOn()){
-//            healthBar.draw(canvas);
-//        }
-//
-//        if (!visible) {
-//            return;
-//            // ton draw actuel du Rock (sprite/animation)
-//        }
-//
-//        if (vanishing) {
-//            vanishAnimation.draw(canvas);
-//        } else {
-//            sprite.draw(canvas);
-//        }
+        // if(visible){
+        // if(vanishing) vanishAnimation.draw(canvas);
+        // else sprite.draw(canvas);
+        // }
+        //
+        // if(!vanishing && healthBar.isOn()){
+        // healthBar.draw(canvas);
+        // }
+        //
+        // if (!visible) {
+        // return;
+        // // ton draw actuel du Rock (sprite/animation)
+        // }
+        //
+        // if (vanishing) {
+        // vanishAnimation.draw(canvas);
+        // } else {
+        // sprite.draw(canvas);
+        // }
     }
 
     @Override
@@ -171,10 +167,8 @@ public class Rock  extends AreaEntity implements Interactable, Updatable {
                 immune = false;
             }
         }
-        //super.update(dt);
+        // super.update(dt);
     }
-
-
 
     @Override
     public boolean takeCellSpace() {
@@ -196,10 +190,8 @@ public class Rock  extends AreaEntity implements Interactable, Updatable {
         ((ICMazeInteractionVisitor) v).interactWith(this, isCellInteraction);
     }
 
-
     @Override
     public List<DiscreteCoordinates> getCurrentCells() {
         return List.of(getCurrentMainCellCoordinates());
     }
 }
-

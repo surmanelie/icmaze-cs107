@@ -21,10 +21,10 @@ import ch.epfl.cs107.play.window.Canvas;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class LogMonster  extends PathFinderEnnemy{
+public class LogMonster extends PathFinderEnnemy {
 
     private static final int MAX_HEALTH = 3;
-    //à combien il peut voir autour de lui
+    // à combien il peut voir autour de lui
     private static final int PERCEPTION_RADIUS = 5;
 
     private final double pTransition;
@@ -36,7 +36,6 @@ public class LogMonster  extends PathFinderEnnemy{
     }
 
     private State state;
-
 
     private DiscreteCoordinates lastKnowPlayerPosition;
 
@@ -61,16 +60,15 @@ public class LogMonster  extends PathFinderEnnemy{
 
     private final Health healthBar = new Health(this, Transform.I.translated(0, 1.75f), MAX_HEALTH, false);
 
-    private void triggerImmunity(){
+    private void triggerImmunity() {
         immune = true;
         blinkTick = 0;
         immunityCd.reset();
     }
 
-
     private final LogMonsterInteractionHandler handler = new LogMonsterInteractionHandler();
 
-    public LogMonster (Area area, Orientation orientation, DiscreteCoordinates position, State initialState ){
+    public LogMonster(Area area, Orientation orientation, DiscreteCoordinates position, State initialState) {
 
         super(area, orientation, position, MAX_HEALTH, PERCEPTION_RADIUS);
         this.state = initialState;
@@ -81,14 +79,14 @@ public class LogMonster  extends PathFinderEnnemy{
         int difficulty = Difficulty.MEDIUM; // valeur par défaut
 
         if (area instanceof AireLabyrinthique) {
-            difficulty = ((AireLabyrinthique)area).getDifficulty();
+            difficulty = ((AireLabyrinthique) area).getDifficulty();
         }
 
         this.pTransition = (double) Difficulty.HARDEST / (double) difficulty;
 
-        //System.out.println("New LogMonster at "+position+" | state = "+initialState);
+        // System.out.println("New LogMonster at "+position+" | state = "+initialState);
 
-        Vector anchor = new Vector (-0.5f, 0.25f);
+        Vector anchor = new Vector(-0.5f, 0.25f);
 
         Orientation[] ordersTargeting = {
                 Orientation.DOWN,
@@ -97,7 +95,8 @@ public class LogMonster  extends PathFinderEnnemy{
                 Orientation.LEFT
         };
 
-        targetingAnimation = new OrientedAnimation("icmaze/logMonster", ANIMATION_DURATION / 3, this, anchor, ordersTargeting, 4, 2, 2, 32, 32, true);
+        targetingAnimation = new OrientedAnimation("icmaze/logMonster", ANIMATION_DURATION / 3, this, anchor,
+                ordersTargeting, 4, 2, 2, 32, 32, true);
 
         Orientation[] ordersRandom = {
                 Orientation.DOWN,
@@ -106,7 +105,8 @@ public class LogMonster  extends PathFinderEnnemy{
                 Orientation.LEFT
         };
 
-        randomAnimation = new OrientedAnimation("icmaze/logMonster_random", ANIMATION_DURATION/3, this, anchor, ordersRandom, 4, 2, 2, 32, 32, true);
+        randomAnimation = new OrientedAnimation("icmaze/logMonster_random", ANIMATION_DURATION / 3, this, anchor,
+                ordersRandom, 4, 2, 2, 32, 32, true);
 
         Orientation[] ordersSleeping = {
                 Orientation.DOWN,
@@ -114,21 +114,19 @@ public class LogMonster  extends PathFinderEnnemy{
                 Orientation.UP,
                 Orientation.RIGHT
         };
-        sleepingAnimation = new OrientedAnimation("icmaze/logMonster.sleeping", ANIMATION_DURATION/3, this, anchor, ordersSleeping, 4, 2, 2, 32, 32, true);
+        sleepingAnimation = new OrientedAnimation("icmaze/logMonster.sleeping", ANIMATION_DURATION / 3, this, anchor,
+                ordersSleeping, 4, 2, 2, 32, 32, true);
 
     }
-
-
 
     @Override
     protected Animation createDeathAnimation() {
-        return new Animation("icmaze/vanish", 7, 2, 2 ,this, 32, 32, new Vector(-0.5f, 0f), DEATH_ANIMATION_DURATION/7, false);
+        return new Animation("icmaze/vanish", 7, 2, 2, this, 32, 32, new Vector(-0.5f, 0f),
+                DEATH_ANIMATION_DURATION / 7, false);
 
     }
 
-
-
-    private Orientation leftof(Orientation o){
+    private Orientation leftof(Orientation o) {
         return switch (o) {
             case UP -> Orientation.LEFT;
             case LEFT -> Orientation.DOWN;
@@ -151,7 +149,7 @@ public class LogMonster  extends PathFinderEnnemy{
         switch (state) {
 
             case SLEEPING -> {
-                if(canReorient){
+                if (canReorient) {
                     orientate(leftof(getOrientation()));
                 }
 
@@ -161,7 +159,7 @@ public class LogMonster  extends PathFinderEnnemy{
             }
 
             case RANDOM -> {
-                if(canReorient) {
+                if (canReorient) {
                     Orientation[] dirs = Orientation.values();
                     Orientation randomDir = dirs[rng.nextInt(dirs.length)];
                     plannedOrientation = randomDir;
@@ -173,9 +171,9 @@ public class LogMonster  extends PathFinderEnnemy{
             }
 
             case TARGETING -> {
-                if(lastKnowPlayerPosition == null) {
+                if (lastKnowPlayerPosition == null) {
                     state = State.RANDOM;
-                }else{
+                } else {
 
                     if (canReorient) {
                         Orientation target = computeTargetOrientation();
@@ -184,8 +182,8 @@ public class LogMonster  extends PathFinderEnnemy{
                         }
                     }
 
-                    //il peut se rendormir
-                    if (canChangeState && rng.nextDouble() < (1.0 - pTransition)){
+                    // il peut se rendormir
+                    if (canChangeState && rng.nextDouble() < (1.0 - pTransition)) {
                         state = State.SLEEPING;
                     }
                 }
@@ -197,17 +195,18 @@ public class LogMonster  extends PathFinderEnnemy{
             case RANDOM -> randomAnimation.update(deltaTime);
             case TARGETING -> targetingAnimation.update(deltaTime);
         }
-        System.out.println("State = "+state);
+        System.out.println("State = " + state);
 
-        if(immune){
+        if (immune) {
             blinkTick++;
-            if(immunityCd.ready(deltaTime)){
+            if (immunityCd.ready(deltaTime)) {
                 immune = false;
             }
         }
 
-//        // on met à jour l'orientation planifiée en fonction de la dernière position connue du joueur
-//        plannedOrientation = computeTargetOrientation();
+        // // on met à jour l'orientation planifiée en fonction de la dernière position
+        // connue du joueur
+        // plannedOrientation = computeTargetOrientation();
 
         super.updateAlive(deltaTime);
     }
@@ -218,11 +217,11 @@ public class LogMonster  extends PathFinderEnnemy{
         return plannedOrientation;
     }
 
-    //méthode pour calculer l'orientation pour avoir  le plus court chemin
-    private Orientation computeTargetOrientation(){
+    // méthode pour calculer l'orientation pour avoir le plus court chemin
+    private Orientation computeTargetOrientation() {
 
         // si on a jamais vu le joueur ba on bouge pas
-        if (lastKnowPlayerPosition == null){
+        if (lastKnowPlayerPosition == null) {
             return null;
         }
 
@@ -232,10 +231,10 @@ public class LogMonster  extends PathFinderEnnemy{
 
         Queue<Orientation> path = area.getShortestPath(from, lastKnowPlayerPosition);
 
-        if(path == null || path.isEmpty()){
+        if (path == null || path.isEmpty()) {
             lastKnowPlayerPosition = null;
             graphicPath = null;
-            return  null;
+            return null;
         }
 
         graphicPath = new Path(this.getPosition(), new LinkedList<>(path));
@@ -248,7 +247,6 @@ public class LogMonster  extends PathFinderEnnemy{
     public boolean wantsViewInteraction() {
         return state != State.SLEEPING;
     }
-
 
     @Override
     public boolean wantsCellInteraction() {
@@ -279,68 +277,68 @@ public class LogMonster  extends PathFinderEnnemy{
                 return;
             }
 
-            if(!isCellInteraction) {
+            if (!isCellInteraction) {
 
                 DiscreteCoordinates playerPos = player.getCurrentMainCellCoordinates();
                 DiscreteCoordinates front = getCurrentMainCellCoordinates().jump(getOrientation().toVector());
 
-                if (playerPos.equals(front)){
+                if (playerPos.equals(front)) {
                     player.sufferHit();
-                    //triggerImmunity(); //temporaire
-                }else {
-                    lastKnowPlayerPosition = playerPos; //comme ça il mémorise la position du joueur
+                    // triggerImmunity(); //temporaire
+                } else {
+                    lastKnowPlayerPosition = playerPos; // comme ça il mémorise la position du joueur
                 }
-//                lastKnowPlayerPosition = player.getCurrentMainCellCoordinates();
-//                System.out.println("LogMonster a vu le joueur en "+ lastKnowPlayerPosition);
-//
-//                DiscreteCoordinates front = getCurrentMainCellCoordinates().jump(getOrientation().toVector());
-//
-//                if (player.getCurrentMainCellCoordinates().equals(front)) { //front pour être sûr que le player est devant le monster (pas face à face)
-//                    player.sufferHit();
-//                }
-
+                // lastKnowPlayerPosition = player.getCurrentMainCellCoordinates();
+                // System.out.println("LogMonster a vu le joueur en "+ lastKnowPlayerPosition);
+                //
+                // DiscreteCoordinates front =
+                // getCurrentMainCellCoordinates().jump(getOrientation().toVector());
+                //
+                // if (player.getCurrentMainCellCoordinates().equals(front)) { //front pour être
+                // sûr que le player est devant le monster (pas face à face)
+                // player.sufferHit();
+                // }
 
             }
 
-
-
-//            // la on mémorise la dernière position connue
-//            if(!isCellInteraction) {
-//                lastKnowPlayerPosition = player.getCurrentMainCellCoordinates();
-//            }
+            // // la on mémorise la dernière position connue
+            // if(!isCellInteraction) {
+            // lastKnowPlayerPosition = player.getCurrentMainCellCoordinates();
+            // }
         }
-        // on a rien besoin d'autre car les autres méthodes gardent le même comportement que par défaut
+        // on a rien besoin d'autre car les autres méthodes gardent le même comportement
+        // que par défaut
     }
 
-    public void setLastKnowPlayerPosition(DiscreteCoordinates position){
+    public void setLastKnowPlayerPosition(DiscreteCoordinates position) {
         this.lastKnowPlayerPosition = position;
     }
 
-    public State getState(){
+    public State getState() {
         return state;
     }
 
-    public void setState(State state){
+    public void setState(State state) {
         this.state = state;
     }
 
-    public void sufferHit(){
+    public void sufferHit() {
 
-        if(immune || isDead()){
+        if (immune || isDead()) {
             return;
         }
 
         loseHealth(1);
         healthBar.decrease(1);
         triggerImmunity();
-//        if(healthBar.isOff()){
-//            /*death flow*/
-//        }
+        // if(healthBar.isOff()){
+        // /*death flow*/
+        // }
     }
 
     @Override
-    public void acceptInteraction (AreaInteractionVisitor v, boolean isCellInteraction) {
-        if(v instanceof ICMazeInteractionVisitor visitor){
+    public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteraction) {
+        if (v instanceof ICMazeInteractionVisitor visitor) {
             visitor.interactWith(this, isCellInteraction);
         }
     }
@@ -348,14 +346,14 @@ public class LogMonster  extends PathFinderEnnemy{
     @Override
     public void draw(Canvas canvas) {
 
-        if(isDead()){
+        if (isDead()) {
             super.draw(canvas);
             return;
         }
 
         boolean visible = !immune || (blinkTick % 2 == 0);
 
-        if(visible){
+        if (visible) {
             switch (state) {
                 case SLEEPING -> sleepingAnimation.draw(canvas);
                 case RANDOM -> randomAnimation.draw(canvas);
@@ -367,7 +365,7 @@ public class LogMonster  extends PathFinderEnnemy{
             graphicPath.draw(canvas);
         }
 
-        if(!immune && healthBar.isOn()){
+        if (!immune && healthBar.isOn()) {
             healthBar.draw(canvas);
         }
     }

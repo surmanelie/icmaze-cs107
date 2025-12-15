@@ -1,14 +1,7 @@
 package ch.epfl.cs107.icmaze.area.maps;
 
-import ch.epfl.cs107.icmaze.KeyBindings;
-import ch.epfl.cs107.icmaze.actor.ICMazePlayer;
-import ch.epfl.cs107.icmaze.actor.Portal;
-import ch.epfl.cs107.icmaze.actor.collectable.Heart;
-import ch.epfl.cs107.icmaze.actor.collectable.Key;
 import ch.epfl.cs107.icmaze.actor.collectable.Pickaxe;
 import ch.epfl.cs107.icmaze.area.ICMazeArea;
-import ch.epfl.cs107.play.engine.actor.Background;
-import ch.epfl.cs107.play.engine.actor.Foreground;
 import ch.epfl.cs107.icmaze.actor.Boss;
 import ch.epfl.cs107.icmaze.actor.collectable.Pickaxe;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
@@ -52,7 +45,7 @@ public class BossArea extends ICMazeArea {
     @Override
     protected void createArea() {
         registerActor(new Boss(this, Orientation.DOWN, new DiscreteCoordinates(4, 4)));
-        registerActor(new Pickaxe(this, Orientation.DOWN, new DiscreteCoordinates(5, 5)));
+//        registerActor(new Pickaxe(this, Orientation.DOWN, new DiscreteCoordinates(5, 5)));
     }
 
     @Override

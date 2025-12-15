@@ -15,10 +15,17 @@ import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Orientation;
 import ch.epfl.cs107.play.window.Canvas;
 
+import ch.epfl.cs107.icmaze.ICMaze;
+import ch.epfl.cs107.icmaze.handler.DialogHandler;
+import ch.epfl.cs107.play.engine.actor.Dialog;
+
 import static ch.epfl.cs107.icmaze.area.maps.AireLabyrinthique.keyIdL1;
 import static ch.epfl.cs107.icmaze.area.maps.AireLabyrinthique.keyIdL2;
 
 public class Spawn extends ICMazeArea {
+
+    private DialogHandler dialogHandler;
+    private boolean welcomeShown = false;
     // @Override
     // public DiscreteCoordinates arrivalCoordinates(int size) {
     // return ;
@@ -93,6 +100,21 @@ public class Spawn extends ICMazeArea {
         // car pour l'instant on en a pas besoin
         // setWestDestination("icmaze/Boss");
 
+    }
+
+    @Override
+    public void setGame(ICMaze game) {
+        super.setGame(game);
+        this.dialogHandler = game;
+    }
+
+    @Override
+    public void update(float dt) {
+        super.update(dt);
+        if (!welcomeShown && dialogHandler != null) {
+            dialogHandler.publish(new Dialog("welcome"));
+            welcomeShown = true;
+        }
     }
 
 }

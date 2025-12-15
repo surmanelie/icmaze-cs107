@@ -10,12 +10,14 @@ import ch.epfl.cs107.play.engine.actor.Foreground;
 import ch.epfl.cs107.play.io.FileSystem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Orientation;
-import ch.epfl.cs107.play.signal.logic.Or;
 import ch.epfl.cs107.play.window.Window;
+
+import ch.epfl.cs107.icmaze.handler.DialogHandler;
+import ch.epfl.cs107.play.engine.actor.Dialog;
 
 import java.util.Queue;
 
-public abstract class ICMazeArea extends Area {
+public abstract class ICMazeArea extends Area implements DialogHandler {
     private final String behaviorName;
     private Portal W;
     private Portal S;
@@ -25,23 +27,14 @@ public abstract class ICMazeArea extends Area {
 
     private ICMaze game;
 
-    // private String northDestination ;
-    // private String southDestination ;
-    // private String westDestination;
-    // private String eastDestination;
-    //
-    // private Portal.State northState = Portal.State.INVISIBLE;
-    // private Portal.State southState = Portal.State.INVISIBLE;
-    // private Portal.State eastState = Portal.State.INVISIBLE;
-    // private Portal.State weststate = Portal.State.INVISIBLE;
-    //
-    // // Id de clé requis pour chaque portail (par défaut : aucune clé)
-    // private int northKeyId = Portal.NO_KEY_ID;
-    // private int southKeyId = Portal.NO_KEY_ID;
-    // private int eastKeyId = 1;
-    // private int westKeyId = Portal.NO_KEY_ID;
+    @Override
+    public void publish(Dialog dialog) {
+        if (game != null) {
+            game.publish(dialog);
+        }
+    }
 
-    // extends Area ?
+    // ... imports ...
 
     public ICMazeArea(String behaviorName, int size) {
         // validation: est -ce que c'est bien ça la modif à faire dans le 2.2 par
