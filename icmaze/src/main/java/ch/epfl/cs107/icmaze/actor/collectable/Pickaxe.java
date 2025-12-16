@@ -8,24 +8,32 @@ import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Orientation;
 import ch.epfl.cs107.play.window.Canvas;
 
-public class Pickaxe extends Equipement{
+/**
+ * Pickaxe
+ * Class representing a collectable Pickaxe in the ICMaze
+ */
+public class Pickaxe extends Equipement {
 
-
-
-
-    public Pickaxe(Area area, Orientation orientation, DiscreteCoordinates position){
-        super(area, orientation,position);
-        setSprite( new Sprite("icmaze/pickaxe", 0.75f, 0.75f, this));
-
-
+    /**
+     * Default Pickaxe constructor
+     * 
+     * @param area        (Area): Owner Area
+     * @param orientation (Orientation): Initial orientation
+     * @param position    (DiscreteCoordinates): Initial position
+     */
+    public Pickaxe(Area area, Orientation orientation, DiscreteCoordinates position) {
+        super(area, orientation, position);
+        setSprite(new Sprite("icmaze/pickaxe", 0.75f, 0.75f, this));
     }
-    @Override public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteraction) {
+
+    /**
+     * Accept interaction from a visitor
+     * 
+     * @param v                 (AreaInteractionVisitor): The visitor
+     * @param isCellInteraction (boolean): True if interaction is cell-based
+     */
+    @Override
+    public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteraction) {
         ((ICMazeInteractionVisitor) v).interactWith(this, isCellInteraction);
     }
-
-
-//    @Override
-//    public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteraction) {
-//        ((ICMazeInteractionVisitor) v).interactWith(this, isCellInteraction);
-//    }
 }

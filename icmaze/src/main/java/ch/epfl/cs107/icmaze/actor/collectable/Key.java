@@ -11,71 +11,74 @@ import ch.epfl.cs107.play.window.Canvas;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Key
+ * Class representing a collectable Key in the ICMaze
+ */
 public class Key extends ICMazeObject {
 
     private final int id;
     public final Sprite sprite;
+    private boolean collected = false;
 
+    /**
+     * Default Key constructor
+     * 
+     * @param area        (Area): Owner Area
+     * @param orientation (Orientation): Initial orientation
+     * @param position    (DiscreteCoordinates): Initial position
+     * @param id          (int): The Key identifier
+     */
     public Key(Area area, Orientation orientation, DiscreteCoordinates position, int id) {
         super(area, orientation, position);
         this.id = id;
         this.sprite = new Sprite("icmaze/key", 1f, 1f, this);
     }
 
+    /**
+     * Get the Key id
+     * 
+     * @return (int): The id
+     */
     public int getId() {
         return id;
     }
 
-    private boolean collected = false;
-
+    /**
+     * Collect the Key
+     * Updates internal collected state
+     */
     @Override
     public void collect() {
         super.collect();
         collected = true;
     }
 
+    /**
+     * Check if the Key is collected
+     * 
+     * @return (boolean): True if collected, false otherwise
+     */
     public boolean isCollected() {
         return collected;
     }
 
-    // @Override
-    // public void collect() {
-    // getOwnerArea().unregisterActor(this);
-    // }
-    // c'est deja défini dans ICMazeObject, donc pas besoin de refaire ici
-
+    /**
+     * Draw the Key
+     * 
+     * @param canvas (Canvas): Canvas to draw on
+     */
     @Override
     public void draw(Canvas canvas) {
         sprite.draw(canvas);
     }
 
-    // @Override
-    // public List<DiscreteCoordinates> getCurrentCells() {
-    // return Collections.singletonList(getCurrentMainCellCoordinates());
-    // }
-    // lui aussi ça sert à rien. il est un peu différent de ICMazeObject, mais en
-    // vrai ça fait exactement la même chose donc en s'en fout
-
-    // @Override
-    // public boolean takeCellSpace() {
-    // return false;
-    //
-    // }
-    // ne sert à rien aussi car aucun changement par rapport à la super classe
-
-    // @Override
-    // public void acceptInteraction(AreaInteractionVisitor v, boolean
-    // isCellInteraction) {
-    // ((ICMazeInteractionVisitor) v).interactWith(this, isCellInteraction);
-    //
-    // }
-
-    // @Override
-    // public boolean isViewInteractable() {
-    // return false;
-    // }
-    // elle ne sert à rien car aucun changement avec la super classe
-
+    /**
+     * Accept interaction from a visitor
+     * 
+     * @param v                 (AreaInteractionVisitor): The visitor
+     * @param isCellInteraction (boolean): True if interaction is cell-based
+     */
     @Override
     public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteraction) {
         if (v instanceof ICMazeInteractionVisitor visitor) {

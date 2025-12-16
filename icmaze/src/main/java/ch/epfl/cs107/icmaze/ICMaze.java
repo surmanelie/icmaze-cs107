@@ -45,7 +45,7 @@ public class ICMaze extends AreaGame implements DialogHandler {
 
     private void createAreas() {
         // generateHardCodedLevel();
-        ICMazeArea[] areas = LevelGenerator.generateLine(this, 3);
+        ICMazeArea[] areas = LevelGenerator.generateLine(this, 3 );
 
         if (areas.length > 0) {
             // Le dernier est BossArea qui est le signal logique

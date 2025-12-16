@@ -9,6 +9,7 @@ import ch.epfl.cs107.icmaze.actor.collectable.Pickaxe;
 import ch.epfl.cs107.play.areagame.actor.Interactable;
 import ch.epfl.cs107.play.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.icmaze.actor.LogMonster;
+import ch.epfl.cs107.icmaze.actor.collectable.Coin;
 
 /**
  * InteractionVisitor for the ICMaze entities
@@ -57,6 +58,7 @@ public interface ICMazeInteractionVisitor extends AreaInteractionVisitor {
 
     }
 
-    default void interactWith(ch.epfl.cs107.icmaze.actor.collectable.Coin coin, boolean isCellInteraction) {
+    default void interactWith(Coin coin, boolean isCellInteraction) {
     }
+
 }
