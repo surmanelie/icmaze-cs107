@@ -192,12 +192,23 @@ public class Boss extends Ennemy {
         }
 
         for (DiscreteCoordinates target : targets) {
-            new FireProjectile(area, ori, target).enterArea(area, target);
-//            Projectile p =new FireProjectile(area, ori, target);
-//            p.enterArea(area, target);
-//            activeProjectiles.add(p);
-//            new FireProjectile(area, ori, target).enterArea(area, target);
+            // 1. On crée UN SEUL projectile
+            Projectile p = new FireProjectile(area, ori, target);
+
+            // 2. On l'active sur l'aire
+            p.enterArea(area, target);
+
+            // 3. On le mémorise dans la liste pour pouvoir le supprimer au prochain reset
+            activeProjectiles.add(p);
         }
+
+//        for (DiscreteCoordinates target : targets) {
+//            new FireProjectile(area, ori, target).enterArea(area, target);
+////            Projectile p =new FireProjectile(area, ori, target);
+////            p.enterArea(area, target);
+////            activeProjectiles.add(p);
+////            new FireProjectile(area, ori, target).enterArea(area, target);
+//        }
     }
 
 //    /**

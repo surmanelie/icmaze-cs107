@@ -60,9 +60,7 @@ public class BossArea extends ICMazeArea implements Logic {
     protected void createArea() {
         // d'abord on nettoie l'ancien boss
 //        if (boss != null){
-//            boss.cleanUp(this);
-//            unregisterActor(boss);
-//            boss = null;
+//            boss.cleanUP(this);
 //        }
         boss = new Boss(this, Orientation.DOWN, new DiscreteCoordinates(4, 4));
         registerActor(boss);
