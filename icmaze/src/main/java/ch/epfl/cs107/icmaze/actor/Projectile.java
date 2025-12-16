@@ -11,24 +11,39 @@ import ch.epfl.cs107.play.math.Orientation;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Projectile
+ * Abstract class representing a projectile in the ICMaze
+ */
 public abstract class Projectile extends ICMazeActor implements Interactor {
 
-    // --- constantes imposées par l'énoncé ---
     protected static final int SPEED = 1;
     protected static final int MAX_RANGE = 7;
     protected static final int DAMAGE = 1;
     private static final int MOVE_DURATION = 4;
 
-    // --- état interne ---
     private int remainingRange = MAX_RANGE;
     private boolean stopped = false;
 
     private final ProjectileInteractionHandler handler = new ProjectileInteractionHandler();
 
+    /**
+     * Default Projectile constructor
+     * 
+     * @param owner       (Area): Owner Area, not null
+     * @param orientation (Orientation): Initial orientation of the projectile, not
+     *                    null
+     * @param coordinates (DiscreteCoordinates): Initial position, not null
+     */
     public Projectile(Area owner, Orientation orientation, DiscreteCoordinates coordinates) {
         super(owner, orientation, coordinates);
     }
 
+    /**
+     * Update the projectile
+     * 
+     * @param dt (float): Delta time
+     */
     @Override
     public void update(float dt) {
         super.update(dt);
@@ -47,64 +62,118 @@ public abstract class Projectile extends ICMazeActor implements Interactor {
         }
     }
 
+    /**
+     * Stop the projectile
+     */
     public void stop() {
         stopped = true;
     }
 
-    // --- position sur la grille ---
+    /**
+     * Get the current cells occupied by the projectile
+     * 
+     * @return (List<DiscreteCoordinates>): List of occupied cells
+     */
     @Override
     public List<DiscreteCoordinates> getCurrentCells() {
         return Collections.singletonList(getCurrentMainCellCoordinates());
     }
 
-    // --- traversabilité ---
+    /**
+     * Check if the projectile takes cell space
+     * 
+     * @return (boolean): false (walkable)
+     */
     @Override
     public boolean takeCellSpace() {
-        return false; // on peut marcher dessus
+        return false;
     }
 
-    // --- interactions subies ---
+    /**
+     * Check if the projectile is interactable via cells
+     * 
+     * @return (boolean): false
+     */
     @Override
     public boolean isCellInteractable() {
         return false;
     }
 
+    /**
+     * Check if the projectile is interactable via view
+     * 
+     * @return (boolean): false
+     */
     @Override
     public boolean isViewInteractable() {
         return false;
     }
 
-    // --- interactions infligées ---
+    /**
+     * Check if the projectile wants cell interactions
+     * 
+     * @return (boolean): true if not stopped
+     */
     @Override
     public boolean wantsCellInteraction() {
         return !stopped;
     }
 
+    /**
+     * Check if the projectile wants view interactions
+     * 
+     * @return (boolean): false
+     */
     @Override
     public boolean wantsViewInteraction() {
         return false;
     }
 
+    /**
+     * Get the cells in the field of view
+     * 
+     * @return (List<DiscreteCoordinates>): List of cells in field of view
+     */
     @Override
     public List<DiscreteCoordinates> getFieldOfViewCells() {
         return Collections.singletonList(
                 getCurrentMainCellCoordinates().jump(getOrientation().toVector()));
     }
 
+    /**
+     * Interact with another interactive entity
+     * 
+     * @param other             (Interactable): The other entity
+     * @param isCellInteraction (boolean): True if cell interaction
+     */
     @Override
     public void interactWith(Interactable other, boolean isCellInteraction) {
         other.acceptInteraction(handler, isCellInteraction);
     }
 
-    // --- visitor obligatoire ---
+    /**
+     * Accept interaction from a visitor
+     * 
+     * @param v                 (AreaInteractionVisitor): The visitor
+     * @param isCellInteraction (boolean): True if cell interaction
+     */
     @Override
     public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteraction) {
         ((ICMazeInteractionVisitor) v).interactWith(this, isCellInteraction);
     }
 
-    // --- handler interne ---
+    /**
+     * ProjectileInteractionHandler
+     * Internal handler for projectile interactions
+     */
     private class ProjectileInteractionHandler implements ICMazeInteractionVisitor {
 
+        /**
+         * Interact with a player
+         * 
+         * @param player            (ICMazePlayer): The player
+         * @param isCellInteraction (boolean): True if cell interaction
+         */
         @Override
         public void interactWith(ICMazePlayer player, boolean isCellInteraction) {
             if (isCellInteraction && !stopped) {

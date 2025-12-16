@@ -11,20 +11,20 @@ public final class LevelGenerator {
 
     private static final Random rng = RandomGenerator.rng;
 
-    // Classe utilitaire : pas d’instance
+    // Utility class: no instance
     private LevelGenerator() {
     }
 
     /**
-     * Génère un niveau linéaire :
-     * Spawn -> length aires procédurales -> Boss
+     * Generate a linear level:
+     * Spawn -> length procedural areas -> Boss
      */
     public static ICMazeArea[] generateLine(ICMaze game, int length) {
 
-        // Spawn + length salles + Boss
+        // Spawn + length rooms + Boss
         ICMazeArea[] areas = new ICMazeArea[length + 2];
 
-        // Référentiel fictif [x][y]
+        // Fictional referential [x][y]
         DiscreteCoordinates current = new DiscreteCoordinates(0, 0);
         Set<DiscreteCoordinates> occupied = new HashSet<>();
         occupied.add(current);
@@ -33,51 +33,57 @@ public final class LevelGenerator {
         Spawn spawn = new Spawn();
         areas[0] = spawn;
 
-        ICMazeArea previous = spawn;
-
-        // 2) Aires intermédiaires
-        for (int i = 0; i < length; i++) {
-
-            // Progression (énoncé)
-            double progress = (double) (i + 1) / length;
-
-            // Choix direction libre (N, E, S)
+        if (length == 0) {
+            BossArea boss = new BossArea();
             ICMazeArea.AreaPortals dir = chooseFreeDirection(current, occupied);
+            connectSpawnToBoss(spawn, dir, boss);
+            areas[1] = boss;
+            return areas;
+        }
 
-            DiscreteCoordinates next = move(current, dir);
-            occupied.add(next);
-            current = next;
+        // Generate first Labyrinth area connected to Spawn
+        int index = 0;
+        double progress = (double) (index + 1) / length;
+        ICMazeArea.AreaPortals dir = chooseFreeDirection(current, occupied);
+        current = move(current, dir);
+        occupied.add(current);
 
-            // Création de l’aire selon la progression
-            ICMazeArea newArea = createAreaForProgress(i, progress);
+        AireLabyrinthique firstArea = createAreaForProgress(index, progress);
+        firstArea.setPortalEnter(getOpposite(dir));
 
-            if (newArea instanceof AireLabyrinthique al) {
-                // On entre dans newArea par l'opposé de la direction prise depuis previous
-                al.setPortalEnter(getOpposite(dir));
-            }
+        // Connect Spawn -> First Labyrinth Area
+        connectSpawnToLabyrinth(spawn, dir, firstArea);
+        areas[1] = firstArea;
 
-            if (previous instanceof AireLabyrinthique al) {
-                // On sort de previous par la direction dir
-                al.setPortalExit(dir);
-            }
+        AireLabyrinthique previous = firstArea;
 
-            // Connexion bidirectionnelle (TA manière) + Centralisation des clés
-            connectAreas(previous, dir, newArea);
+        // 2) Intermediate areas
+        for (int i = 1; i < length; i++) {
+            progress = (double) (i + 1) / length;
+            dir = chooseFreeDirection(current, occupied);
+            current = move(current, dir);
+            occupied.add(current);
+
+            AireLabyrinthique newArea = createAreaForProgress(i, progress);
+            newArea.setPortalEnter(getOpposite(dir));
+
+            // Previous (Labyrinth) -> Current (Labyrinth)
+            previous.setPortalExit(dir);
+
+            connectLabyrinthToLabyrinth(previous, dir, newArea);
 
             areas[i + 1] = newArea;
             previous = newArea;
         }
 
-        // 3) BossArea à la fin
+        // 3) BossArea at the end
         BossArea boss = new BossArea();
-
         ICMazeArea.AreaPortals bossDir = chooseFreeDirection(current, occupied);
 
-        if (previous instanceof AireLabyrinthique al) {
-            al.setPortalExit(bossDir);
-        }
+        // Previous (Labyrinth) -> Boss
+        previous.setPortalExit(bossDir);
 
-        connectAreas(previous, bossDir, boss);
+        connectLabyrinthToBoss(previous, bossDir, boss);
 
         areas[length + 1] = boss;
 
@@ -85,12 +91,11 @@ public final class LevelGenerator {
     }
 
     // ======================
-    // MÉTHODES UTILITAIRES
+    // UTILITY METHODS
     // ======================
 
     /**
-     * Choisit une direction libre parmi N, E, S
-     * (jamais vers l’arrière)
+     * Chooses a free direction among N, E, S
      */
     private static ICMazeArea.AreaPortals chooseFreeDirection(
             DiscreteCoordinates current,
@@ -110,12 +115,11 @@ public final class LevelGenerator {
             }
         }
 
-        // Cas extrême : on force Est
         return ICMazeArea.AreaPortals.E;
     }
 
     /**
-     * Déplace une position selon une direction
+     * Moves position by direction
      */
     private static DiscreteCoordinates move(
             DiscreteCoordinates c,
@@ -130,10 +134,10 @@ public final class LevelGenerator {
     }
 
     /**
-     * Crée Small / Medium / Large selon la progression
-     * (règle EPFL)
+     * Creates Small / Medium / Large based on progress
+     * Now strictly returns AireLabyrinthique
      */
-    private static ICMazeArea createAreaForProgress(
+    private static AireLabyrinthique createAreaForProgress(
             int index,
             double progress) {
 
@@ -149,86 +153,122 @@ public final class LevelGenerator {
         return new SmallArea(keyId);
     }
 
-    /**
-     * Connecte deux aires via leurs portails
-     * en utilisant TES setters
-     */
-    private static void connectAreas(ICMazeArea from, ICMazeArea.AreaPortals dir, ICMazeArea to) {
+    // --- Specific Connection Methods strictly typed to remove instanceof ---
 
+    // Connect Spawn -> AireLabyrinthique
+    private static void connectSpawnToLabyrinth(Spawn from, ICMazeArea.AreaPortals dir, AireLabyrinthique to) {
+        setOutgoingLocked(from, dir, Integer.MAX_VALUE); // Spawn uses MAX_VALUE key
+
+        setDestinations(from, dir, to);
+
+        // Entering a Labyrinth -> Open
+        setIncomingOpen(to, dir);
+    }
+
+    // Connect AireLabyrinthique -> AireLabyrinthique
+    private static void connectLabyrinthToLabyrinth(AireLabyrinthique from, ICMazeArea.AreaPortals dir,
+            AireLabyrinthique to) {
+        setOutgoingLocked(from, dir, from.getKeyId());
+
+        setDestinations(from, dir, to);
+
+        setIncomingOpen(to, dir);
+    }
+
+    // Connect AireLabyrinthique -> BossArea
+    private static void connectLabyrinthToBoss(AireLabyrinthique from, ICMazeArea.AreaPortals dir, BossArea to) {
+        setOutgoingLocked(from, dir, from.getKeyId());
+
+        setDestinations(from, dir, to);
+
+        // Entering Boss Area -> Locked usually
+        setIncomingLocked(to, dir, 999);
+    }
+
+    // Connect Spawn -> BossArea (case length=0)
+    private static void connectSpawnToBoss(Spawn from, ICMazeArea.AreaPortals dir, BossArea to) {
+        setOutgoingLocked(from, dir, Integer.MAX_VALUE);
+
+        setDestinations(from, dir, to);
+
+        setIncomingLocked(to, dir, 999);
+    }
+
+    // --- Low-level helpers for connection logic ---
+
+    private static void setDestinations(ICMazeArea from, ICMazeArea.AreaPortals dir, ICMazeArea to) {
         switch (dir) {
             case E -> {
-                if (from instanceof AireLabyrinthique) {
-                    AireLabyrinthique al = (AireLabyrinthique) from;
-                    from.setEastKeyId(al.getKeyId());
-                    from.setEastState(Portal.State.LOCKED);
-                } else {
-                    // Spawn
-                    from.setEastKeyId(Integer.MAX_VALUE);
-                    from.setEastState(Portal.State.LOCKED);
-                }
                 from.setEastDestination(to.getTitle(), to.getSize());
                 to.setWestDestination(from.getTitle(), from.getSize());
-                if (to instanceof BossArea) {
-                    to.setWestKeyId(999);
-                    to.setWestState(Portal.State.LOCKED);
-                } else {
-                    to.setWestState(Portal.State.OPEN);
-                }
             }
             case W -> {
-                if (from instanceof AireLabyrinthique) {
-                    AireLabyrinthique al = (AireLabyrinthique) from;
-                    from.setWestKeyId(al.getKeyId());
-                    from.setWestState(Portal.State.LOCKED);
-                } else {
-                    from.setWestState(Portal.State.OPEN);
-                }
                 from.setWestDestination(to.getTitle(), to.getSize());
                 to.setEastDestination(from.getTitle(), from.getSize());
-                if (to instanceof BossArea) {
-                    to.setEastKeyId(999);
-                    to.setEastState(Portal.State.LOCKED);
-                } else {
-                    to.setEastState(Portal.State.OPEN);
-                }
             }
             case N -> {
-                if (from instanceof AireLabyrinthique) {
-                    AireLabyrinthique al = (AireLabyrinthique) from;
-                    from.setNorthKeyId(al.getKeyId());
-                    from.setNorthState(Portal.State.LOCKED);
-                } else {
-                    // Spawn
-                    from.setNorthKeyId(Integer.MAX_VALUE);
-                    from.setNorthState(Portal.State.LOCKED);
-                }
                 from.setNorthDestination(to.getTitle(), to.getSize());
                 to.setSouthDestination(from.getTitle(), from.getSize());
-                if (to instanceof BossArea) {
-                    to.setSouthKeyId(999);
-                    to.setSouthState(Portal.State.LOCKED);
-                } else {
-                    to.setSouthState(Portal.State.OPEN);
-                }
             }
             case S -> {
-                if (from instanceof AireLabyrinthique) {
-                    AireLabyrinthique al = (AireLabyrinthique) from;
-                    from.setSouthKeyId(al.getKeyId());
-                    from.setSouthState(Portal.State.LOCKED);
-                } else {
-                    // Spawn
-                    from.setSouthKeyId(Integer.MAX_VALUE);
-                    from.setSouthState(Portal.State.LOCKED);
-                }
                 from.setSouthDestination(to.getTitle(), to.getSize());
                 to.setNorthDestination(from.getTitle(), from.getSize());
-                if (to instanceof BossArea) {
-                    to.setNorthKeyId(999);
-                    to.setNorthState(Portal.State.LOCKED);
-                } else {
-                    to.setNorthState(Portal.State.OPEN);
-                }
+            }
+        }
+    }
+
+    private static void setOutgoingLocked(ICMazeArea from, ICMazeArea.AreaPortals dir, int keyId) {
+        switch (dir) {
+            case E -> {
+                from.setEastKeyId(keyId);
+                from.setEastState(Portal.State.LOCKED);
+            }
+            case W -> {
+                from.setWestKeyId(keyId);
+                from.setWestState(Portal.State.LOCKED);
+            }
+            case N -> {
+                from.setNorthKeyId(keyId);
+                from.setNorthState(Portal.State.LOCKED);
+            }
+            case S -> {
+                from.setSouthKeyId(keyId);
+                from.setSouthState(Portal.State.LOCKED);
+            }
+        }
+    }
+
+    private static void setIncomingOpen(ICMazeArea to, ICMazeArea.AreaPortals fromDir) {
+        // Warning: fromDir is the direction leaving 'from', so 'to' receives on
+        // opposite
+        // However, switch cases below match original logic which sets the COMPLEMENTARY
+        // portal on 'to'
+        // Original: case E -> to.setWestState(OPEN)
+        switch (fromDir) {
+            case E -> to.setWestState(Portal.State.OPEN);
+            case W -> to.setEastState(Portal.State.OPEN);
+            case N -> to.setSouthState(Portal.State.OPEN);
+            case S -> to.setNorthState(Portal.State.OPEN);
+        }
+    }
+
+    private static void setIncomingLocked(ICMazeArea to, ICMazeArea.AreaPortals fromDir, int keyId) {
+        switch (fromDir) {
+            case E -> {
+                to.setWestKeyId(keyId);
+                to.setWestState(Portal.State.LOCKED);
+            }
+            case W -> {
+                to.setEastKeyId(keyId);
+                to.setEastState(Portal.State.LOCKED);
+            }
+            case N -> {
+                to.setSouthKeyId(keyId);
+                to.setSouthState(Portal.State.LOCKED);
+            }
+            case S -> {
+                to.setNorthKeyId(keyId);
+                to.setNorthState(Portal.State.LOCKED);
             }
         }
     }

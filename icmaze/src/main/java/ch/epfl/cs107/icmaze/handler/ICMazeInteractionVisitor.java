@@ -12,53 +12,108 @@ import ch.epfl.cs107.icmaze.actor.LogMonster;
 import ch.epfl.cs107.icmaze.actor.collectable.Coin;
 
 /**
+ * ICMazeInteractionVisitor
  * InteractionVisitor for the ICMaze entities
  */
-
 public interface ICMazeInteractionVisitor extends AreaInteractionVisitor {
-    /// Add Interaction method with all non Abstract Interactable
 
-    // Interaction avec une cellule
+    /**
+     * Simulate an interaction between ICMaze actors and an ICMazeCell
+     * 
+     * @param cell              (ICMazeCell): the cell, not null
+     * @param isCellInteraction (boolean): true if it is a cell interaction
+     */
     default void interactWith(ICMazeBehavior.ICMazeCell cell, boolean isCellInteraction) {
-        // rien par défaut
+        // default empty
     }
 
-    // Interaction avec le joueur
+    /**
+     * Simulate an interaction between ICMaze actors and an ICMazePlayer
+     * 
+     * @param player            (ICMazePlayer): the player, not null
+     * @param isCellInteraction (boolean): true if it is a cell interaction
+     */
     default void interactWith(ICMazePlayer player, boolean isCellInteraction) {
-        // rien par défaut
+        // default empty
     }
 
-    // Interaction avec une pioche
+    /**
+     * Simulate an interaction between ICMaze actors and a Pickaxe
+     * 
+     * @param pickaxe           (Pickaxe): the pickaxe, not null
+     * @param isCellInteraction (boolean): true if it is a cell interaction
+     */
     default void interactWith(Pickaxe pickaxe, boolean isCellInteraction) {
-        // rien par défaut
+        // default empty
     }
 
-    // Interaction avec un cœur
+    /**
+     * Simulate an interaction between ICMaze actors and a Heart
+     * 
+     * @param heart             (Heart): the heart, not null
+     * @param isCellInteraction (boolean): true if it is a cell interaction
+     */
     default void interactWith(Heart heart, boolean isCellInteraction) {
-        // rien par défaut
+        // default empty
     }
 
+    /**
+     * Simulate an interaction between ICMaze actors and a Key
+     * 
+     * @param key               (Key): the key, not null
+     * @param isCellInteraction (boolean): true if it is a cell interaction
+     */
     default void interactWith(Key key, boolean isCellInteraction) {
-
+        // default empty
     }
 
+    /**
+     * Simulate an interaction between ICMaze actors and a Portal
+     * 
+     * @param portal            (Portal): the portal, not null
+     * @param isCellInteraction (boolean): true if it is a cell interaction
+     */
     default void interactWith(Portal portal, boolean isCellInteraction) {
-
+        // default empty
     }
 
+    /**
+     * Simulate an interaction between ICMaze actors and a Rock
+     * 
+     * @param rock              (Rock): the rock, not null
+     * @param isCellInteraction (boolean): true if it is a cell interaction
+     */
     default void interactWith(Rock rock, boolean isCellInteraction) {
-
+        // default empty
     }
 
+    /**
+     * Simulate an interaction between ICMaze actors and a LogMonster
+     * 
+     * @param monster           (LogMonster): the monster, not null
+     * @param isCellInteraction (boolean): true if it is a cell interaction
+     */
     default void interactWith(LogMonster monster, boolean isCellInteraction) {
-
+        // default empty
     }
 
+    /**
+     * Simulate an interaction between ICMaze actors and a Boss
+     * 
+     * @param boss              (Boss): the boss, not null
+     * @param isCellInteraction (boolean): true if it is a cell interaction
+     */
     default void interactWith(Boss boss, boolean isCellInteraction) {
-
+        // default empty
     }
 
+    /**
+     * Simulate an interaction between ICMaze actors and a Coin
+     * 
+     * @param coin              (Coin): the coin, not null
+     * @param isCellInteraction (boolean): true if it is a cell interaction
+     */
     default void interactWith(Coin coin, boolean isCellInteraction) {
+        // default empty
     }
-
 }

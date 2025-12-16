@@ -12,48 +12,51 @@ import static ch.epfl.cs107.play.window.Keyboard.LEFT;
 import static ch.epfl.cs107.play.window.Keyboard.RIGHT;
 
 /**
- * Interface KeyboardConfig
- * Définition des touches de déplacement des deux joueurs ainsi que d'autres
- * actions globales dans le jeu.
+ * KeyBindings
+ * Class defining key bindings for players and global game actions.
  */
 public final class KeyBindings {
 
     /**
-     * Touches utilisées pour le joueur rouge.
+     * Key bindings used for the player.
      */
     public static final PlayerKeyBindings PLAYER_KEY_BINDINGS = new PlayerKeyBindings(UP, LEFT, DOWN, RIGHT, SPACE, E);
 
     /**
-     * Touche pour passer au dialogue suivant.
+     * Key to advance to the next dialog.
      */
     public static final int NEXT_DIALOG = ENTER;
+
     /**
-     * Touche pour réinitialiser le jeu.
+     * Key to reset the game.
      */
     public static final int RESET_GAME = R;
+
     /**
-     * Touche pour réinitialiser la zone.
+     * Key to pause the game.
      */
     public static final int PAUSE_GAME = P;
 
     /**
-     * Touche pour se téléporter à la salle du BOSS
+     * Key to teleport to the BOSS room.
      */
     public static final int BOSS_ROOM = B;
 
+    /**
+     * Private constructor to prevent instantiation
+     */
     private KeyBindings() {
-
     }
 
     /**
-     * Touches utilisées pour un joueur
+     * Key bindings record for a player
      *
-     * @param up         Pour le déplacement vers le haut
-     * @param left       Pour le déplacement vers la gauche
-     * @param down       Pour le déplacement vers le bas
-     * @param right      Pour le déplacement vers la droite
-     * @param pickaxe    Pour utiliser la pioche
-     * @param interact   Pour interagir à distance
+     * @param up       (int): Key for moving up
+     * @param left     (int): Key for moving left
+     * @param down     (int): Key for moving down
+     * @param right    (int): Key for moving right
+     * @param pickaxe  (int): Key for using the pickaxe
+     * @param interact (int): Key for remote interaction
      */
     public record PlayerKeyBindings(int up, int left, int down, int right, int pickaxe, int interact) {
     }
