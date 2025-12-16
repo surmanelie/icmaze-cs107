@@ -29,6 +29,11 @@ public abstract class ICMazeArea extends Area implements DialogHandler {
 
     private ICMaze game;
 
+    //private static final  float DEFAULT_SCALE_FACTOR = 11.f;
+    private static final float DYNAMIC_SCALE_MULTIPLIER = 1.375f;
+    private static final float MAXIMUM_SCALE = 30f;
+
+
     @Override
     public void publish(Dialog dialog) {
         if (game != null) {
@@ -47,9 +52,27 @@ public abstract class ICMazeArea extends Area implements DialogHandler {
         createPortals();
     }
 
+//    @Override
+//    public float getCameraScaleFactor() {
+//
+//        return (float) Math.min(getSize() * 1.375, 30);
+//    }
+
+    // Dans ICMazeArea.java
+
     @Override
     public float getCameraScaleFactor() {
-        return (float) Math.min(getSize() * 1.375, 30);
+
+        int effectiveSize = Math.max(getWidth(), getHeight());
+
+
+        return (float) Math.min(effectiveSize * DYNAMIC_SCALE_MULTIPLIER, MAXIMUM_SCALE );
+//        // Si c'est une petite aire (8), on force 11 comme demandé dans l'étape 1
+//        if (getSize() <= 8) {
+//            return 11f;
+//        }
+//        // Sinon calcul dynamique pour l'extension
+//        return (float) Math.min(getSize() * 1.375, 30);
     }
 
     public abstract DiscreteCoordinates getplayerSpawnPosition();

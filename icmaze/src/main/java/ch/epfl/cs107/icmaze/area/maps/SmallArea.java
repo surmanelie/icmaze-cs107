@@ -56,4 +56,11 @@ public class SmallArea extends AireLabyrinthique {
     public int getKeyId() {
         return super.getKeyId();
     }
+
+
+
+//    @Override
+//    public float getCameraScaleFactor() {
+//        return 15f; // ou 14f, ou 16f — constant
+//    }
 }

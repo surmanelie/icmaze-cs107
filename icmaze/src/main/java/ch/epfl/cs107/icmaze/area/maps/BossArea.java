@@ -58,6 +58,12 @@ public class BossArea extends ICMazeArea implements Logic {
 
     @Override
     protected void createArea() {
+        // d'abord on nettoie l'ancien boss
+//        if (boss != null){
+//            boss.cleanUp(this);
+//            unregisterActor(boss);
+//            boss = null;
+//        }
         boss = new Boss(this, Orientation.DOWN, new DiscreteCoordinates(4, 4));
         registerActor(boss);
         // registerActor(new Pickaxe(this, Orientation.DOWN, new DiscreteCoordinates(5,
@@ -68,4 +74,10 @@ public class BossArea extends ICMazeArea implements Logic {
     public DiscreteCoordinates getplayerSpawnPosition() {
         return new DiscreteCoordinates(5, 7);
     }
+//
+//    @Override
+//    public float getCameraScaleFactor() {
+//        return 15f; // ou 14f, ou 16f — constant
+//    }
+
 }

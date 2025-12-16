@@ -83,7 +83,7 @@ public class Spawn extends ICMazeArea {
         registerActor(key1);
 
         // Clé 2 : identifiant MAX_VALUE - 1 en (1,2)
-        Key key2 = new Key(this, Orientation.DOWN, new DiscreteCoordinates(1, 2), keyIdL2);
+        Key key2 = new Key(this, Orientation.DOWN, new DiscreteCoordinates(1, 2), 0);
         registerActor(key2);
 
         registerActor(pickaxe);
@@ -119,5 +119,10 @@ public class Spawn extends ICMazeArea {
             welcomeShown = true;
         }
     }
+
+//    @Override
+//    public float getCameraScaleFactor() {
+//        return 15f; // ou 14f, ou 16f — constant
+//    }
 
 }

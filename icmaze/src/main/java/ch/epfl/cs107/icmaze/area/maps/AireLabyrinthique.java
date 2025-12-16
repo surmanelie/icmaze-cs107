@@ -66,9 +66,27 @@ public abstract class AireLabyrinthique extends ICMazeArea {
         this.keyId = keyId;
     }
 
+    private boolean isvalid(DiscreteCoordinates c){
+        return c.x >=1 && c.x <= size && c.y >= 1 && c.y <= size;
+    }
+
     @Override
     protected void createArea() {
         mazeGrid = MazeGenerator.createMaze(size, size, difficulty);
+
+        //on force le nettoyage des entrèes/sorties pour ne pas avoir de problème sur les rocks au niveau des entrées des portails --> on évite l'erreur
+        DiscreteCoordinates entry = getEntryArrivalCoordinates();
+        DiscreteCoordinates exit = getExitArrivalCoordinates();
+
+        if(isvalid(entry)){
+            mazeGrid[entry.y - 1][entry.x - 1] = 0;
+        }
+
+        if(isvalid(exit)){
+            mazeGrid[exit.y - 1][exit.x - 1] =0;
+        }
+
+
         MazeGenerator.printMaze(mazeGrid, getEntryArrivalCoordinates(), getExitArrivalCoordinates());
 
         buildGraphFromMaze();
@@ -171,8 +189,8 @@ public abstract class AireLabyrinthique extends ICMazeArea {
         return switch (portal) {
             case N -> new DiscreteCoordinates(size / 2, size);
             case S -> new DiscreteCoordinates(size / 2, 1);
-            case W -> new DiscreteCoordinates(size, size / 2);
-            case E -> new DiscreteCoordinates(1, size / 2);
+            case W -> new DiscreteCoordinates(1, size / 2);
+            case E -> new DiscreteCoordinates(size, size / 2);
         };
     }
 
