@@ -8,20 +8,37 @@ import ch.epfl.cs107.play.math.Orientation;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * PathFinderEnnemy
+ * Abstract class for enemies that use pathfinding.
+ */
 public abstract class PathFinderEnnemy extends Ennemy implements Interactor {
     private final int perceptionRadius;
-    private final static int MOVE_DURATION = 4; // ou autre valeur
+    private final static int MOVE_DURATION = 4;
 
-
+    /**
+     * PathFinderEnnemy constructor
+     * 
+     * @param area             (Area): Owner area
+     * @param orientation      (Orientation): Initial orientation
+     * @param position         (DiscreteCoordinates): Initial position
+     * @param maxHealth        (int): Max health
+     * @param perceptionRadius (int): Perception radius in cells
+     */
     protected PathFinderEnnemy(Area area,
-                               Orientation orientation,
-                               DiscreteCoordinates position,
-                               int maxHealth,
-                               int perceptionRadius) {
+            Orientation orientation,
+            DiscreteCoordinates position,
+            int maxHealth,
+            int perceptionRadius) {
         super(area, orientation, position, maxHealth);
         this.perceptionRadius = perceptionRadius;
     }
 
+    /**
+     * Calculate next orientation for movement
+     * 
+     * @return (Orientation): The next orientation, or null
+     */
     public abstract Orientation getNextOrientation();
 
     public int getPerceptionRadius() {
@@ -30,16 +47,16 @@ public abstract class PathFinderEnnemy extends Ennemy implements Interactor {
 
     @Override
     public boolean wantsCellInteraction() {
-        return false; // pas demandeur de contact
+        return false;
     }
 
     @Override
     public boolean wantsViewInteraction() {
-        return true;  // demandeur à distance
+        return true;
     }
 
     @Override
-    public void  updateAlive(float deltaTime) {
+    public void updateAlive(float deltaTime) {
         super.updateAlive(deltaTime);
 
         if (!isDead() && !isDisplacementOccurs()) {
@@ -65,6 +82,5 @@ public abstract class PathFinderEnnemy extends Ennemy implements Interactor {
         }
         return cells;
     }
-
 
 }

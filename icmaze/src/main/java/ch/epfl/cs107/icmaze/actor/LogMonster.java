@@ -22,10 +22,14 @@ import ch.epfl.cs107.play.window.Canvas;
 import java.util.LinkedList;
 import java.util.Queue;
 
+/**
+ * LogMonster
+ * A specific monster that looks like a log.
+ * It has different states: Sleeping, Random movement, and Targeting player.
+ */
 public class LogMonster extends PathFinderEnnemy {
 
     private static final int MAX_HEALTH = 3;
-    // à combien il peut voir autour de lui
     private static final int PERCEPTION_RADIUS = 5;
 
     private final double pTransition;
@@ -48,9 +52,9 @@ public class LogMonster extends PathFinderEnnemy {
     private static final int DEATH_ANIMATION_DURATION = 24;
     private static final int ANIMATION_DURATION = 12;
 
-    private OrientedAnimation targetingAnimation;
-    private OrientedAnimation randomAnimation;
-    private OrientedAnimation sleepingAnimation;
+    private final OrientedAnimation targetingAnimation;
+    private final OrientedAnimation randomAnimation;
+    private final OrientedAnimation sleepingAnimation;
 
     private Path graphicPath;
 
@@ -72,6 +76,15 @@ public class LogMonster extends PathFinderEnnemy {
 
     private final LogMonsterInteractionHandler handler = new LogMonsterInteractionHandler();
 
+    /**
+     * LogMonster constructor
+     * 
+     * @param area         (Area): Owner area
+     * @param orientation  (Orientation): Initial orientation
+     * @param position     (DiscreteCoordinates): Initial position
+     * @param initialState (State): Initial state
+     * @param signal       (Logic): Signal to control sleeping state
+     */
     public LogMonster(Area area, Orientation orientation, DiscreteCoordinates position, State initialState,
             Logic signal) {
 
@@ -82,7 +95,7 @@ public class LogMonster extends PathFinderEnnemy {
         this.reorientCooldown = new Cooldown(0.75f);
         this.stateCooldown = new Cooldown(3.0f);
 
-        int difficulty = Difficulty.MEDIUM; // valeur par défaut
+        int difficulty = Difficulty.MEDIUM; // default
 
         if (area instanceof AireLabyrinthique) {
             difficulty = ((AireLabyrinthique) area).getDifficulty();
@@ -190,7 +203,6 @@ public class LogMonster extends PathFinderEnnemy {
                         }
                     }
 
-                    // il peut se rendormir
                     if (canChangeState && rng.nextDouble() < (1.0 - pTransition)) {
                         state = State.SLEEPING;
                     }
@@ -211,23 +223,16 @@ public class LogMonster extends PathFinderEnnemy {
             }
         }
 
-        // // on met à jour l'orientation planifiée en fonction de la dernière position
-        // connue du joueur
-        // plannedOrientation = computeTargetOrientation();
-
         super.updateAlive(deltaTime);
     }
 
-    // dans quelle direction on se déplace au prochain mouvement
     @Override
     public Orientation getNextOrientation() {
         return plannedOrientation;
     }
 
-    // méthode pour calculer l'orientation pour avoir le plus court chemin
     private Orientation computeTargetOrientation() {
 
-        // si on a jamais vu le joueur ba on bouge pas
         if (lastKnowPlayerPosition == null) {
             return null;
         }
@@ -246,7 +251,7 @@ public class LogMonster extends PathFinderEnnemy {
 
         graphicPath = new Path(this.getPosition(), new LinkedList<>(path));
 
-        return path.poll(); // on prend juste la première direction du chemin
+        return path.poll();
 
     }
 
@@ -291,30 +296,11 @@ public class LogMonster extends PathFinderEnnemy {
 
                 if (playerPos.equals(front)) {
                     player.sufferHit();
-                    // triggerImmunity(); //temporaire
                 } else {
-                    lastKnowPlayerPosition = playerPos; // comme ça il mémorise la position du joueur
+                    lastKnowPlayerPosition = playerPos;
                 }
-                // lastKnowPlayerPosition = player.getCurrentMainCellCoordinates();
-
-                //
-                // DiscreteCoordinates front =
-                // getCurrentMainCellCoordinates().jump(getOrientation().toVector());
-                //
-                // if (player.getCurrentMainCellCoordinates().equals(front)) { //front pour être
-                // sûr que le player est devant le monster (pas face à face)
-                // player.sufferHit();
-                // }
-
             }
-
-            // // la on mémorise la dernière position connue
-            // if(!isCellInteraction) {
-            // lastKnowPlayerPosition = player.getCurrentMainCellCoordinates();
-            // }
         }
-        // on a rien besoin d'autre car les autres méthodes gardent le même comportement
-        // que par défaut
     }
 
     public void setLastKnowPlayerPosition(DiscreteCoordinates position) {
@@ -329,6 +315,9 @@ public class LogMonster extends PathFinderEnnemy {
         this.state = state;
     }
 
+    /**
+     * Monster takes damage
+     */
     public void sufferHit() {
 
         if (immune || isDead()) {
@@ -339,9 +328,6 @@ public class LogMonster extends PathFinderEnnemy {
         healthBar.decrease(1);
         hasTakenDamage = true;
         triggerImmunity();
-        // if(healthBar.isOff()){
-        // /*death flow*/
-        // }
     }
 
     @Override

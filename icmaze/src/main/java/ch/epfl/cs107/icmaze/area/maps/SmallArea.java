@@ -1,25 +1,19 @@
 package ch.epfl.cs107.icmaze.area.maps;
 
 import ch.epfl.cs107.icmaze.Difficulty;
-import ch.epfl.cs107.icmaze.actor.Portal;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
+/**
+ * SmallArea
+ * Represents a small labyrinth area (size 8).
+ */
 public class SmallArea extends AireLabyrinthique {
 
-    // private int sizeSmall;
-    // public int getsSizeSmall(){
-    // return sizeSmall; }
-
-    // @Override
-    // public DiscreteCoordinates arrivalCoordinates(int size) {
-    // return ;
-    // }
-    //
-    // @Override
-    // public DiscreteCoordinates startingCoordinates(int size) {
-    // return ;
-    // }
-
+    /**
+     * SmallArea constructor
+     * 
+     * @param keyId (int): ID of the key generated in this area
+     */
     public SmallArea(int keyId) {
         super("SmallArea", 8, AreaPortals.W, AreaPortals.E, keyId, Difficulty.HARDEST);
     }
@@ -31,15 +25,7 @@ public class SmallArea extends AireLabyrinthique {
 
     @Override
     protected void createArea() {
-
         super.createArea();
-        // AregisterActor(new Background(this, getBehaviorName()));
-        // maintenant on configure des portails pour BossArea
-
-        // ICMazePlayer player = new ICMazePlayer(this, Orientation.DOWN,
-        // getplayerSpawnPosition(),"player");
-        // registerActor(player);
-
     }
 
     @Override
@@ -56,11 +42,4 @@ public class SmallArea extends AireLabyrinthique {
     public int getKeyId() {
         return super.getKeyId();
     }
-
-
-
-//    @Override
-//    public float getCameraScaleFactor() {
-//        return 15f; // ou 14f, ou 16f — constant
-//    }
 }

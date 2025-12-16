@@ -8,25 +8,40 @@ import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Orientation;
 import ch.epfl.cs107.play.window.Canvas;
 
+/**
+ * Ennemy
+ * Abstract class representing an enemy entity in the game.
+ */
 public abstract class Ennemy extends ICMazeActor implements Interactor, Interactable {
 
-    // --- Attributs privés (encapsulation stricte) ---
+    // --- Attributes ---
     private int currentHealth;
     private final int maxHealth;
 
-    private enum State { ALIVE, DYING, DEAD }
+    private enum State {
+        ALIVE,
+        DYING,
+        DEAD
+    }
+
     private State state;
 
     private final Animation deathAnimation;
 
-    // --- Constructeur ---
+    /**
+     * Ennemy constructor
+     * 
+     * @param area        (Area): Owner area, not null
+     * @param orientation (Orientation): Initial orientation
+     * @param position    (DiscreteCoordinates): Initial position
+     * @param maxHealth   (int): Maximum health points
+     */
     protected Ennemy(Area area,
-                     Orientation orientation,
-                     DiscreteCoordinates position,
-                     int maxHealth) {
+            Orientation orientation,
+            DiscreteCoordinates position,
+            int maxHealth) {
         super(area, orientation, position);
 
-        // Le sujet dit : on ne fixe pas le max ici => on le reçoit en paramètre
         this.maxHealth = maxHealth;
         this.currentHealth = maxHealth;
         this.state = State.ALIVE;
@@ -34,11 +49,15 @@ public abstract class Ennemy extends ICMazeActor implements Interactor, Interact
         this.deathAnimation = createDeathAnimation();
     }
 
-    /** Chaque type d'ennemi fournira sa propre animation de mort. */
+    /**
+     * Create the death animation for this enemy
+     * 
+     * @return (Animation): The death animation
+     */
     protected abstract Animation createDeathAnimation();
 
+    // --- Accessors ---
 
-    // --- Accesseurs (lecture seule de l'extérieur) ---
     public int getCurrentHealth() {
         return currentHealth;
     }
@@ -51,15 +70,16 @@ public abstract class Ennemy extends ICMazeActor implements Interactor, Interact
         return currentHealth <= 0;
     }
 
+    // --- Health Logic ---
 
-    // --- Perte de points de vie (API officielle) ---
     /**
-     * Méthode à utiliser partout pour infliger des dégâts à l'ennemi.
-     * Elle applique la règle : mort si PV <= 0 + animation + disparition.
+     * Inflict damage to the enemy.
+     * 
+     * @param amount (int): Amount of damage
      */
     public void loseHealth(int amount) {
         if (state != State.ALIVE) {
-            return; // déjà en train de mourir ou mort
+            return;
         }
 
         currentHealth -= amount;
@@ -70,21 +90,23 @@ public abstract class Ennemy extends ICMazeActor implements Interactor, Interact
         }
     }
 
-    /** Démarre le processus "animation de mort + future disparition". */
+    /**
+     * Start the dying process
+     */
     private void startDying() {
         state = State.DYING;
         deathAnimation.reset();
     }
 
+    // --- Physics ---
 
-    // --- Contraintes de déplacements / collisions ---
     @Override
     public boolean takeCellSpace() {
-        // On bloque la case tant qu'on est en vie
         return state == State.ALIVE;
     }
 
-    // --- Interactions : par défaut, tout est autorisé (distance + contact) ---
+    // --- Interactions ---
+
     @Override
     public boolean isCellInteractable() {
         return true;
@@ -105,8 +127,8 @@ public abstract class Ennemy extends ICMazeActor implements Interactor, Interact
         return true;
     }
 
+    // --- Lifecycle ---
 
-    // --- Cycle de vie (update / animation de mort / disparition) ---
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
@@ -125,17 +147,17 @@ public abstract class Ennemy extends ICMazeActor implements Interactor, Interact
                 break;
 
             case DEAD:
-                // normalement plus rien à faire
                 break;
         }
     }
 
     /**
-     * Comportement normal de l'ennemi (déplacement, IA...) quand il est vivant.
-     * Les sous-classes surchargent cette méthode, pas les champs.
+     * Behavior when alive.
+     * Subclasses should override this instead of update for normal behavior.
+     * 
+     * @param deltaTime (float): Delta time
      */
     public void updateAlive(float deltaTime) {
-        // par défaut : rien
     }
 
     @Override
@@ -147,4 +169,3 @@ public abstract class Ennemy extends ICMazeActor implements Interactor, Interact
         }
     }
 }
-

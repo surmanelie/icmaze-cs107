@@ -1,62 +1,31 @@
 package ch.epfl.cs107.icmaze.area.maps;
 
 import ch.epfl.cs107.icmaze.Difficulty;
-import ch.epfl.cs107.icmaze.actor.Portal;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
+/**
+ * MediumArea
+ * Represents a medium labyrinth area (size 16).
+ */
 public class MediumArea extends AireLabyrinthique {
 
-    // private int sizeMedium;
-    // public int getsSizeMedium(){
-    // return sizeMedium; }
-
-    // @Override
-    // public DiscreteCoordinates arrivalCoordinates(int size) {
-    // return ;
-    // }
-    //
-    // @Override
-    // public DiscreteCoordinates startingCoordinates(int size) {
-    // return ;
-    // }
+    /**
+     * MediumArea constructor
+     * 
+     * @param keyId (int): ID of the key generated in this area
+     */
+    public MediumArea(int keyId) {
+        super("MediumArea", 16, AreaPortals.W, AreaPortals.E, keyId, Difficulty.HARDEST);
+    }
 
     @Override
     public int getSize() {
         return 16;
     }
 
-    public MediumArea(int keyId) {
-        super("MediumArea", 16, AreaPortals.W, AreaPortals.E, keyId, Difficulty.HARDEST);
-    }
-
+    @Override
     protected void createArea() {
-        // super.createArea();
-        // AregisterActor(new Background(this, getBehaviorName()));
-        // maintenant on configure des portails pour BossArea
-
-        // ICMazePlayer player = new ICMazePlayer(this, Orientation.DOWN,
-        // getplayerSpawnPosition(),"player");
-        // registerActor(player);
         super.createArea();
-        // AregisterActor(new Background(this, getBehaviorName()));
-        // maintenant on configure des portails pour BossArea
-
-        // ICMazePlayer player = new ICMazePlayer(this, Orientation.DOWN,
-        // getplayerSpawnPosition(),"player");
-        // registerActor(player);
-
-        // setWestState(Portal.State.OPEN);
-        // setEastState(Portal.State.OPEN);
-        // setNorthState(Portal.State.INVISIBLE);
-        // setSouthState(Portal.State.INVISIBLE);
-
-        // setWestDestination("icmaze/SmallArea["+ keyIdL2+"]");
-        // setEastDestination("icmaze/LargeArea["+ keyIdL4+"]");
-
-        // il n'y a que pour west qu'on met une aire d'arrivée car les autres sont
-        // invisibles
-        // setEastDestination("icmaze/Spawn");
-
     }
 
     @Override
@@ -68,5 +37,4 @@ public class MediumArea extends AireLabyrinthique {
     public String getTitle() {
         return "icmaze/MediumArea[" + getKeyId() + "]";
     }
-
 }

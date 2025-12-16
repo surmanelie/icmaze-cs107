@@ -1,44 +1,58 @@
 package ch.epfl.cs107.icmaze;
 
-
 import ch.epfl.cs107.icmaze.handler.ICMazeInteractionVisitor;
 import ch.epfl.cs107.play.areagame.actor.Interactable;
 import ch.epfl.cs107.play.areagame.area.AreaBehavior;
 import ch.epfl.cs107.play.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.play.window.Window;
 
-public class ICMazeBehavior extends AreaBehavior{
+/**
+ * ICMazeBehavior
+ * Defines the behavior of the ICMaze cells (walkability, interaction).
+ */
+public class ICMazeBehavior extends AreaBehavior {
 
-    public ICMazeBehavior (Window window, String name){
-        super (window,name);
+    /**
+     * ICMazeBehavior constructor
+     * 
+     * @param window (Window): The game window
+     * @param name   (String): The name of the behavior map file
+     */
+    public ICMazeBehavior(Window window, String name) {
+        super(window, name);
 
-        for (int y =0; y < getHeight(); ++y){
-            for (int x = 0; x < getWidth(); ++x){
+        for (int y = 0; y < getHeight(); ++y) {
+            for (int x = 0; x < getWidth(); ++x) {
 
                 int color = getRGB(getHeight() - 1 - y, x);
                 CellType ct = CellType.toType(color);
 
-                setCell (x, y, new ICMazeCell(x,y,ct));
+                setCell(x, y, new ICMazeCell(x, y, ct));
             }
         }
     }
 
-    public enum CellType{
-        NONE(0,false),
+    /**
+     * CellType
+     * Enumeration of the different cell types in the maze behaviors.
+     */
+    public enum CellType {
+        NONE(0, false),
         GROUND(-16777216, true),
         WALL(-14112955, false),
         HOLE(-65536, true);
 
-        final int type; // c'est quoi concrètement type
+        final int type;
         final boolean walkable;
 
-        CellType(int type, boolean walkable){
+        CellType(int type, boolean walkable) {
             this.type = type;
             this.walkable = walkable;
         }
-        public static CellType toType(int rgb){
-            for (CellType t : values()){
-                if(t.type == rgb){
+
+        public static CellType toType(int rgb) {
+            for (CellType t : values()) {
+                if (t.type == rgb) {
                     return t;
                 }
             }
@@ -46,34 +60,39 @@ public class ICMazeBehavior extends AreaBehavior{
         }
     }
 
-
-
-
-
-    public class ICMazeCell extends AreaBehavior.Cell implements Interactable{
-        boolean walkable = false;
+    /**
+     * ICMazeCell
+     * Represents a single cell in the maze with specific behavior.
+     */
+    public class ICMazeCell extends AreaBehavior.Cell implements Interactable {
         private final CellType type;
 
-        public ICMazeCell(int x, int y, CellType type){
-            super(x,y);
+        /**
+         * ICMazeCell constructor
+         * 
+         * @param x    (int): x coordinate
+         * @param y    (int): y coordinate
+         * @param type (CellType): The type of the cell
+         */
+        public ICMazeCell(int x, int y, CellType type) {
+            super(x, y);
             this.type = type;
-
         }
 
-
         @Override
-        public boolean takeCellSpace(){ // à vérifier si c'est bien publique
+        public boolean takeCellSpace() {
             return false;
         }
 
-
         @Override
-        public boolean canEnter(Interactable entity){
-            if(!type.walkable)return false;
-            // si y'a rien sur la cellule il peut passer le bg
-            if(entity.takeCellSpace()) {// ici on vérifie que dans chaque cellule il n'y ait personne d'autre
-                for(Interactable other : entities) {
-                    if (other.takeCellSpace()){//takeCellSpace est la méthode qui dit si l'entité qui est dans la cellule prend ou pas de l'espace
+        public boolean canEnter(Interactable entity) {
+            if (!type.walkable)
+                return false;
+
+            // Check if any other entity in the cell takes space
+            if (entity.takeCellSpace()) {
+                for (Interactable other : entities) {
+                    if (other.takeCellSpace()) {
                         return false;
                     }
                 }
@@ -82,23 +101,23 @@ public class ICMazeBehavior extends AreaBehavior{
         }
 
         @Override
-        public boolean canLeave(Interactable entity){ // est ce que l'entité a le droit de sortir de cette cellule
+        public boolean canLeave(Interactable entity) {
             return true;
         }
 
         @Override
-        public boolean isCellInteractable(){ // est ce qu'on peut intéragir avec cette cellule par contact
-            return true ;
+        public boolean isCellInteractable() {
+            return true;
         }
 
         @Override
-        public boolean isViewInteractable(){ // est ce qu'on peut intéragir avec cette cellule à distance
-            return false ;// false parce que les cellules n'ont pas d'action à distance
+        public boolean isViewInteractable() {
+            return false;
         }
+
+        @Override
         public void acceptInteraction(AreaInteractionVisitor v, boolean isCellInteraction) {
             ((ICMazeInteractionVisitor) v).interactWith(this, isCellInteraction);
         }
     }
-
-
 }

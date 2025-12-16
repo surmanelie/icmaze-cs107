@@ -1,49 +1,31 @@
 package ch.epfl.cs107.icmaze.area.maps;
 
 import ch.epfl.cs107.icmaze.Difficulty;
-import ch.epfl.cs107.icmaze.actor.Portal;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
+/**
+ * LargeArea
+ * Represents a large labyrinth area (size 32).
+ */
 public class LargeArea extends AireLabyrinthique {
 
-    // private int sizeLarge;
-    // public int getsSizeLarge(){
-    // return sizeLarge; }
-
-    // @Override
-    // public DiscreteCoordinates arrivalCoordinates(int size) {
-    // return ;
-    // }
-    //
-    // @Override
-    // public DiscreteCoordinates startingCoordinates(int size) {
-    // return ;
-    // }
+    /**
+     * LargeArea constructor
+     * 
+     * @param keyId (int): ID of the key generated in this area
+     */
+    public LargeArea(int keyId) {
+        super("LargeArea", 32, AreaPortals.W, AreaPortals.E, keyId, Difficulty.HARDEST);
+    }
 
     @Override
     public int getSize() {
         return 32;
     }
 
-    public LargeArea(int keyId) {
-        super("LargeArea", 32, AreaPortals.W, AreaPortals.E, keyId, Difficulty.HARDEST);
-    }
-
+    @Override
     protected void createArea() {
         super.createArea();
-        // AregisterActor(new Background(this, getBehaviorName()));
-        // maintenant on configure des portails pour BossArea
-
-        // ICMazePlayer player = new ICMazePlayer(this, Orientation.DOWN,
-        // getplayerSpawnPosition(),"player");
-        // registerActor(player);
-
-        // setWestDestination("icmaze/MediumArea["+ keyIdL3+"]");
-        // setEastDestination("icmaze/Boss");
-
-        // il n'y a que pour west qu'on met une aire d'arrivée car les autres sont
-        // invisibles
-        // setEastDestination("icmaze/Spawn");
     }
 
     @Override
@@ -55,5 +37,4 @@ public class LargeArea extends AireLabyrinthique {
     public String getTitle() {
         return "icmaze/LargeArea[" + getKeyId() + "]";
     }
-
 }
