@@ -1,7 +1,7 @@
 package ch.epfl.cs107.icmaze.area.maps;
 
 import ch.epfl.cs107.icmaze.ICMaze;
-import ch.epfl.cs107.icmaze.actor.collectable.Coin;
+
 import ch.epfl.cs107.icmaze.actor.collectable.Heart;
 import ch.epfl.cs107.icmaze.actor.collectable.Key;
 import ch.epfl.cs107.icmaze.actor.collectable.Pickaxe;
@@ -65,7 +65,7 @@ public class Spawn extends ICMazeArea {
         Rock rock = new Rock(this, new DiscreteCoordinates(3, 3));
         registerActor(rock);
 
-        registerActor(new Coin(this, Orientation.DOWN, new DiscreteCoordinates(5, 7), getValidationSignal()));
+        addCoinWithValidation(Orientation.DOWN, new DiscreteCoordinates(5, 7));
 
     }
 

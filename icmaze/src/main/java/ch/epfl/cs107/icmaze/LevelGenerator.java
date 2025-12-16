@@ -18,6 +18,10 @@ public final class LevelGenerator {
     /**
      * Generate a linear level:
      * Spawn -> length procedural areas -> Boss
+     * 
+     * @param game   The game instance to set on each area
+     * @param length The number of procedural areas to generate (excluding Spawn and
+     *               Boss)
      */
     public static ICMazeArea[] generateLine(ICMaze game, int length) {
 
@@ -31,10 +35,12 @@ public final class LevelGenerator {
 
         // 1) Spawn
         Spawn spawn = new Spawn();
+        spawn.setGame(game);
         areas[0] = spawn;
 
         if (length == 0) {
             BossArea boss = new BossArea();
+            boss.setGame(game);
             ICMazeArea.AreaPortals dir = chooseFreeDirection(current, occupied);
             connectSpawnToBoss(spawn, dir, boss);
             areas[1] = boss;
@@ -49,6 +55,7 @@ public final class LevelGenerator {
         occupied.add(current);
 
         AireLabyrinthique firstArea = createAreaForProgress(index, progress);
+        firstArea.setGame(game);
         firstArea.setPortalEnter(getOpposite(dir));
 
         // Connect Spawn -> First Labyrinth Area
@@ -65,6 +72,7 @@ public final class LevelGenerator {
             occupied.add(current);
 
             AireLabyrinthique newArea = createAreaForProgress(i, progress);
+            newArea.setGame(game);
             newArea.setPortalEnter(getOpposite(dir));
 
             // Previous (Labyrinth) -> Current (Labyrinth)
@@ -78,6 +86,7 @@ public final class LevelGenerator {
 
         // 3) BossArea at the end
         BossArea boss = new BossArea();
+        boss.setGame(game);
         ICMazeArea.AreaPortals bossDir = chooseFreeDirection(current, occupied);
 
         // Previous (Labyrinth) -> Boss
@@ -135,7 +144,7 @@ public final class LevelGenerator {
 
     /**
      * Creates Small / Medium / Large based on progress
-     * Now strictly returns AireLabyrinthique
+     * Returns AireLabyrinthique
      */
     private static AireLabyrinthique createAreaForProgress(
             int index,
@@ -144,13 +153,20 @@ public final class LevelGenerator {
         int keyId = Integer.MAX_VALUE - index;
         double r = rng.nextDouble();
 
+        int difficulty = switch ((int) (progress * 4)) {
+            case 0 -> Difficulty.EASY;
+            case 1 -> Difficulty.MEDIUM;
+            case 2 -> Difficulty.HARD;
+            default -> Difficulty.HARDEST;
+        };
+
         if (r < progress * progress) {
-            return new LargeArea(keyId);
+            return new LargeArea(keyId, difficulty);
         }
         if (r < progress) {
-            return new MediumArea(keyId);
+            return new MediumArea(keyId, difficulty);
         }
-        return new SmallArea(keyId);
+        return new SmallArea(keyId, difficulty);
     }
 
     // --- Specific Connection Methods strictly typed to remove instanceof ---
@@ -239,11 +255,6 @@ public final class LevelGenerator {
     }
 
     private static void setIncomingOpen(ICMazeArea to, ICMazeArea.AreaPortals fromDir) {
-        // Warning: fromDir is the direction leaving 'from', so 'to' receives on
-        // opposite
-        // However, switch cases below match original logic which sets the COMPLEMENTARY
-        // portal on 'to'
-        // Original: case E -> to.setWestState(OPEN)
         switch (fromDir) {
             case E -> to.setWestState(Portal.State.OPEN);
             case W -> to.setEastState(Portal.State.OPEN);

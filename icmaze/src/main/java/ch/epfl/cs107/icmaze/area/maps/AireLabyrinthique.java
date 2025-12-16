@@ -4,13 +4,12 @@ import ch.epfl.cs107.icmaze.Difficulty;
 import ch.epfl.cs107.icmaze.MazeGenerator;
 import ch.epfl.cs107.icmaze.RandomGenerator;
 import ch.epfl.cs107.icmaze.actor.LogMonster;
-import ch.epfl.cs107.icmaze.actor.Rock;
+
 import ch.epfl.cs107.icmaze.actor.collectable.Key;
 import ch.epfl.cs107.icmaze.area.ICMazeArea;
 import ch.epfl.cs107.play.io.FileSystem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Orientation;
-import ch.epfl.cs107.play.window.Window;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -66,26 +65,26 @@ public abstract class AireLabyrinthique extends ICMazeArea {
         this.keyId = keyId;
     }
 
-    private boolean isvalid(DiscreteCoordinates c){
-        return c.x >=1 && c.x <= size && c.y >= 1 && c.y <= size;
+    private boolean isvalid(DiscreteCoordinates c) {
+        return c.x >= 1 && c.x <= size && c.y >= 1 && c.y <= size;
     }
 
     @Override
     protected void createArea() {
         mazeGrid = MazeGenerator.createMaze(size, size, difficulty);
 
-        //on force le nettoyage des entrèes/sorties pour ne pas avoir de problème sur les rocks au niveau des entrées des portails --> on évite l'erreur
+        // on force le nettoyage des entrèes/sorties pour ne pas avoir de problème sur
+        // les rocks au niveau des entrées des portails --> on évite l'erreur
         DiscreteCoordinates entry = getEntryArrivalCoordinates();
         DiscreteCoordinates exit = getExitArrivalCoordinates();
 
-        if(isvalid(entry)){
+        if (isvalid(entry)) {
             mazeGrid[entry.y - 1][entry.x - 1] = 0;
         }
 
-        if(isvalid(exit)){
-            mazeGrid[exit.y - 1][exit.x - 1] =0;
+        if (isvalid(exit)) {
+            mazeGrid[exit.y - 1][exit.x - 1] = 0;
         }
-
 
         MazeGenerator.printMaze(mazeGrid, getEntryArrivalCoordinates(), getExitArrivalCoordinates());
 
@@ -160,7 +159,7 @@ public abstract class AireLabyrinthique extends ICMazeArea {
                     DiscreteCoordinates pos = new DiscreteCoordinates(x + 1, y + 1);
 
                     if (!pos.equals(entry) && !pos.equals(exit)) {
-                        registerActor(new Rock(this, Orientation.DOWN, pos, getValidationSignal()));
+                        addRockWithValidation(Orientation.DOWN, pos);
                     }
                 }
             }
@@ -233,9 +232,7 @@ public abstract class AireLabyrinthique extends ICMazeArea {
 
             LogMonster.State initialState = chooseInitialState(rng, diffRatio);
 
-            LogMonster monster = new LogMonster(this, Orientation.DOWN, pos, initialState, getValidationSignal());
-
-            registerActor(monster);
+            addLogMonsterWithValidation(Orientation.DOWN, pos, initialState);
         }
     }
 
@@ -253,6 +250,38 @@ public abstract class AireLabyrinthique extends ICMazeArea {
         } else {
             return LogMonster.State.TARGETING;
         }
+    }
+
+    @Override
+    public void onRockDestroyed(DiscreteCoordinates cell) {
+        // Convertir coordonnée "aire" -> indices mazeGrid
+        int gx = cell.x - 1;
+        int gy = cell.y - 1;
+
+        if (gx < 0 || gx >= size || gy < 0 || gy >= size) return;
+
+        // 1) Ouvrir la cellule
+        mazeGrid[gy][gx] = 0;
+
+        // 2) Recréer le noeud ET rafraîchir les voisins pour mettre à jour les arêtes
+        rebuildGraphNodeAt(gx, gy);
+        if (gx > 0) rebuildGraphNodeAt(gx - 1, gy);
+        if (gx < size - 1) rebuildGraphNodeAt(gx + 1, gy);
+        if (gy > 0) rebuildGraphNodeAt(gx, gy - 1);
+        if (gy < size - 1) rebuildGraphNodeAt(gx, gy + 1);
+    }
+
+    private void rebuildGraphNodeAt(int gx, int gy) {
+        if (mazeGrid[gy][gx] != 0) return; // on ne met des noeuds que sur les chemins
+
+        DiscreteCoordinates c = new DiscreteCoordinates(gx + 1, gy + 1);
+
+        boolean left  = (gx > 0        && mazeGrid[gy][gx - 1] == 0);
+        boolean right = (gx < size - 1 && mazeGrid[gy][gx + 1] == 0);
+        boolean down  = (gy > 0        && mazeGrid[gy - 1][gx] == 0);
+        boolean up    = (gy < size - 1 && mazeGrid[gy + 1][gx] == 0);
+
+        graph.addNode(c, left, up, right, down);
     }
 
 }

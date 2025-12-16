@@ -1,6 +1,5 @@
 package ch.epfl.cs107.icmaze.area.maps;
 
-import ch.epfl.cs107.icmaze.Difficulty;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
 /**
@@ -12,10 +11,11 @@ public class LargeArea extends AireLabyrinthique {
     /**
      * LargeArea constructor
      * 
-     * @param keyId (int): ID of the key generated in this area
+     * @param keyId      (int): ID of the key generated in this area
+     * @param difficulty (int): Difficulty level (minimum room size)
      */
-    public LargeArea(int keyId) {
-        super("LargeArea", 32, AreaPortals.W, AreaPortals.E, keyId, Difficulty.HARDEST);
+    public LargeArea(int keyId, int difficulty) {
+        super("LargeArea", 32, AreaPortals.W, AreaPortals.E, keyId, difficulty);
     }
 
     @Override

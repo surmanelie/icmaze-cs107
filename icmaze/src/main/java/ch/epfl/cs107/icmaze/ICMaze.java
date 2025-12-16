@@ -7,6 +7,7 @@ import ch.epfl.cs107.play.areagame.AreaGame;
 import ch.epfl.cs107.play.io.FileSystem;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Orientation;
+import ch.epfl.cs107.play.signal.logic.Logic;
 import ch.epfl.cs107.play.window.Window;
 import ch.epfl.cs107.play.window.Keyboard;
 
@@ -49,8 +50,7 @@ public class ICMaze extends AreaGame implements DialogHandler {
 
         if (areas.length > 0) {
             // Le dernier est BossArea qui est le signal logique
-            ch.epfl.cs107.play.signal.logic.Logic bossSignal = (ch.epfl.cs107.play.signal.logic.Logic) areas[areas.length
-                    - 1];
+           Logic bossSignal = (Logic) areas[areas.length - 1];
 
             for (ICMazeArea area : areas) {
                 area.setValidationSignal(bossSignal);
