@@ -20,11 +20,6 @@ public class BossArea extends ICMazeArea implements Logic {
         return boss != null && boss.isDefeated() && boss.getDroppedKey() != null && boss.getDroppedKey().isCollected();
     }
 
-    @Override
-    public boolean isOff() {
-        return !isOn();
-    }
-
     // private int sizeBoss;
     // public int getsSizeBoss(){
     // return sizeBoss; }
@@ -59,9 +54,9 @@ public class BossArea extends ICMazeArea implements Logic {
     @Override
     protected void createArea() {
         // d'abord on nettoie l'ancien boss
-//        if (boss != null){
-//            boss.cleanUP(this);
-//        }
+        // if (boss != null){
+        // boss.cleanUP(this);
+        // }
         boss = new Boss(this, Orientation.DOWN, new DiscreteCoordinates(4, 4));
         registerActor(boss);
         // registerActor(new Pickaxe(this, Orientation.DOWN, new DiscreteCoordinates(5,
@@ -72,10 +67,10 @@ public class BossArea extends ICMazeArea implements Logic {
     public DiscreteCoordinates getplayerSpawnPosition() {
         return new DiscreteCoordinates(5, 7);
     }
-//
-//    @Override
-//    public float getCameraScaleFactor() {
-//        return 15f; // ou 14f, ou 16f — constant
-//    }
+    //
+    // @Override
+    // public float getCameraScaleFactor() {
+    // return 15f; // ou 14f, ou 16f — constant
+    // }
 
 }

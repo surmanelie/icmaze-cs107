@@ -1,6 +1,5 @@
 package ch.epfl.cs107.icmaze.area.maps;
 
-import ch.epfl.cs107.icmaze.Difficulty;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 
 /**
@@ -12,10 +11,11 @@ public class SmallArea extends AireLabyrinthique {
     /**
      * SmallArea constructor
      * 
-     * @param keyId (int): ID of the key generated in this area
+     * @param keyId      (int): ID of the key generated in this area
+     * @param difficulty (int): Difficulty level (minimum room size)
      */
-    public SmallArea(int keyId) {
-        super("SmallArea", 8, AreaPortals.W, AreaPortals.E, keyId, Difficulty.HARDEST);
+    public SmallArea(int keyId, int difficulty) {
+        super("SmallArea", 8, AreaPortals.W, AreaPortals.E, keyId, difficulty);
     }
 
     @Override
@@ -23,10 +23,7 @@ public class SmallArea extends AireLabyrinthique {
         return 8;
     }
 
-    @Override
-    protected void createArea() {
-        super.createArea();
-    }
+    // Removed createArea() to reuse AireLabyrinthique's implementation
 
     @Override
     public DiscreteCoordinates getplayerSpawnPosition() {

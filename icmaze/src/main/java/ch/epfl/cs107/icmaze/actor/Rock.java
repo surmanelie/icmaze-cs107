@@ -56,15 +56,16 @@ public class Rock extends AreaEntity implements Interactable, Updatable {
                 ANIMATION_DURATION / 7, false);
     }
 
-//    public Rock(Area area, Orientation orientation, DiscreteCoordinates coordinates, Logic signal) {
-//        super(area, orientation, coordinates);
-//        this.signal = signal;
-//        sprite = new Sprite("rock.2", 1f, 1f, this);
-//
-//        vanishAnimation = new Animation("icmaze/vanish", 7, 2, 2, this, 32, 32, new Vector(-0.5f, 0f),
-//                ANIMATION_DURATION / 7, false);
-//    }
-
+    // public Rock(Area area, Orientation orientation, DiscreteCoordinates
+    // coordinates, Logic signal) {
+    // super(area, orientation, coordinates);
+    // this.signal = signal;
+    // sprite = new Sprite("rock.2", 1f, 1f, this);
+    //
+    // vanishAnimation = new Animation("icmaze/vanish", 7, 2, 2, this, 32, 32, new
+    // Vector(-0.5f, 0f),
+    // ANIMATION_DURATION / 7, false);
+    // }
 
     public Rock(ICMazeArea area, DiscreteCoordinates coordinates) {
 
@@ -96,10 +97,9 @@ public class Rock extends AreaEntity implements Interactable, Updatable {
         healthBar.decrease(1);
         hasTakenDamage = true;
 
-        if (healthBar.isOff()) {
+        if (!healthBar.isOn()) {
             vanishing = true;
             owner.onRockDestroyed(getCurrentMainCellCoordinates());
-
 
             return;
         }

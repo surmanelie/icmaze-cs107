@@ -19,7 +19,23 @@ import ch.epfl.cs107.play.engine.actor.Dialog;
 
 import java.util.Queue;
 
-public abstract class ICMazeArea extends Area implements DialogHandler {
+public abstract class ICMazeArea extends Area implements DialogHandler, Logic {
+    // ... in existing class body
+    @Override
+    public boolean isOn() {
+        return validationSignal.isOn();
+    }
+
+    @Override
+    public boolean isOff() {
+        return !isOn();
+    }
+
+    public void setValidationSignal(Logic signal) {
+        this.validationSignal = signal;
+    }
+
+    // getValidationSignal removed
     private final String behaviorName;
     private Portal W;
     private Portal S;
@@ -29,10 +45,9 @@ public abstract class ICMazeArea extends Area implements DialogHandler {
 
     private ICMaze game;
 
-    //private static final  float DEFAULT_SCALE_FACTOR = 11.f;
+    // private static final float DEFAULT_SCALE_FACTOR = 11.f;
     private static final float DYNAMIC_SCALE_MULTIPLIER = 1.375f;
     private static final float MAXIMUM_SCALE = 30f;
-
 
     @Override
     public void publish(Dialog dialog) {
@@ -52,11 +67,11 @@ public abstract class ICMazeArea extends Area implements DialogHandler {
         createPortals();
     }
 
-//    @Override
-//    public float getCameraScaleFactor() {
-//
-//        return (float) Math.min(getSize() * 1.375, 30);
-//    }
+    // @Override
+    // public float getCameraScaleFactor() {
+    //
+    // return (float) Math.min(getSize() * 1.375, 30);
+    // }
 
     // Dans ICMazeArea.java
 
@@ -65,14 +80,13 @@ public abstract class ICMazeArea extends Area implements DialogHandler {
 
         int effectiveSize = Math.max(getWidth(), getHeight());
 
-
-        return (float) Math.min(effectiveSize * DYNAMIC_SCALE_MULTIPLIER, MAXIMUM_SCALE );
-//        // Si c'est une petite aire (8), on force 11 comme demandé dans l'étape 1
-//        if (getSize() <= 8) {
-//            return 11f;
-//        }
-//        // Sinon calcul dynamique pour l'extension
-//        return (float) Math.min(getSize() * 1.375, 30);
+        return (float) Math.min(effectiveSize * DYNAMIC_SCALE_MULTIPLIER, MAXIMUM_SCALE);
+        // // Si c'est une petite aire (8), on force 11 comme demandé dans l'étape 1
+        // if (getSize() <= 8) {
+        // return 11f;
+        // }
+        // // Sinon calcul dynamique pour l'extension
+        // return (float) Math.min(getSize() * 1.375, 30);
     }
 
     public abstract DiscreteCoordinates getplayerSpawnPosition();
@@ -256,16 +270,23 @@ public abstract class ICMazeArea extends Area implements DialogHandler {
 
     private Logic validationSignal = Logic.FALSE;
 
-    public void setValidationSignal(Logic signal) {
-        this.validationSignal = signal;
+    // getValidationSignal removed
+
+    public void onRockDestroyed(DiscreteCoordinates cell) {
+
     }
 
-    protected Logic getValidationSignal() {
-        return validationSignal;
-    }
-
-    public void onRockDestroyed(DiscreteCoordinates cell){
-
+    public java.util.List<DiscreteCoordinates> getPortalCells() {
+        java.util.List<DiscreteCoordinates> cells = new java.util.ArrayList<>();
+        if (N != null)
+            cells.addAll(N.getCurrentCells());
+        if (S != null)
+            cells.addAll(S.getCurrentCells());
+        if (E != null)
+            cells.addAll(E.getCurrentCells());
+        if (W != null)
+            cells.addAll(W.getCurrentCells());
+        return cells;
     }
 
 }

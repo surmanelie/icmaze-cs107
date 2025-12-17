@@ -189,7 +189,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
 
         triggerVisualEffect();
 
-        if (healthBar.isOff()) {
+        if (!healthBar.isOn()) {
             // ça veut dire que le player est mort
             ((ICMazeArea) getOwnerArea()).requestReset();
         }
@@ -469,89 +469,89 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
         }
     }
 
-//    private void drawHUD(Canvas canvas) {
-//        int coinCount = 0;
-//        for (ICMazeObject obj : bag) {
-//            if (obj instanceof Coin)
-//                coinCount++;
-//        }
-//
-//        // HUD Fixed Position (Screen Space)
-//        // Canvas.getPosition() returns the camera center
-//        float width = (float) canvas.getScaledWidth();
-//        float height = (float) canvas.getScaledHeight();
-//        Vector viewCenter = canvas.getPosition();
-//        Vector topLeft = viewCenter.add(new Vector(-width / 2, height / 2));
-//
-//        // HUD size is 4x2 units. Anchor is center of image.
-//        // We place it at Top Left + margin.
-//        Vector anchor = topLeft.add(new Vector(2f + 0.5f, -1f - 0.5f));
-//
-//        // 1. Coin Display (64x32 px -> 4x2 units)
-//        ImageGraphics coinIcon = new ImageGraphics(
-//                ch.epfl.cs107.play.io.ResourcePath.getSprite("icmaze/coinsDisplay"),
-//                4f, 2f, new RegionOfInterest(0, 0, 64, 32),
-//                anchor, 1f, 2000f);
-//        coinIcon.draw(canvas);
-//
-//        // 2. Digits
-//        // Display in the right half of the 4x2 area.
-//        // Right half center relative to anchor: (+1, 0).
-//        // Digits size 0.5x0.5 ?
-//        // 3 digits max. Total width 1.5. Fits in 2.0.
-//
-//        String countStr = String.valueOf(coinCount);
-//        float digitSize = 0.5f;
-//
-//        // Start drawing digits centered in the right half
-//        // Right half x range: [0, 2] relative to HUD center? No, HUD is [-2, 2].
-//        // Right half is [0, 2].
-//        // Center of right half is x=1.
-//
-//        // Let's center the string of digits around x=1 relative to anchor.
-//        float totalWidth = countStr.length() * digitSize;
-//        float startX = 1f - (totalWidth / 2) + (digitSize / 2);
-//        // Logic: if 1 digit (width 0.5), center at 1. Start at 1.
-//        // Wait, anchor is center of digit? ImageGraphics anchor is center.
-//        // So we place digit centers.
-//
-//        // Let's simplify: Start at x = 0.5 (left of right half) + margin
-//        // Right half starts at anchor.x (since anchor is center of 4-wide image).
-//        // Correct.
-//
-//        for (int i = 0; i < countStr.length(); i++) {
-//            int digit = Character.getNumericValue(countStr.charAt(i));
-//
-//            int regionX = 0;
-//            int regionY = 0;
-//
-//            if (digit == 0) {
-//                regionX = 16;
-//                regionY = 32;
-//            } else {
-//                int n = digit - 1;
-//                int col = n % 4;
-//                int row = n / 4;
-//                regionX = col * 16;
-//                regionY = row * 16;
-//            }
-//
-//            ImageGraphics digitGraphics = new ImageGraphics(
-//                    ch.epfl.cs107.play.io.ResourcePath.getSprite("icmaze/digits"),
-//                    digitSize, digitSize, new RegionOfInterest(regionX, regionY, 16, 16),
-//                    anchor.add(new Vector(0.4f + i * 0.6f, 0)), // Manual offset into right half
-//                    1f, 2001f);
-//            digitGraphics.draw(canvas);
-//        }
-//    }
-
+    // private void drawHUD(Canvas canvas) {
+    // int coinCount = 0;
+    // for (ICMazeObject obj : bag) {
+    // if (obj instanceof Coin)
+    // coinCount++;
+    // }
+    //
+    // // HUD Fixed Position (Screen Space)
+    // // Canvas.getPosition() returns the camera center
+    // float width = (float) canvas.getScaledWidth();
+    // float height = (float) canvas.getScaledHeight();
+    // Vector viewCenter = canvas.getPosition();
+    // Vector topLeft = viewCenter.add(new Vector(-width / 2, height / 2));
+    //
+    // // HUD size is 4x2 units. Anchor is center of image.
+    // // We place it at Top Left + margin.
+    // Vector anchor = topLeft.add(new Vector(2f + 0.5f, -1f - 0.5f));
+    //
+    // // 1. Coin Display (64x32 px -> 4x2 units)
+    // ImageGraphics coinIcon = new ImageGraphics(
+    // ch.epfl.cs107.play.io.ResourcePath.getSprite("icmaze/coinsDisplay"),
+    // 4f, 2f, new RegionOfInterest(0, 0, 64, 32),
+    // anchor, 1f, 2000f);
+    // coinIcon.draw(canvas);
+    //
+    // // 2. Digits
+    // // Display in the right half of the 4x2 area.
+    // // Right half center relative to anchor: (+1, 0).
+    // // Digits size 0.5x0.5 ?
+    // // 3 digits max. Total width 1.5. Fits in 2.0.
+    //
+    // String countStr = String.valueOf(coinCount);
+    // float digitSize = 0.5f;
+    //
+    // // Start drawing digits centered in the right half
+    // // Right half x range: [0, 2] relative to HUD center? No, HUD is [-2, 2].
+    // // Right half is [0, 2].
+    // // Center of right half is x=1.
+    //
+    // // Let's center the string of digits around x=1 relative to anchor.
+    // float totalWidth = countStr.length() * digitSize;
+    // float startX = 1f - (totalWidth / 2) + (digitSize / 2);
+    // // Logic: if 1 digit (width 0.5), center at 1. Start at 1.
+    // // Wait, anchor is center of digit? ImageGraphics anchor is center.
+    // // So we place digit centers.
+    //
+    // // Let's simplify: Start at x = 0.5 (left of right half) + margin
+    // // Right half starts at anchor.x (since anchor is center of 4-wide image).
+    // // Correct.
+    //
+    // for (int i = 0; i < countStr.length(); i++) {
+    // int digit = Character.getNumericValue(countStr.charAt(i));
+    //
+    // int regionX = 0;
+    // int regionY = 0;
+    //
+    // if (digit == 0) {
+    // regionX = 16;
+    // regionY = 32;
+    // } else {
+    // int n = digit - 1;
+    // int col = n % 4;
+    // int row = n / 4;
+    // regionX = col * 16;
+    // regionY = row * 16;
+    // }
+    //
+    // ImageGraphics digitGraphics = new ImageGraphics(
+    // ch.epfl.cs107.play.io.ResourcePath.getSprite("icmaze/digits"),
+    // digitSize, digitSize, new RegionOfInterest(regionX, regionY, 16, 16),
+    // anchor.add(new Vector(0.4f + i * 0.6f, 0)), // Manual offset into right half
+    // 1f, 2001f);
+    // digitGraphics.draw(canvas);
+    // }
+    // }
 
     // Dans ICMazePlayer.java
 
     private void drawHUD(Canvas canvas) {
         int coinCount = 0;
         for (ICMazeObject obj : bag) {
-            if (obj instanceof Coin) coinCount++;
+            if (obj instanceof Coin)
+                coinCount++;
         }
 
         // --- CORRECTION DU SCALE FACTOR ---
@@ -573,7 +573,8 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
         Vector topLeft = viewCenter.add(new Vector(-viewWidth / 2, viewHeight / 2));
 
         // On place l'ancre en haut à gauche avec une petite marge proportionnelle
-        Vector anchor = topLeft.add(new Vector((hudWidth / 2) + (0.5f * scaleRatio), -(hudHeight / 2) - (0.5f * scaleRatio)));
+        Vector anchor = topLeft
+                .add(new Vector((hudWidth / 2) + (0.5f * scaleRatio), -(hudHeight / 2) - (0.5f * scaleRatio)));
 
         // 1. Dessin du fond (Coins Display)
         ImageGraphics coinIcon = new ImageGraphics(
@@ -614,7 +615,5 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
             digitGraphics.draw(canvas);
         }
     }
-
-
 
 }

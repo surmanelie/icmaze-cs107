@@ -5,7 +5,7 @@ import ch.epfl.cs107.icmaze.Difficulty;
 import ch.epfl.cs107.icmaze.RandomGenerator;
 import ch.epfl.cs107.icmaze.actor.util.Cooldown;
 import ch.epfl.cs107.icmaze.area.ICMazeArea;
-import ch.epfl.cs107.icmaze.area.maps.AireLabyrinthique;
+
 import ch.epfl.cs107.icmaze.handler.ICMazeInteractionVisitor;
 import ch.epfl.cs107.play.areagame.actor.Interactable;
 import ch.epfl.cs107.play.areagame.area.Area;
@@ -85,8 +85,17 @@ public class LogMonster extends PathFinderEnnemy {
      * @param initialState (State): Initial state
      * @param signal       (Logic): Signal to control sleeping state
      */
+    /**
+     * LogMonster constructor
+     * 
+     * @param area         (Area): Owner area
+     * @param orientation  (Orientation): Initial orientation
+     * @param position     (DiscreteCoordinates): Initial position
+     * @param initialState (State): Initial state
+     * @param signal       (Logic): Signal to control sleeping state
+     */
     public LogMonster(Area area, Orientation orientation, DiscreteCoordinates position, State initialState,
-            Logic signal) {
+            Logic signal, int difficulty) {
 
         super(area, orientation, position, MAX_HEALTH, PERCEPTION_RADIUS);
         this.state = initialState;
@@ -95,12 +104,7 @@ public class LogMonster extends PathFinderEnnemy {
         this.reorientCooldown = new Cooldown(0.75f);
         this.stateCooldown = new Cooldown(3.0f);
 
-        int difficulty = Difficulty.MEDIUM; // default
-
-        if (area instanceof AireLabyrinthique) {
-            difficulty = ((AireLabyrinthique) area).getDifficulty();
-        }
-
+        // difficulty injected
         this.pTransition = (double) Difficulty.HARDEST / (double) difficulty;
 
         Vector anchor = new Vector(-0.5f, 0.25f);
@@ -156,8 +160,15 @@ public class LogMonster extends PathFinderEnnemy {
     @Override
     public void updateAlive(float deltaTime) {
 
+        // Gestion prioritaire du signal (Victoire)
         if (signal != null && signal.isOn()) {
-            state = State.SLEEPING;
+            if (state != State.SLEEPING) {
+                state = State.SLEEPING;
+                sleepingAnimation.reset();
+                graphicPath = null;
+            }
+            sleepingAnimation.update(deltaTime);
+            return;
         }
 
         boolean canReorient = reorientCooldown.ready(deltaTime);
@@ -176,6 +187,7 @@ public class LogMonster extends PathFinderEnnemy {
 
                 if (canChangeState && rng.nextDouble() < pTransition) {
                     state = State.RANDOM;
+                    randomAnimation.reset();
                 }
             }
 
@@ -186,14 +198,27 @@ public class LogMonster extends PathFinderEnnemy {
                     plannedOrientation = randomDir;
                 }
 
-                if (canChangeState && lastKnowPlayerPosition != null && rng.nextDouble() < pTransition) {
+                // STRICT COMPLIANCE: Immediate detection if player is known
+                if (lastKnowPlayerPosition != null) {
+                    // Check probability or forced? "Si le joueur est vu, le passage en TARGETING
+                    // doit être déterministe"
+                    // We bypass stateCooldown check for reaction to detection
                     state = State.TARGETING;
+                    targetingAnimation.reset();
+                } else if (canChangeState && rng.nextDouble() < pTransition) {
+                    // Only random transition to Targeting if we somehow got here without
+                    // lastKnowPlayerPosition?
+                    // Actually, lastKnowPlayerPosition is set by interaction.
+                    // If we are here, it means no interaction yet, OR interaction just happened.
+                    // If interaction happened, the IF above handles it.
                 }
             }
 
             case TARGETING -> {
                 if (lastKnowPlayerPosition == null) {
                     state = State.RANDOM;
+                    randomAnimation.reset();
+                    graphicPath = null;
                 } else {
 
                     if (canReorient) {
@@ -203,14 +228,15 @@ public class LogMonster extends PathFinderEnnemy {
                         }
                     }
 
-                    if (canChangeState && rng.nextDouble() < (1.0 - pTransition)) {
-                        state = State.SLEEPING;
-                    }
+                    // STRICT COMPLIANCE: No random abandonment in TARGETING state.
+                    // Only transitions to RANDOM (if target lost) or SLEEPING (forced externally)
+                    // are allowed.
                 }
             }
         }
 
         switch (state) {
+            // Pas de cas 'default' ici pour update, logique est ok
             case SLEEPING -> sleepingAnimation.update(deltaTime);
             case RANDOM -> randomAnimation.update(deltaTime);
             case TARGETING -> targetingAnimation.update(deltaTime);
@@ -257,7 +283,8 @@ public class LogMonster extends PathFinderEnnemy {
 
     @Override
     public boolean wantsViewInteraction() {
-        return state != State.SLEEPING;
+        // STRICT COMPLIANCE: Always wants view interaction to allow proximity wakeup
+        return true;
     }
 
     @Override
@@ -285,8 +312,21 @@ public class LogMonster extends PathFinderEnnemy {
         @Override
         public void interactWith(ICMazePlayer player, boolean isCellInteraction) {
 
-            if (state == State.SLEEPING) {
+            // STRICT COMPLIANCE: If victory signal is active, IGNORE ALL INTERACTIONS
+            // (Monster is inert)
+            if (signal != null && signal.isOn()) {
                 return;
+            }
+
+            // STRICT COMPLIANCE: Wake up logic
+            if (state == State.SLEEPING) {
+                // If touched or seen, wake up!
+                // We prefer waking up to RANDOM (alerted) or TARGETING (if hit/seen).
+                // Let's wake to RANDOM first, updateAlive will promote to TARGETING if position
+                // is set.
+                state = State.RANDOM;
+                randomAnimation.reset();
+                stateCooldown.reset(); // Reset cooldown to likely allow immediate targeting
             }
 
             if (!isCellInteraction) {
@@ -296,6 +336,8 @@ public class LogMonster extends PathFinderEnnemy {
 
                 if (playerPos.equals(front)) {
                     player.sufferHit();
+                    // Hit implies known position
+                    lastKnowPlayerPosition = playerPos;
                 } else {
                     lastKnowPlayerPosition = playerPos;
                 }
@@ -347,15 +389,18 @@ public class LogMonster extends PathFinderEnnemy {
 
         boolean visible = !immune || (blinkTick % 2 == 0);
 
-        if (visible) {
+        if (state == State.SLEEPING) {
+            sleepingAnimation.draw(canvas);
+        } else if (visible) {
             switch (state) {
-                case SLEEPING -> sleepingAnimation.draw(canvas);
                 case RANDOM -> randomAnimation.draw(canvas);
                 case TARGETING -> targetingAnimation.draw(canvas);
+                default -> sleepingAnimation.draw(canvas);
             }
         }
 
-        if (graphicPath != null) {
+        // PROTECTION CHEMIN
+        if (state == State.TARGETING && graphicPath != null) {
             graphicPath.draw(canvas);
         }
 

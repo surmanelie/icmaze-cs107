@@ -65,7 +65,7 @@ public class Spawn extends ICMazeArea {
         Rock rock = new Rock(this, new DiscreteCoordinates(3, 3));
         registerActor(rock);
 
-        registerActor(new Coin(this, Orientation.DOWN, new DiscreteCoordinates(5, 7), getValidationSignal()));
+        registerActor(new Coin(this, Orientation.DOWN, new DiscreteCoordinates(5, 7), this));
 
     }
 

@@ -87,6 +87,13 @@ public final class LevelGenerator {
 
         areas[length + 1] = boss;
 
+        // Wiring the signal: BossArea -> Spawn and Labyrinth areas
+        for (ICMazeArea area : areas) {
+            if (area != boss) {
+                area.setValidationSignal(boss);
+            }
+        }
+
         return areas;
     }
 
@@ -144,13 +151,20 @@ public final class LevelGenerator {
         int keyId = Integer.MAX_VALUE - index;
         double r = rng.nextDouble();
 
+        int difficulty = switch ((int) (progress * 4)) {
+            case 0 -> Difficulty.EASY;
+            case 1 -> Difficulty.MEDIUM;
+            case 2 -> Difficulty.HARD;
+            default -> Difficulty.HARDEST;
+        };
+
         if (r < progress * progress) {
-            return new LargeArea(keyId);
+            return new LargeArea(keyId, difficulty);
         }
         if (r < progress) {
-            return new MediumArea(keyId);
+            return new MediumArea(keyId, difficulty);
         }
-        return new SmallArea(keyId);
+        return new SmallArea(keyId, difficulty);
     }
 
     // --- Specific Connection Methods strictly typed to remove instanceof ---

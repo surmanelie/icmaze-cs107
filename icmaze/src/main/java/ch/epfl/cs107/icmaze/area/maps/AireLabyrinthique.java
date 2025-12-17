@@ -66,43 +66,58 @@ public abstract class AireLabyrinthique extends ICMazeArea {
         this.keyId = keyId;
     }
 
-    private boolean isvalid(DiscreteCoordinates c){
-        return c.x >=1 && c.x <= size && c.y >= 1 && c.y <= size;
+    private boolean isvalid(DiscreteCoordinates c) {
+        return c.x >= 1 && c.x <= size && c.y >= 1 && c.y <= size;
     }
 
     @Override
     protected void createArea() {
+        // 1. On génère le labyrinthe brut (avec des murs potentiellement devant les
+        // portes)
         mazeGrid = MazeGenerator.createMaze(size, size, difficulty);
 
-        //on force le nettoyage des entrèes/sorties pour ne pas avoir de problème sur les rocks au niveau des entrées des portails --> on évite l'erreur
+        // 2. On récupère les positions des portes
         DiscreteCoordinates entry = getEntryArrivalCoordinates();
         DiscreteCoordinates exit = getExitArrivalCoordinates();
 
-        if(isvalid(entry)){
+        // 3. --- CORRECTION CRITIQUE ---
+        // On calcule les cases juste DEVANT les portes (à l'intérieur du jeu)
+        DiscreteCoordinates entryInside = getInsideCell(portalEnter);
+        DiscreteCoordinates exitInside = getInsideCell(portalExit);
+
+        // 4. On force le nettoyage (0 = chemin) :
+        // - Sur la case du portail elle-même
+        // - ET sur la case juste devant
+        if (isvalid(entry))
             mazeGrid[entry.y - 1][entry.x - 1] = 0;
-        }
+        if (isvalid(entryInside))
+            mazeGrid[entryInside.y - 1][entryInside.x - 1] = 0;
 
-        if(isvalid(exit)){
-            mazeGrid[exit.y - 1][exit.x - 1] =0;
-        }
+        if (isvalid(exit))
+            mazeGrid[exit.y - 1][exit.x - 1] = 0;
+        if (isvalid(exitInside))
+            mazeGrid[exitInside.y - 1][exitInside.x - 1] = 0;
+        // -----------------------------
 
-
+        // 5. Le reste ne change pas (construction du graphe, placement des objets...)
         MazeGenerator.printMaze(mazeGrid, getEntryArrivalCoordinates(), getExitArrivalCoordinates());
 
         buildGraphFromMaze();
 
-        placeRocks();
+        placeRocks(); // Maintenant, placeRocks ne mettra plus de rocher devant la porte car c'est
+                      // devenu un 0 !
 
         Random rng = RandomGenerator.rng;
 
         placeRandomKey(rng);
 
         placeLogMonsters(rng);
-
     }
 
     private void buildGraphFromMaze() {
         graph.getNodes().clear();
+
+        List<DiscreteCoordinates> portalCells = getPortalCells();
 
         for (int y = 0; y < size; y++) {
             for (int x = 0; x < size; x++) {
@@ -110,10 +125,19 @@ public abstract class AireLabyrinthique extends ICMazeArea {
                 if (mazeGrid[y][x] == 0) {
                     DiscreteCoordinates c = new DiscreteCoordinates(x + 1, y + 1);
 
-                    boolean left = (x > 0 && mazeGrid[y][x - 1] == 0);
-                    boolean right = (x < size - 1 && mazeGrid[y][x + 1] == 0);
-                    boolean down = (y > 0 && mazeGrid[y - 1][x] == 0);
-                    boolean up = (y < size - 1 && mazeGrid[y + 1][x] == 0);
+                    // Skip adding the node if it is a portal cell
+                    if (portalCells.contains(c)) {
+                        continue;
+                    }
+
+                    boolean left = (x > 0 && mazeGrid[y][x - 1] == 0
+                            && !portalCells.contains(new DiscreteCoordinates(x, y + 1)));
+                    boolean right = (x < size - 1 && mazeGrid[y][x + 1] == 0
+                            && !portalCells.contains(new DiscreteCoordinates(x + 2, y + 1)));
+                    boolean down = (y > 0 && mazeGrid[y - 1][x] == 0
+                            && !portalCells.contains(new DiscreteCoordinates(x + 1, y)));
+                    boolean up = (y < size - 1 && mazeGrid[y + 1][x] == 0
+                            && !portalCells.contains(new DiscreteCoordinates(x + 1, y + 2)));
 
                     graph.addNode(c, left, up, right, down);
                 }
@@ -141,9 +165,6 @@ public abstract class AireLabyrinthique extends ICMazeArea {
 
         Key key = new Key(this, Orientation.DOWN, pos, keyId);
         registerActor(key);
-        // DiscreteCoordinates pos = getRandomFreeCell(rng);
-        // Key key = new Key(this, Orientation.DOWN, pos, keyId);
-        // registerActor(key);
     }
 
     /** Placement des rochers en fonction de mazeGrid */
@@ -160,7 +181,7 @@ public abstract class AireLabyrinthique extends ICMazeArea {
                     DiscreteCoordinates pos = new DiscreteCoordinates(x + 1, y + 1);
 
                     if (!pos.equals(entry) && !pos.equals(exit)) {
-                        registerActor(new Rock(this, Orientation.DOWN, pos, getValidationSignal()));
+                        registerActor(new Rock(this, Orientation.DOWN, pos, this));
                     }
                 }
             }
@@ -233,7 +254,7 @@ public abstract class AireLabyrinthique extends ICMazeArea {
 
             LogMonster.State initialState = chooseInitialState(rng, diffRatio);
 
-            LogMonster monster = new LogMonster(this, Orientation.DOWN, pos, initialState, getValidationSignal());
+            LogMonster monster = new LogMonster(this, Orientation.DOWN, pos, initialState, this, difficulty);
 
             registerActor(monster);
         }
@@ -261,30 +282,64 @@ public abstract class AireLabyrinthique extends ICMazeArea {
         int gx = cell.x - 1;
         int gy = cell.y - 1;
 
-        if (gx < 0 || gx >= size || gy < 0 || gy >= size) return;
+        if (gx < 0 || gx >= size || gy < 0 || gy >= size)
+            return;
 
         // 1) Ouvrir la cellule
         mazeGrid[gy][gx] = 0;
 
         // 2) Recréer le noeud ET rafraîchir les voisins pour mettre à jour les arêtes
         rebuildGraphNodeAt(gx, gy);
-        if (gx > 0) rebuildGraphNodeAt(gx - 1, gy);
-        if (gx < size - 1) rebuildGraphNodeAt(gx + 1, gy);
-        if (gy > 0) rebuildGraphNodeAt(gx, gy - 1);
-        if (gy < size - 1) rebuildGraphNodeAt(gx, gy + 1);
+        if (gx > 0)
+            rebuildGraphNodeAt(gx - 1, gy);
+        if (gx < size - 1)
+            rebuildGraphNodeAt(gx + 1, gy);
+        if (gy > 0)
+            rebuildGraphNodeAt(gx, gy - 1);
+        if (gy < size - 1)
+            rebuildGraphNodeAt(gx, gy + 1);
     }
 
     private void rebuildGraphNodeAt(int gx, int gy) {
-        if (mazeGrid[gy][gx] != 0) return; // on ne met des noeuds que sur les chemins
+        if (mazeGrid[gy][gx] != 0)
+            return; // on ne met des noeuds que sur les chemins
 
         DiscreteCoordinates c = new DiscreteCoordinates(gx + 1, gy + 1);
 
-        boolean left  = (gx > 0        && mazeGrid[gy][gx - 1] == 0);
-        boolean right = (gx < size - 1 && mazeGrid[gy][gx + 1] == 0);
-        boolean down  = (gy > 0        && mazeGrid[gy - 1][gx] == 0);
-        boolean up    = (gy < size - 1 && mazeGrid[gy + 1][gx] == 0);
+        java.util.List<DiscreteCoordinates> portalCells = getPortalCells();
+
+        // Skip adding the node if it is a portal cell
+        if (portalCells.contains(c)) {
+            return;
+        }
+
+        boolean left = (gx > 0 && mazeGrid[gy][gx - 1] == 0
+                && !portalCells.contains(new DiscreteCoordinates(gx, gy + 1)));
+        boolean right = (gx < size - 1 && mazeGrid[gy][gx + 1] == 0
+                && !portalCells.contains(new DiscreteCoordinates(gx + 2, gy + 1)));
+        boolean down = (gy > 0 && mazeGrid[gy - 1][gx] == 0
+                && !portalCells.contains(new DiscreteCoordinates(gx + 1, gy)));
+        boolean up = (gy < size - 1 && mazeGrid[gy + 1][gx] == 0
+                && !portalCells.contains(new DiscreteCoordinates(gx + 1, gy + 2)));
 
         graph.addNode(c, left, up, right, down);
+    }
+
+    /**
+     * Calcule la case située juste devant le portail (vers l'intérieur).
+     * C'est cette case qui doit être impérativement vide pour ne pas bloquer le
+     * joueur.
+     */
+    private DiscreteCoordinates getInsideCell(AreaPortals portal) {
+        DiscreteCoordinates pos = getArrivalCoordinatesForPortal(portal);
+
+        // Selon le portail, on se décale d'une case vers le centre du jeu
+        return switch (portal) {
+            case N -> new DiscreteCoordinates(pos.x, pos.y - 1); // Nord -> on descend
+            case S -> new DiscreteCoordinates(pos.x, pos.y + 1); // Sud -> on monte
+            case W -> new DiscreteCoordinates(pos.x + 1, pos.y); // Ouest -> on va à droite
+            case E -> new DiscreteCoordinates(pos.x - 1, pos.y); // Est -> on va à gauche
+        };
     }
 
 }
