@@ -6,7 +6,7 @@ import ch.epfl.cs107.play.math.DiscreteCoordinates;
  * SmallArea
  * Represents a small labyrinth area (size 8).
  */
-public class SmallArea extends AireLabyrinthique {
+public class SmallArea extends LabyrinthArea {
 
     /**
      * SmallArea constructor

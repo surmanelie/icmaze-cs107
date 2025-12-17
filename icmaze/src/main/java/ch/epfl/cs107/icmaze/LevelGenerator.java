@@ -48,14 +48,14 @@ public final class LevelGenerator {
         current = move(current, dir);
         occupied.add(current);
 
-        AireLabyrinthique firstArea = createAreaForProgress(index, progress);
+        LabyrinthArea firstArea = createAreaForProgress(index, progress);
         firstArea.setPortalEnter(getOpposite(dir));
 
         // Connect Spawn -> First Labyrinth Area
         connectSpawnToLabyrinth(spawn, dir, firstArea);
         areas[1] = firstArea;
 
-        AireLabyrinthique previous = firstArea;
+        LabyrinthArea previous = firstArea;
 
         // 2) Intermediate areas
         for (int i = 1; i < length; i++) {
@@ -64,7 +64,7 @@ public final class LevelGenerator {
             current = move(current, dir);
             occupied.add(current);
 
-            AireLabyrinthique newArea = createAreaForProgress(i, progress);
+            LabyrinthArea newArea = createAreaForProgress(i, progress);
             newArea.setPortalEnter(getOpposite(dir));
 
             // Previous (Labyrinth) -> Current (Labyrinth)
@@ -142,9 +142,9 @@ public final class LevelGenerator {
 
     /**
      * Creates Small / Medium / Large based on progress
-     * Now strictly returns AireLabyrinthique
+     * Now strictly returns LabyrinthArea
      */
-    private static AireLabyrinthique createAreaForProgress(
+    private static LabyrinthArea createAreaForProgress(
             int index,
             double progress) {
 
@@ -169,8 +169,8 @@ public final class LevelGenerator {
 
     // --- Specific Connection Methods strictly typed to remove instanceof ---
 
-    // Connect Spawn -> AireLabyrinthique
-    private static void connectSpawnToLabyrinth(Spawn from, ICMazeArea.AreaPortals dir, AireLabyrinthique to) {
+    // Connect Spawn -> LabyrinthArea
+    private static void connectSpawnToLabyrinth(Spawn from, ICMazeArea.AreaPortals dir, LabyrinthArea to) {
         setOutgoingLocked(from, dir, Integer.MAX_VALUE); // Spawn uses MAX_VALUE key
 
         setDestinations(from, dir, to);
@@ -179,9 +179,9 @@ public final class LevelGenerator {
         setIncomingOpen(to, dir);
     }
 
-    // Connect AireLabyrinthique -> AireLabyrinthique
-    private static void connectLabyrinthToLabyrinth(AireLabyrinthique from, ICMazeArea.AreaPortals dir,
-            AireLabyrinthique to) {
+    // Connect LabyrinthArea -> LabyrinthArea
+    private static void connectLabyrinthToLabyrinth(LabyrinthArea from, ICMazeArea.AreaPortals dir,
+            LabyrinthArea to) {
         setOutgoingLocked(from, dir, from.getKeyId());
 
         setDestinations(from, dir, to);
@@ -189,8 +189,8 @@ public final class LevelGenerator {
         setIncomingOpen(to, dir);
     }
 
-    // Connect AireLabyrinthique -> BossArea
-    private static void connectLabyrinthToBoss(AireLabyrinthique from, ICMazeArea.AreaPortals dir, BossArea to) {
+    // Connect LabyrinthArea -> BossArea
+    private static void connectLabyrinthToBoss(LabyrinthArea from, ICMazeArea.AreaPortals dir, BossArea to) {
         setOutgoingLocked(from, dir, from.getKeyId());
 
         setDestinations(from, dir, to);

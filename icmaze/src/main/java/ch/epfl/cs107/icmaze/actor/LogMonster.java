@@ -29,7 +29,7 @@ import java.util.Queue;
  */
 public class LogMonster extends PathFinderEnnemy {
 
-    private static final int MAX_HEALTH = 1;
+    private static final int MAX_HEALTH = 3;
     private static final int PERCEPTION_RADIUS = 5;
 
     private final double pTransition;

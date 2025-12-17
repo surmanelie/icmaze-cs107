@@ -6,7 +6,7 @@ import ch.epfl.cs107.play.math.DiscreteCoordinates;
  * MediumArea
  * Represents a medium labyrinth area (size 16).
  */
-public class MediumArea extends AireLabyrinthique {
+public class MediumArea extends LabyrinthArea {
 
     /**
      * MediumArea constructor

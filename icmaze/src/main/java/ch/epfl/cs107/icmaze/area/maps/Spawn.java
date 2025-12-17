@@ -12,7 +12,7 @@ import ch.epfl.cs107.play.engine.actor.Dialog;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Orientation;
 
-import static ch.epfl.cs107.icmaze.area.maps.AireLabyrinthique.keyIdL1;
+import static ch.epfl.cs107.icmaze.area.maps.LabyrinthArea.keyIdL1;
 
 /**
  * Spawn

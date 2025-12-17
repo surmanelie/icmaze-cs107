@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public abstract class AireLabyrinthique extends ICMazeArea {
+public abstract class LabyrinthArea extends ICMazeArea {
     private AreaPortals portalEnter; // il permet d entrer dans le labyrinthe associé
     private AreaPortals portalExit;
     protected int keyId;
@@ -48,7 +48,7 @@ public abstract class AireLabyrinthique extends ICMazeArea {
         this.portalExit = portalExit;
     }
 
-    public AireLabyrinthique(String behaviorName, int size, AreaPortals portalEnter, AreaPortals portalExit, int Keyid,
+    public LabyrinthArea(String behaviorName, int size, AreaPortals portalEnter, AreaPortals portalExit, int Keyid,
             int difficulty) {
         super(behaviorName, size);
         this.portalEnter = portalEnter;
@@ -112,6 +112,29 @@ public abstract class AireLabyrinthique extends ICMazeArea {
         placeRandomKey(rng);
 
         placeLogMonsters(rng);
+        placeSpeedBalls(rng);
+    }
+
+    private void placeSpeedBalls(Random rng) {
+        List<DiscreteCoordinates> candidates = new ArrayList<>(graph.keySet());
+        DiscreteCoordinates entry = getEntryArrivalCoordinates();
+        DiscreteCoordinates exit = getExitArrivalCoordinates();
+
+        candidates.remove(entry);
+        candidates.remove(exit);
+
+        // Ensure we have at least 2 spots
+        if (candidates.size() < 2) {
+            return;
+        }
+
+        Collections.shuffle(candidates, rng);
+
+        DiscreteCoordinates posBlue = candidates.get(0);
+        DiscreteCoordinates posRed = candidates.get(1);
+
+        registerActor(new ch.epfl.cs107.icmaze.actor.collectable.BlueSpeedBall(this, Orientation.DOWN, posBlue));
+        registerActor(new ch.epfl.cs107.icmaze.actor.collectable.RedSpeedBall(this, Orientation.DOWN, posRed));
     }
 
     private void buildGraphFromMaze() {

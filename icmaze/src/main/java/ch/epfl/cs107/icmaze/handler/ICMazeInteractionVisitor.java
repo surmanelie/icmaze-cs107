@@ -10,6 +10,7 @@ import ch.epfl.cs107.play.areagame.actor.Interactable;
 import ch.epfl.cs107.play.areagame.handler.AreaInteractionVisitor;
 import ch.epfl.cs107.icmaze.actor.LogMonster;
 import ch.epfl.cs107.icmaze.actor.collectable.Coin;
+import ch.epfl.cs107.icmaze.actor.collectable.SpeedBall;
 
 /**
  * ICMazeInteractionVisitor
@@ -114,6 +115,16 @@ public interface ICMazeInteractionVisitor extends AreaInteractionVisitor {
      * @param isCellInteraction (boolean): true if it is a cell interaction
      */
     default void interactWith(Coin coin, boolean isCellInteraction) {
+        // default empty
+    }
+
+    /**
+     * Simulate an interaction between ICMaze actors and a SpeedBall
+     *
+     * @param ball              (SpeedBall): the speed ball, not null
+     * @param isCellInteraction (boolean): true if it is a cell interaction
+     */
+    default void interactWith(SpeedBall ball, boolean isCellInteraction) {
         // default empty
     }
 }

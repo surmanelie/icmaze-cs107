@@ -11,7 +11,6 @@ import ch.epfl.cs107.play.math.Orientation;
 import ch.epfl.cs107.play.window.Window;
 import ch.epfl.cs107.play.window.Keyboard;
 
-import static ch.epfl.cs107.icmaze.area.maps.AireLabyrinthique.*;
 
 import ch.epfl.cs107.icmaze.handler.DialogHandler;
 import ch.epfl.cs107.play.engine.actor.Dialog;
@@ -49,7 +48,7 @@ public class ICMaze extends AreaGame implements DialogHandler {
 
     private void createAreas() {
         // generateHardCodedLevel();
-        ICMazeArea[] areas = LevelGenerator.generateLine(this, 2);
+        ICMazeArea[] areas = LevelGenerator.generateLine(this, 5);
 
         if (areas.length > 0) {
             // Le dernier est BossArea qui est le signal logique
