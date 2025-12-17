@@ -130,6 +130,16 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
         return false;
     }
 
+    public int getCoinCount() {
+        int count = 0;
+        for (ICMazeObject obj : bag) {
+            if (obj instanceof Coin) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     public void setDestinationArea(String destinationArea) {
         this.destinationArea = destinationArea;
     }
@@ -149,7 +159,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
         if (healthBar.isOn()) {
             healthBar.draw(canvas);
         }
-        drawHUD(canvas);
+
     }
 
     public DiscreteCoordinates getDestinationCoordonates() {
@@ -417,7 +427,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                         portal.open();
                         // On choisit de ne PAS téléporter tout de suite :
                         // le joueur devra ensuite passer dessus pour se téléporter.
-
+git add
                     }
                 }
                 // Si le portail est INVISIBLE ou déjà OPEN : rien à faire en view interaction.
@@ -546,74 +556,5 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
     // }
 
     // Dans ICMazePlayer.java
-
-    private void drawHUD(Canvas canvas) {
-        int coinCount = 0;
-        for (ICMazeObject obj : bag) {
-            if (obj instanceof Coin)
-                coinCount++;
-        }
-
-        // --- CORRECTION DU SCALE FACTOR ---
-        // Ajout du cast (float) car canvas.getScaledHeight() retourne un double
-        float scaleRatio = (float) canvas.getScaledHeight() / 11.0f;
-
-        // Dimensions de base (adaptées par le ratio)
-        float hudWidth = 4f * scaleRatio;
-        float hudHeight = 2f * scaleRatio;
-        float digitSize = 0.5f * scaleRatio;
-
-        // Calcul de la position (Coin Haut-Gauche)
-        Vector viewCenter = canvas.getPosition();
-
-        // Ajout des casts (float) ici aussi
-        float viewWidth = (float) canvas.getScaledWidth();
-        float viewHeight = (float) canvas.getScaledHeight();
-
-        Vector topLeft = viewCenter.add(new Vector(-viewWidth / 2, viewHeight / 2));
-
-        // On place l'ancre en haut à gauche avec une petite marge proportionnelle
-        Vector anchor = topLeft
-                .add(new Vector((hudWidth / 2) + (0.5f * scaleRatio), -(hudHeight / 2) - (0.5f * scaleRatio)));
-
-        // 1. Dessin du fond (Coins Display)
-        ImageGraphics coinIcon = new ImageGraphics(
-                ch.epfl.cs107.play.io.ResourcePath.getSprite("icmaze/coinsDisplay"),
-                hudWidth, hudHeight,
-                new RegionOfInterest(0, 0, 64, 32),
-                anchor, 1f, 2000f);
-        coinIcon.draw(canvas);
-
-        // 2. Dessin des chiffres (Centrés dans la moitié droite du HUD)
-        String countStr = String.valueOf(coinCount);
-
-        // On calcule le décalage pour centrer les chiffres
-        float numberStartX = (hudWidth / 4) - ((countStr.length() * digitSize) / 2);
-
-        for (int i = 0; i < countStr.length(); i++) {
-            int digit = Character.getNumericValue(countStr.charAt(i));
-            int regionX = 0;
-            int regionY = 0;
-
-            if (digit == 0) {
-                regionX = 16;
-                regionY = 32;
-            } else {
-                int n = digit - 1;
-                int col = n % 4;
-                int row = n / 4;
-                regionX = col * 16;
-                regionY = row * 16;
-            }
-
-            ImageGraphics digitGraphics = new ImageGraphics(
-                    ch.epfl.cs107.play.io.ResourcePath.getSprite("icmaze/digits"),
-                    digitSize, digitSize,
-                    new RegionOfInterest(regionX, regionY, 16, 16),
-                    anchor.add(new Vector(numberStartX + (i * digitSize), 0)),
-                    1f, 2001f);
-            digitGraphics.draw(canvas);
-        }
-    }
 
 }

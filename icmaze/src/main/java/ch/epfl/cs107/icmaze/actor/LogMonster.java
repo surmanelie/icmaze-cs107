@@ -174,7 +174,6 @@ public class LogMonster extends PathFinderEnnemy {
             }
             sleepingAnimation.update(deltaTime);
 
-
             return;
         }
 
@@ -249,12 +248,12 @@ public class LogMonster extends PathFinderEnnemy {
             case TARGETING -> targetingAnimation.update(deltaTime);
         }
 
-//        if (immune) {
-//            blinkTick++;
-//            if (immunityCd.ready(deltaTime)) {
-//                immune = false;
-//            }
-//        }
+        // if (immune) {
+        // blinkTick++;
+        // if (immunityCd.ready(deltaTime)) {
+        // immune = false;
+        // }
+        // }
 
         super.updateAlive(deltaTime);
     }
@@ -323,7 +322,7 @@ public class LogMonster extends PathFinderEnnemy {
             // Si le monstre dort ET que c'est une interaction de VUE -> IGNORER.
             // Il ne doit pas se réveiller juste parce que le joueur le regarde de loin.
             if (state == State.SLEEPING && !isCellInteraction) {
-                return ;
+                return;
             }
 
             // CORRECTIF 2: "Invincibilité Post-Victoire"

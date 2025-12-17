@@ -264,10 +264,6 @@ public abstract class ICMazeArea extends Area implements DialogHandler, Logic {
             game.resetCurrentArea();
     }
 
-    // public ICMaze getGame() {
-    // return game;
-    // }
-
     private Logic validationSignal = Logic.FALSE;
 
     // getValidationSignal removed

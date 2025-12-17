@@ -152,19 +152,17 @@ public class Boss extends Ennemy {
         }
     }
 
-
-
     private void respawnAt(Area area, TeleportDest dest) {
 
-//        orientate(dest.orientation);
-//
-//        setCurrentPosition(dest.coords.toVector());
-//
-//        resetMotion();
-//        this.resetMotion();
-//
-//        this.leaveArea();
-//        this.enterArea(area, dest.coords);
+        // orientate(dest.orientation);
+        //
+        // setCurrentPosition(dest.coords.toVector());
+        //
+        // resetMotion();
+        // this.resetMotion();
+        //
+        // this.leaveArea();
+        // this.enterArea(area, dest.coords);
         changePosition(dest.coords);
         this.orientate(dest.orientation);
     }
@@ -203,43 +201,43 @@ public class Boss extends Ennemy {
             activeProjectiles.add(p);
         }
 
-//        for (DiscreteCoordinates target : targets) {
-//            new FireProjectile(area, ori, target).enterArea(area, target);
-////            Projectile p =new FireProjectile(area, ori, target);
-////            p.enterArea(area, target);
-////            activeProjectiles.add(p);
-////            new FireProjectile(area, ori, target).enterArea(area, target);
-//        }
+        // for (DiscreteCoordinates target : targets) {
+        // new FireProjectile(area, ori, target).enterArea(area, target);
+        //// Projectile p =new FireProjectile(area, ori, target);
+        //// p.enterArea(area, target);
+        //// activeProjectiles.add(p);
+        //// new FireProjectile(area, ori, target).enterArea(area, target);
+        // }
     }
 
-//    /**
-//     * Nettoie TOUT : les projectiles et le boss lui-même.
-//     * On passe l'aire en paramètre pour être sûr de nettoyer la bonne aire.
-//     */
-//    public void cleanUp(Area area) {
-//        // 1. Supprimer tous les projectiles enregistrés
-//        for (Projectile p : activeProjectiles) {
-//            area.unregisterActor(p);
-//        }
-//        activeProjectiles.clear();
-//
-//        // 2. Supprimer le Boss lui-même
-//        area.unregisterActor(this);
-//    }
+    // /**
+    // * Nettoie TOUT : les projectiles et le boss lui-même.
+    // * On passe l'aire en paramètre pour être sûr de nettoyer la bonne aire.
+    // */
+    // public void cleanUp(Area area) {
+    // // 1. Supprimer tous les projectiles enregistrés
+    // for (Projectile p : activeProjectiles) {
+    // area.unregisterActor(p);
+    // }
+    // activeProjectiles.clear();
+    //
+    // // 2. Supprimer le Boss lui-même
+    // area.unregisterActor(this);
+    // }
 
-//    public void cleanUP(){
-//        Area area = getOwnerArea();
-//        if(area == null){
-//            return;
-//        }
-//
-//        for(Projectile p : activeProjectiles){
-//            p.leaveArea();
-//        }
-//        activeProjectiles.clear();
-//
-//        this.leaveArea();
-//    }
+    // public void cleanUP(){
+    // Area area = getOwnerArea();
+    // if(area == null){
+    // return;
+    // }
+    //
+    // for(Projectile p : activeProjectiles){
+    // p.leaveArea();
+    // }
+    // activeProjectiles.clear();
+    //
+    // this.leaveArea();
+    // }
 
     private record TeleportDest(DiscreteCoordinates coords, Orientation orientation) {
     }

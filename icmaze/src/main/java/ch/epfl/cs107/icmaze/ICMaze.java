@@ -1,6 +1,7 @@
 package ch.epfl.cs107.icmaze;
 
 import ch.epfl.cs107.icmaze.actor.ICMazePlayer;
+import ch.epfl.cs107.icmaze.actor.ui.CoinCounterHUD;
 import ch.epfl.cs107.icmaze.area.ICMazeArea;
 import ch.epfl.cs107.icmaze.area.maps.*;
 import ch.epfl.cs107.play.areagame.AreaGame;
@@ -20,6 +21,7 @@ public class ICMaze extends AreaGame implements DialogHandler {
 
     private static final String INITIAL_AREA = "icmaze/Spawn";
     private ICMazePlayer player;
+    private final CoinCounterHUD coinHUD = new CoinCounterHUD();
     private Dialog activeDialog;
 
     private Window window;
@@ -45,7 +47,7 @@ public class ICMaze extends AreaGame implements DialogHandler {
 
     private void createAreas() {
         // generateHardCodedLevel();
-        ICMazeArea[] areas = LevelGenerator.generateLine(this, 1 );
+        ICMazeArea[] areas = LevelGenerator.generateLine(this, 10);
 
         if (areas.length > 0) {
             // Le dernier est BossArea qui est le signal logique
@@ -101,6 +103,10 @@ public class ICMaze extends AreaGame implements DialogHandler {
     @Override
     public void draw() {
         super.draw();
+        if (player != null) {
+            coinHUD.setCoinCount(player.getCoinCount());
+            coinHUD.draw(getWindow());
+        }
         if (activeDialog != null) {
             activeDialog.draw(getWindow());
         }
