@@ -163,8 +163,9 @@ public class Boss extends Ennemy {
 //        resetMotion();
 //        this.resetMotion();
 //
-        this.leaveArea();
-        this.enterArea(area, dest.coords);
+//        this.leaveArea();
+//        this.enterArea(area, dest.coords);
+        changePosition(dest.coords);
         this.orientate(dest.orientation);
     }
 

@@ -136,7 +136,7 @@ public class LogMonster extends PathFinderEnnemy {
                 Orientation.RIGHT
         };
         sleepingAnimation = new OrientedAnimation("icmaze/logMonster.sleeping", ANIMATION_DURATION / 3, this, anchor,
-                ordersSleeping, 4, 2, 2, 32, 32, true);
+                ordersSleeping, 1, 2, 2, 32, 32, true);
 
     }
 
@@ -159,7 +159,12 @@ public class LogMonster extends PathFinderEnnemy {
 
     @Override
     public void updateAlive(float deltaTime) {
-
+        if (immune) {
+            blinkTick++;
+            if (immunityCd.ready(deltaTime)) {
+                immune = false;
+            }
+        }
         // Gestion prioritaire du signal (Victoire)
         if (signal != null && signal.isOn()) {
             if (state != State.SLEEPING) {
@@ -168,6 +173,8 @@ public class LogMonster extends PathFinderEnnemy {
                 graphicPath = null;
             }
             sleepingAnimation.update(deltaTime);
+
+
             return;
         }
 
@@ -242,12 +249,12 @@ public class LogMonster extends PathFinderEnnemy {
             case TARGETING -> targetingAnimation.update(deltaTime);
         }
 
-        if (immune) {
-            blinkTick++;
-            if (immunityCd.ready(deltaTime)) {
-                immune = false;
-            }
-        }
+//        if (immune) {
+//            blinkTick++;
+//            if (immunityCd.ready(deltaTime)) {
+//                immune = false;
+//            }
+//        }
 
         super.updateAlive(deltaTime);
     }
@@ -312,34 +319,49 @@ public class LogMonster extends PathFinderEnnemy {
         @Override
         public void interactWith(ICMazePlayer player, boolean isCellInteraction) {
 
-            // STRICT COMPLIANCE: If victory signal is active, IGNORE ALL INTERACTIONS
-            // (Monster is inert)
-            if (signal != null && signal.isOn()) {
-                return;
+            // CORRECTIF 1: "Faux-Sommeil"
+            // Si le monstre dort ET que c'est une interaction de VUE -> IGNORER.
+            // Il ne doit pas se réveiller juste parce que le joueur le regarde de loin.
+            if (state == State.SLEEPING && !isCellInteraction) {
+                return ;
             }
 
-            // STRICT COMPLIANCE: Wake up logic
-            if (state == State.SLEEPING) {
-                // If touched or seen, wake up!
-                // We prefer waking up to RANDOM (alerted) or TARGETING (if hit/seen).
-                // Let's wake to RANDOM first, updateAlive will promote to TARGETING if position
-                // is set.
+            // CORRECTIF 2: "Invincibilité Post-Victoire"
+            // Le signal de victoire empêche l'attaque et le réveil, MAIS ne doit pas
+            // bloquer la méthode
+            // si on voulait gérer autre chose (ex: sufferHit est géré ailleurs, mais ici on
+            // gère l'attaque du monstre).
+            // On déplace le return global pour cibler les actions offensives/réactives.
+            boolean victory = (signal != null && signal.isOn());
+
+            // LOGIQUE DE REVEIL (Seulement si pas victoire)
+            if (!victory && state == State.SLEEPING) {
+                // Ici c'est forcément une interaction de CELLULE (contact) car le cas VUE est
+                // filtré au dessus
                 state = State.RANDOM;
                 randomAnimation.reset();
-                stateCooldown.reset(); // Reset cooldown to likely allow immediate targeting
+                stateCooldown.reset();
             }
 
+            // LOGIQUE D'ATTAQUE / SUIVI (Seulement si pas victoire)
             if (!isCellInteraction) {
 
                 DiscreteCoordinates playerPos = player.getCurrentMainCellCoordinates();
                 DiscreteCoordinates front = getCurrentMainCellCoordinates().jump(getOrientation().toVector());
 
                 if (playerPos.equals(front)) {
-                    player.sufferHit();
-                    // Hit implies known position
-                    lastKnowPlayerPosition = playerPos;
+                    // Attaque seulement si pas victoire
+                    if (!victory) {
+                        player.sufferHit();
+                    }
+                    // On met à jour la position connue (sauf si victoire -> on s'en fiche, il dort)
+                    if (!victory) {
+                        lastKnowPlayerPosition = playerPos;
+                    }
                 } else {
-                    lastKnowPlayerPosition = playerPos;
+                    if (!victory) {
+                        lastKnowPlayerPosition = playerPos;
+                    }
                 }
             }
         }
@@ -364,6 +386,16 @@ public class LogMonster extends PathFinderEnnemy {
 
         if (immune || isDead()) {
             return;
+        }
+
+        // CORRECTIF: Réveil sur dégâts (si pas victoire)
+        if (true) {
+            boolean victory = (signal != null && signal.isOn());
+            if (!victory) {
+                state = State.RANDOM;
+                randomAnimation.reset();
+                stateCooldown.reset();
+            }
         }
 
         loseHealth(1);

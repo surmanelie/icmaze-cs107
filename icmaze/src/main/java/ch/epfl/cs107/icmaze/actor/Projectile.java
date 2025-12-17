@@ -177,9 +177,9 @@ public abstract class Projectile extends ICMazeActor implements Interactor {
         @Override
         public void interactWith(ICMazePlayer player, boolean isCellInteraction) {
             if (isCellInteraction && !stopped) {
+                leaveArea();
                 player.sufferHit();
                 stop();
-                leaveArea();
             }
         }
     }
