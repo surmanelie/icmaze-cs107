@@ -104,15 +104,6 @@ public class Rock extends AreaEntity implements Interactable, Updatable {
             return;
         }
 
-        // if (vanishing) return;
-        // if(immune);
-
-        // hP -= 1;
-
-        // if (hP <= 0) {
-        // vanishing = true;
-        // return;
-        // }
 
         triggerImmunity();
 

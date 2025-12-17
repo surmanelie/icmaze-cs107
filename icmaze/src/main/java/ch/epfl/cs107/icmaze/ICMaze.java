@@ -11,7 +11,6 @@ import ch.epfl.cs107.play.math.Orientation;
 import ch.epfl.cs107.play.window.Window;
 import ch.epfl.cs107.play.window.Keyboard;
 
-
 import ch.epfl.cs107.icmaze.handler.DialogHandler;
 import ch.epfl.cs107.play.engine.actor.Dialog;
 import ch.epfl.cs107.play.window.Canvas;
@@ -48,7 +47,7 @@ public class ICMaze extends AreaGame implements DialogHandler {
 
     private void createAreas() {
         // generateHardCodedLevel();
-        ICMazeArea[] areas = LevelGenerator.generateLine(this, 5);
+        ICMazeArea[] areas = LevelGenerator.generateLine(this, 1);
 
         if (areas.length > 0) {
             // Le dernier est BossArea qui est le signal logique
@@ -64,13 +63,27 @@ public class ICMaze extends AreaGame implements DialogHandler {
 
     // ...
 
+    private boolean isPaused = false;
+    private final ch.epfl.cs107.icmaze.actor.ui.PauseMenu pauseMenu = new ch.epfl.cs107.icmaze.actor.ui.PauseMenu();
+
     @Override
     public void update(float deltaTime) {
 
+        // RESET GAME (Always active)
         // on vérifie ici la touche reset
         Keyboard keyboard = getCurrentArea().getKeyboard();
         if (keyboard.get(KeyBindings.RESET_GAME).isPressed()) {
             resetGame();
+            return;
+        }
+
+        // PAUSE TOGGLE
+        if (keyboard.get(KeyBindings.PAUSE_GAME).isPressed()) {
+            isPaused = !isPaused;
+        }
+
+        // IF PAUSED: Freeze game loop
+        if (isPaused) {
             return;
         }
 
@@ -111,6 +124,9 @@ public class ICMaze extends AreaGame implements DialogHandler {
         if (activeDialog != null) {
             activeDialog.draw(getWindow());
         }
+        if (isPaused) {
+            pauseMenu.draw(getWindow());
+        }
     }
 
     @Override
@@ -121,6 +137,14 @@ public class ICMaze extends AreaGame implements DialogHandler {
     // ... resetGame and other methods ...
 
     public void resetGame() {
+        // Safe reset: ensure explicit cleanup
+        if (player != null) {
+            player.leaveArea();
+        }
+        activeDialog = null;
+        isPaused = false;
+
+        // Re-start the game
         begin(window, fileSystem);
     }
 
