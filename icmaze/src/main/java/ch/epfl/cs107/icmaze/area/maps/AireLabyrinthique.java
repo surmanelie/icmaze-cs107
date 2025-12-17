@@ -255,4 +255,36 @@ public abstract class AireLabyrinthique extends ICMazeArea {
         }
     }
 
+    @Override
+    public void onRockDestroyed(DiscreteCoordinates cell) {
+        // Convertir coordonnée "aire" -> indices mazeGrid
+        int gx = cell.x - 1;
+        int gy = cell.y - 1;
+
+        if (gx < 0 || gx >= size || gy < 0 || gy >= size) return;
+
+        // 1) Ouvrir la cellule
+        mazeGrid[gy][gx] = 0;
+
+        // 2) Recréer le noeud ET rafraîchir les voisins pour mettre à jour les arêtes
+        rebuildGraphNodeAt(gx, gy);
+        if (gx > 0) rebuildGraphNodeAt(gx - 1, gy);
+        if (gx < size - 1) rebuildGraphNodeAt(gx + 1, gy);
+        if (gy > 0) rebuildGraphNodeAt(gx, gy - 1);
+        if (gy < size - 1) rebuildGraphNodeAt(gx, gy + 1);
+    }
+
+    private void rebuildGraphNodeAt(int gx, int gy) {
+        if (mazeGrid[gy][gx] != 0) return; // on ne met des noeuds que sur les chemins
+
+        DiscreteCoordinates c = new DiscreteCoordinates(gx + 1, gy + 1);
+
+        boolean left  = (gx > 0        && mazeGrid[gy][gx - 1] == 0);
+        boolean right = (gx < size - 1 && mazeGrid[gy][gx + 1] == 0);
+        boolean down  = (gy > 0        && mazeGrid[gy - 1][gx] == 0);
+        boolean up    = (gy < size - 1 && mazeGrid[gy + 1][gx] == 0);
+
+        graph.addNode(c, left, up, right, down);
+    }
+
 }

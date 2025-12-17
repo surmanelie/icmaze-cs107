@@ -264,4 +264,8 @@ public abstract class ICMazeArea extends Area implements DialogHandler {
         return validationSignal;
     }
 
+    public void onRockDestroyed(DiscreteCoordinates cell){
+
+    }
+
 }
