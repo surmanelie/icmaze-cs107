@@ -239,6 +239,9 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
     public void resetAfterAreaReset() {
         healthBar.resetHealth();
 
+        // FIX: Key Hoarding - We remove keys but keep the Pickaxe
+        bag.removeIf(item -> item instanceof Key);
+
         immune = false;
         blinkTick = 0;
         immunityCd.reset();
@@ -255,6 +258,11 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
 
     @Override
     public void update(float deltaTime) {
+
+        // FIX: Zombie Interaction - Dead player cannot move or interact
+        if (!healthBar.isOn()) {
+            return;
+        }
 
         Keyboard keyboard = getOwnerArea().getKeyboard();
 
