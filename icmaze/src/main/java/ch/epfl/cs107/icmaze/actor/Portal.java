@@ -49,9 +49,6 @@ public class Portal extends ICMazeActor implements Interactable {
 
         this.state = state;
         this.destinationAreaName = destinationAreaName;
-        // this.arrivalCoordinates = arrivalCoordinates; // Redundant/Error in original
-        // code, arrivalCoordinates was not passed in constructor here, assumed null or
-        // set later
         this.keyId = keyId;
 
         this.invisibleSprite = new Sprite(
@@ -87,7 +84,6 @@ public class Portal extends ICMazeActor implements Interactable {
                 lockedSprite.draw(canvas);
                 break;
             case OPEN:
-                /* draw nothing */
                 break;
             default:
                 break;

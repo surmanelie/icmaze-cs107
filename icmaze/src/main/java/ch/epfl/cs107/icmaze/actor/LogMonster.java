@@ -105,7 +105,7 @@ public class LogMonster extends PathFinderEnnemy {
         this.reorientCooldown = new Cooldown(0.75f);
         this.stateCooldown = new Cooldown(3.0f);
 
-        // difficulty injected
+
         this.pTransition = (double) Difficulty.HARDEST / (double) difficulty;
 
         Vector anchor = new Vector(-0.5f, 0.25f);
@@ -166,7 +166,7 @@ public class LogMonster extends PathFinderEnnemy {
                 immune = false;
             }
         }
-        // Gestion prioritaire du signal (Victoire)
+
         if (signal != null && signal.isOn()) {
             if (state != State.SLEEPING) {
                 state = State.SLEEPING;
@@ -205,19 +205,11 @@ public class LogMonster extends PathFinderEnnemy {
                     plannedOrientation = randomDir;
                 }
 
-                // STRICT COMPLIANCE: Immediate detection if player is known
+
                 if (lastKnowPlayerPosition != null) {
-                    // Check probability or forced? "Si le joueur est vu, le passage en TARGETING
-                    // doit être déterministe"
-                    // We bypass stateCooldown check for reaction to detection
                     state = State.TARGETING;
                     targetingAnimation.reset();
                 } else if (canChangeState && rng.nextDouble() < pTransition) {
-                    // Only random transition to Targeting if we somehow got here without
-                    // lastKnowPlayerPosition?
-                    // Actually, lastKnowPlayerPosition is set by interaction.
-                    // If we are here, it means no interaction yet, OR interaction just happened.
-                    // If interaction happened, the IF above handles it.
                 }
             }
 
@@ -235,26 +227,18 @@ public class LogMonster extends PathFinderEnnemy {
                         }
                     }
 
-                    // STRICT COMPLIANCE: No random abandonment in TARGETING state.
-                    // Only transitions to RANDOM (if target lost) or SLEEPING (forced externally)
-                    // are allowed.
+
                 }
             }
         }
 
         switch (state) {
-            // Pas de cas 'default' ici pour update, logique est ok
             case SLEEPING -> sleepingAnimation.update(deltaTime);
             case RANDOM -> randomAnimation.update(deltaTime);
             case TARGETING -> targetingAnimation.update(deltaTime);
         }
 
-        // if (immune) {
-        // blinkTick++;
-        // if (immunityCd.ready(deltaTime)) {
-        // immune = false;
-        // }
-        // }
+
 
         super.updateAlive(deltaTime);
     }
@@ -290,7 +274,6 @@ public class LogMonster extends PathFinderEnnemy {
 
     @Override
     public boolean wantsViewInteraction() {
-        // STRICT COMPLIANCE: Always wants view interaction to allow proximity wakeup
         return true;
     }
 
@@ -319,42 +302,31 @@ public class LogMonster extends PathFinderEnnemy {
         @Override
         public void interactWith(ICMazePlayer player, boolean isCellInteraction) {
 
-            // CORRECTIF 1: "Faux-Sommeil"
-            // Si le monstre dort ET que c'est une interaction de VUE -> IGNORER.
-            // Il ne doit pas se réveiller juste parce que le joueur le regarde de loin.
             if (state == State.SLEEPING && !isCellInteraction) {
                 return;
             }
 
-            // CORRECTIF 2: "Invincibilité Post-Victoire"
-            // Le signal de victoire empêche l'attaque et le réveil, MAIS ne doit pas
-            // bloquer la méthode
-            // si on voulait gérer autre chose (ex: sufferHit est géré ailleurs, mais ici on
-            // gère l'attaque du monstre).
-            // On déplace le return global pour cibler les actions offensives/réactives.
+
             boolean victory = (signal != null && signal.isOn());
 
-            // LOGIQUE DE REVEIL (Seulement si pas victoire)
+
             if (!victory && state == State.SLEEPING) {
-                // Ici c'est forcément une interaction de CELLULE (contact) car le cas VUE est
-                // filtré au dessus
                 state = State.RANDOM;
                 randomAnimation.reset();
                 stateCooldown.reset();
             }
 
-            // LOGIQUE D'ATTAQUE / SUIVI (Seulement si pas victoire)
             if (!isCellInteraction) {
 
                 DiscreteCoordinates playerPos = player.getCurrentMainCellCoordinates();
                 DiscreteCoordinates front = getCurrentMainCellCoordinates().jump(getOrientation().toVector());
 
                 if (playerPos.equals(front)) {
-                    // Attaque seulement si pas victoire
+
                     if (!victory) {
                         player.sufferHit();
                     }
-                    // On met à jour la position connue (sauf si victoire -> on s'en fiche, il dort)
+
                     if (!victory) {
                         lastKnowPlayerPosition = playerPos;
                     }
@@ -367,17 +339,17 @@ public class LogMonster extends PathFinderEnnemy {
         }
     }
 
-    public void setLastKnowPlayerPosition(DiscreteCoordinates position) {
-        this.lastKnowPlayerPosition = position;
-    }
-
-    public State getState() {
-        return state;
-    }
-
-    public void setState(State state) {
-        this.state = state;
-    }
+//    public void setLastKnowPlayerPosition(DiscreteCoordinates position) {
+//        this.lastKnowPlayerPosition = position;
+//    }
+//
+//    public State getState() {
+//        return state;
+//    }
+//
+//    public void setState(State state) {
+//        this.state = state;
+//    }
 
     /**
      * Monster takes damage
@@ -388,7 +360,6 @@ public class LogMonster extends PathFinderEnnemy {
             return;
         }
 
-        // CORRECTIF: Réveil sur dégâts (si pas victoire)
         if (true) {
             boolean victory = (signal != null && signal.isOn());
             if (!victory) {
@@ -436,7 +407,6 @@ public class LogMonster extends PathFinderEnnemy {
             }
         }
 
-        // PROTECTION CHEMIN
         if (state == State.TARGETING && graphicPath != null) {
             graphicPath.draw(canvas);
         }

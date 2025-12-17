@@ -56,8 +56,6 @@ public abstract class ICMazeArea extends Area implements DialogHandler, Logic {
         }
     }
 
-    // ... imports ...
-
     public ICMazeArea(String behaviorName, int size) {
         // validation: est -ce que c'est bien ça la modif à faire dans le 2.2 par
         // rapport au tutoriel pour avoir plusieurs noms
@@ -67,26 +65,13 @@ public abstract class ICMazeArea extends Area implements DialogHandler, Logic {
         createPortals();
     }
 
-    // @Override
-    // public float getCameraScaleFactor() {
-    //
-    // return (float) Math.min(getSize() * 1.375, 30);
-    // }
-
-    // Dans ICMazeArea.java
 
     @Override
     public float getCameraScaleFactor() {
 
         int effectiveSize = Math.max(getWidth(), getHeight());
 
-        return (float) Math.min(effectiveSize * DYNAMIC_SCALE_MULTIPLIER, MAXIMUM_SCALE);
-        // // Si c'est une petite aire (8), on force 11 comme demandé dans l'étape 1
-        // if (getSize() <= 8) {
-        // return 11f;
-        // }
-        // // Sinon calcul dynamique pour l'extension
-        // return (float) Math.min(getSize() * 1.375, 30);
+        return  Math.min(effectiveSize * DYNAMIC_SCALE_MULTIPLIER, MAXIMUM_SCALE);
     }
 
     public abstract DiscreteCoordinates getplayerSpawnPosition();
@@ -106,7 +91,7 @@ public abstract class ICMazeArea extends Area implements DialogHandler, Logic {
         registerActor(E);
         registerActor(W);
 
-        return true; // car tout s'est bien passé
+        return true;
     }
 
     protected abstract void createArea();
@@ -127,39 +112,28 @@ public abstract class ICMazeArea extends Area implements DialogHandler, Logic {
         this.W.setState(state);
     }
 
-    // tous les prochains sont changés pour ne pas toucher aux objets Portal
+
 
     public void setNorthDestination(String destination, int nextSize) {
-        // this.northDestination = destination;
         this.N.setDestinationArea(destination);
         this.N.setArrivalCoordinates(new DiscreteCoordinates(nextSize / 2, 1));
     }
 
     public void setSouthDestination(String destination, int nextSize) {
-        // this.southDestination = destination;
         this.S.setDestinationArea(destination);
         this.S.setArrivalCoordinates(new DiscreteCoordinates(nextSize / 2, nextSize));
     }
 
     public void setWestDestination(String destination, int nextSize) {
-        // this.westDestination = destination;
         this.W.setDestinationArea(destination);
         this.W.setArrivalCoordinates(new DiscreteCoordinates(nextSize, nextSize / 2));
 
     }
 
     public void setEastDestination(String destination, int nextSize) {
-        // this.eastDestination = destination;
         this.E.setDestinationArea(destination);
         this.E.setArrivalCoordinates(new DiscreteCoordinates(1, nextSize / 2));
     }
-
-    // public void setDestination(int sizeNext){
-    // N.setArrivalCoordinates(new DiscreteCoordinates(sizeNext/2, 1));
-    // S.setArrivalCoordinates(new DiscreteCoordinates(sizeNext/2, sizeNext));
-    // W.setArrivalCoordinates(new DiscreteCoordinates(sizeNext, sizeNext/2));
-    // E.setArrivalCoordinates(new DiscreteCoordinates(1,sizeNext/2));
-    // }
 
     public void setNorthKeyId(int id) {
         this.N.setKeyId(id);
@@ -177,31 +151,10 @@ public abstract class ICMazeArea extends Area implements DialogHandler, Logic {
         this.W.setKeyId(id);
     }
 
-    public String getBehaviorName() {
-        return behaviorName;
-    }
-
-    // public abstract DiscreteCoordinates startingCoordinates(int sizeStart);
-    //
-    // public abstract DiscreteCoordinates arrivalCoordinates(int sizeArrival);
 
     public abstract int getSize();
 
-    // public void setDestination(DiscreteCoordinates coord){
-    // N.setArrivalCoordinates(coord.jump(0,1));
-    // }
 
-    // ici l'objectif c'est de dire où tu vas arriver par rapport à la tu pars
-    // et du coup ici ce qui est bien c'est que on prend en paramètre la size de
-    // l'aire d'après
-    // ce qui permet d'arriver à des coordonnées qui correspondent bien à l'aire
-    // d'arrivée
-    // par exemple si je prends le portail Nord, alors le but c'est d'arriver par le
-    // portail
-    // sud, donc on prend la coordonnée du portail sud, et on lui rajoute 1 en y.
-    // du coup s'il prend en sud, il arrive par le nord mais en y-1
-    // s'il prend le portail ouest, alors il arrive en est x-1
-    // s'il prend le poratil est, alors il arrive par l'ouest du porchain en x+1
 
     protected void createPortals() {// modifier cordonne arrivee
 
@@ -242,19 +195,11 @@ public abstract class ICMazeArea extends Area implements DialogHandler, Logic {
 
     protected AreaGraph graph = new AreaGraph();
 
-    // le get ci dessous est intrusif
-    // public AreaGraph getGraph(){
-    // return graph;
-    // }
 
     public Queue<Orientation> getShortestPath(DiscreteCoordinates from, DiscreteCoordinates to) {
         return graph.shortestPath(from, to);
     }
 
-    // // ce qui arrive je suis pas sûr
-    //
-    // private ICMaze game;
-    //
     public void setGame(ICMaze game) {
         this.game = game;
     }
@@ -279,7 +224,6 @@ public abstract class ICMazeArea extends Area implements DialogHandler, Logic {
 
     private Logic validationSignal = Logic.FALSE;
 
-    // getValidationSignal removed
 
     public void onRockDestroyed(DiscreteCoordinates cell) {
 

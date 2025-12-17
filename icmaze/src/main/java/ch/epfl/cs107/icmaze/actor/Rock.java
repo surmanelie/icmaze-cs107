@@ -23,19 +23,10 @@ import java.util.List;
 
 public class Rock extends AreaEntity implements Interactable, Updatable {
 
-    // Sprite principal du rocher
     private Sprite sprite;
 
-    // Points de vie restants (le rocher disparaît à 0)
-    // private int hP = 3;
-
-    // private boolean recentlyHit = false;
-
-    // Indique si le rocher est en train de disparaître
     private boolean vanishing = false;
     private boolean hasTakenDamage = false;
-
-    // Animation de disparition
     private static final int ANIMATION_DURATION = 24;
     private final Animation vanishAnimation;
     private final Logic signal;
@@ -43,8 +34,6 @@ public class Rock extends AreaEntity implements Interactable, Updatable {
     private final ICMazeArea owner;
 
     private final Health healthBar = new Health(this, Transform.I.translated(0, 1.0f), 3, false);
-
-    // Initialise le rocher, son sprite et l’animation de disparition
 
     public Rock(ICMazeArea area, Orientation orientation, DiscreteCoordinates coordinates, Logic signal) {
         super(area, orientation, coordinates);
@@ -56,16 +45,6 @@ public class Rock extends AreaEntity implements Interactable, Updatable {
                 ANIMATION_DURATION / 7, false);
     }
 
-    // public Rock(Area area, Orientation orientation, DiscreteCoordinates
-    // coordinates, Logic signal) {
-    // super(area, orientation, coordinates);
-    // this.signal = signal;
-    // sprite = new Sprite("rock.2", 1f, 1f, this);
-    //
-    // vanishAnimation = new Animation("icmaze/vanish", 7, 2, 2, this, 32, 32, new
-    // Vector(-0.5f, 0f),
-    // ANIMATION_DURATION / 7, false);
-    // }
 
     public Rock(ICMazeArea area, DiscreteCoordinates coordinates) {
 
@@ -85,11 +64,6 @@ public class Rock extends AreaEntity implements Interactable, Updatable {
 
     public void weaken() {
 
-        // if(recentlyHit || vanishing ){
-        // return;
-        // }
-        // recentlyHit = true;
-
         if (vanishing || immune) {
             return;
         }
@@ -108,10 +82,6 @@ public class Rock extends AreaEntity implements Interactable, Updatable {
         triggerImmunity();
 
     }
-
-    // public void resetHitFlag(){
-    // recentlyHit = false;
-    // }
 
     private void handleVanish(float dt) {
         vanishAnimation.update(dt);

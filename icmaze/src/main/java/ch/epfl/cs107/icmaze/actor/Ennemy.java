@@ -105,7 +105,6 @@ public abstract class Ennemy extends ICMazeActor implements Interactor, Interact
         return state == State.ALIVE;
     }
 
-    // --- Interactions ---
 
     @Override
     public boolean isCellInteractable() {
@@ -127,7 +126,7 @@ public abstract class Ennemy extends ICMazeActor implements Interactor, Interact
         return true;
     }
 
-    // --- Lifecycle ---
+
 
     @Override
     public void update(float deltaTime) {

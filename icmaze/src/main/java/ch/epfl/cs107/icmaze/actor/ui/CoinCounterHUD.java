@@ -16,16 +16,16 @@ public final class CoinCounterHUD {
 
     public void draw(Canvas canvas) {
 
-        // ===== SCALE =====
+
         double scale = canvas.getScaledHeight() / 11.0;
 
         double hudWidth  = 4.0 * scale;
         double hudHeight = 2.0 * scale;
 
-        // 🔥 DIGITS PLUS GRANDS
+
         double digitSize = 1 * scale;
 
-        // ===== CAMERA =====
+
         Vector center = canvas.getPosition();
         double viewWidth  = canvas.getScaledWidth();
         double viewHeight = canvas.getScaledHeight();
@@ -34,7 +34,7 @@ public final class CoinCounterHUD {
                 new Vector(-viewWidth / 2.0, viewHeight / 2.0)
         );
 
-        // ===== HUD ANCHOR =====
+
         Vector hudAnchor = topLeft.add(
                 new Vector(
                         hudWidth / 2.0 + scale,
@@ -42,7 +42,7 @@ public final class CoinCounterHUD {
                 )
         );
 
-        // ===== DRAW HUD BACKGROUND =====
+
         new ImageGraphics(
                 ResourcePath.getSprite("icmaze/coinsDisplay"),
                 (float) hudWidth,
@@ -53,11 +53,7 @@ public final class CoinCounterHUD {
                 2000
         ).draw(canvas);
 
-        // ==================================================
-        // DIGITS — ANCRÉS DANS LA ZONE GRISE DE L’IMAGE
-        // ==================================================
 
-        // Coordonnées IMAGE (pixel)
         final double GREY_X_CENTER = 70.0;
         final double GREY_Y_CENTER = 6.5; //
 
@@ -71,7 +67,7 @@ public final class CoinCounterHUD {
                 )
         );
 
-        // ===== DRAW DIGITS =====
+
         String text = String.valueOf(coinCount);
         double startX = -(text.length() * digitSize) / 2.0;
 

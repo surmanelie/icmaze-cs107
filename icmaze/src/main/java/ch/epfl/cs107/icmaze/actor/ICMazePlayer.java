@@ -44,7 +44,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
     private int currentMoveDuration = NORMAL_MOVE_DURATION;
     private Cooldown speedCd = new Cooldown(0f);
     private boolean speedEffectActive = false;
-    // --- Speed visual effect (independent from immunity) ---
+
     private boolean speedVisualActive = false;
     private int speedBlinkTick = 0;
     private static final int SPEED_BLINK_RATE = 2; // très rapide
@@ -53,13 +53,13 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
     private PlayerState currentState = PlayerState.IDLE;
 
     private final KeyBindings.PlayerKeyBindings keys;
-    // private Keyboard keyboard = getOwnerArea().getKeyboard();
+
 
     private OrientedAnimation animation;
 
     private OrientedAnimation pickaxeAnimation;
     private static final int PICKAXE_ANIMATION_DURATION = 5;
-    // animation d’attaque à la pioche
+
 
     private final ICMazePlayerInteractionHandler handler = new ICMazePlayerInteractionHandler();
 
@@ -68,17 +68,15 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
     private String destinationArea;
     private DiscreteCoordinates destinationCoordinates;
 
-    // private static final int MAX_LIFE = 5;
+
     private final Health healthBar = new Health(this, Transform.I.translated(0, 1.75f), 5, true);
 
-    // private int life = MAX_LIFE;
 
     private static final float IMMUNITY_DURATION = 1.0f;
     private final Cooldown immunityCd = new Cooldown(IMMUNITY_DURATION);
     private boolean immune = false;
     private int blinkTick = 0;
 
-    // private float immunityTimer = 0f;
 
     public ICMazePlayer(Area owner, Orientation orientation, DiscreteCoordinates coordinates, String spriteName) {
         super(owner, orientation, coordinates);
@@ -93,17 +91,13 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
         animation = new OrientedAnimation(prefix, ANIMATION_DURATION, this, anchor, orders,
                 4, 1, 2, 16, 32, true);
 
-        // création de l'animation d'attaque
+
         final Vector anchor2 = new Vector(-.5f, 0);
         final Orientation[] orders2 = { DOWN, UP, RIGHT, LEFT };
         pickaxeAnimation = new OrientedAnimation("icmaze/player.pickaxe",
                 PICKAXE_ANIMATION_DURATION, this,
                 anchor2, orders2, 4, 2, 2, 32, 32);
-        // // création de l'animation d'attaque
-        //
-        // pickaxeAttackAnimation= new OrientedAnimation("icmaze/player.pickaxe",
-        // PICKAXE_ANIMATION_DURATION , this ,
-        // anchor2 , orders2 , 4, 2, 2, 32, 32);
+
     }
 
     public enum PlayerState {
@@ -160,12 +154,12 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
 
         boolean visible = true;
 
-        // Immunité : clignotement lent
+
         if (immune) {
             visible = (blinkTick % 2 == 0);
         }
 
-        // Speed effect : clignotement très rapide
+
         if (speedVisualActive) {
             visible = (speedBlinkTick % SPEED_BLINK_RATE == 0);
         }
@@ -206,10 +200,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
 
     private boolean hasHitThisAttack = false;
 
-    // private boolean dead = false;
-    // public boolean isDead(){
-    // return dead;
-    // }
+
 
     public void sufferHit() {
 
@@ -221,7 +212,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
         triggerVisualEffect();
 
         if (!healthBar.isOn()) {
-            // ça veut dire que le player est mort
+
             ((ICMazeArea) getOwnerArea()).requestReset();
         }
     }
@@ -232,14 +223,11 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
         immunityCd.reset();
     }
 
-    // private boolean isImmune(){
-    // return immunityTimer > 0f;
-    // }
 
     public void resetAfterAreaReset() {
         healthBar.resetHealth();
 
-        // FIX: Key Hoarding - We remove keys but keep the Pickaxe
+
         bag.removeIf(item -> item instanceof Key);
 
         immune = false;
@@ -259,7 +247,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
     @Override
     public void update(float deltaTime) {
 
-        // FIX: Zombie Interaction - Dead player cannot move or interact
+
         if (!healthBar.isOn()) {
             return;
         }
@@ -279,16 +267,14 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                 else
                     animation.reset();
 
-                // Entrer en mode INTERACTING
+
                 if (!isDisplacementOccurs() &&
                         keyboard.get(keys.interact()).isPressed()) {
                     currentState = PlayerState.INTERACTING;
                 }
 
-                // Lancer animation d’attaque
                 if (!isDisplacementOccurs() && hasPickaxe() && keyboard.get(keys.pickaxe()).isPressed()) {
                     currentState = PlayerState.ATTACKING_WITH_PICKAXE;
-                    // animation = pickaxeAnimation;
                     pickaxeAnimation.reset();
                     hasHitThisAttack = false;
                 }
@@ -303,32 +289,27 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                 break;
 
             case INTERACTING:
-                // Quitter mode INTERACTING
                 if (!keyboard.get(keys.interact()).isDown()) {
                     currentState = PlayerState.IDLE;
                 }
                 break;
 
             case ATTACKING_WITH_PICKAXE:
-                // --- On joue l’animation d’attaque ---
                 pickaxeAnimation.update(deltaTime);
 
-                // --- Quand l’animation finit, on revient à l’IDLE ---
                 if (pickaxeAnimation.isCompleted()) {
 
                     currentState = PlayerState.IDLE;
 
-                    // remettre l'animation normale
 
                     animation.reset();
-                    hasHitThisAttack = false; // prêt pour la prochaine attaque
+                    hasHitThisAttack = false;
                 }
 
                 break;
         }
 
-        // immunityTimer = Math.max(0f, immunityTimer-deltaTime); // comme ça son temps
-        // d'immunité évolue à chaque update
+
         if (immune) {
             blinkTick++;
             if (immunityCd.ready(deltaTime)) { // ça vérifie si le temps d'immunité est terminé ou pass
@@ -354,7 +335,6 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
         }
     }
 
-    // pour que le joueur puisse être vu par les monster
 
     @Override
     public boolean isViewInteractable() {
@@ -396,13 +376,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
             if (isCellInteraction) {
                 bag.add(pickaxe);
                 pickaxe.collect();
-                // getOwnerArea().unregisterActor(pickaxe); //à vérifier si c'est vraiment
-                // nécessaire
-                // j'ai vérifié et ça change rien si on appelle pas unregistor car le collect
-                // est bon mntn
 
-                // mntn il faut faire effacer l'objet de la map
-                // pickaxe.unregister(pickaxe);
             }
         }
 
@@ -414,7 +388,6 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                 triggerVisualEffect();
             }
 
-            // getOwnerArea().unregisterActor(heart);
 
         }
 
@@ -427,12 +400,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
             }
         }
 
-        // @Override
-        // public void interactWith(Portal portal, boolean isCellInteraction) {
-        // setisChanging(true);
-        // setDestinationArea(portal.getDestinationAreaName());
-        // destinationCoordonates = portal.getArrivalCoordinates();
-        // }
+
         @Override
         public void interactWith(Portal portal, boolean isCellInteraction) {
             if (isCellInteraction) {
@@ -441,48 +409,41 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                     setisChanging(true);
                     setDestinationArea(portal.getDestinationAreaName());
                     destinationCoordinates = portal.getArrivalCoordinates();
-                    // DiscreteCoordinates inside =
-                    // arrival.jump(portal.getOrientation().opposite().toVector());
+
                 }
             } else {
 
-                // on doit d'abord vérifier qu'on ne fait rien si on attaque avec la pioche
+
                 if (currentState != PlayerState.INTERACTING) {
                     return;
                 }
 
-                // Interaction de vue : on est en mode INTERACTING et on regarde le portail
+
                 if (portal.getState() == Portal.State.LOCKED) {
                     int id = portal.getKeyId();
 
-                    // Si le portail n'utilise pas de clé (id spécial), on ne fait rien
                     if (id == Portal.NO_KEY_ID) {
                         return;
                     }
 
-                    // Si on a la bonne clé, on la consomme et on ouvre le portail
                     if (hasKey(id) && useKey(id)) {
                         portal.open();
-                        // On choisit de ne PAS téléporter tout de suite :
-                        // le joueur devra ensuite passer dessus pour se téléporter.
+
 
                     }
                 }
-                // Si le portail est INVISIBLE ou déjà OPEN : rien à faire en view interaction.
             }
         }
 
         @Override
         public void interactWith(Rock rock, boolean isCellInteraction) {
 
-            // Le joueur doit être en train d’attaquer AVEC la pioche
+
             if (!isCellInteraction && currentState == PlayerState.ATTACKING_WITH_PICKAXE && !hasHitThisAttack) {
 
-                rock.weaken(); // inflige 1 dégât au rocher
-                hasHitThisAttack = true; // c'est ça qui permet de ne pas retaper pendant la même animation.
+                rock.weaken();
+                hasHitThisAttack = true;
 
-                // ATTENTION : le rock gère déjà vanish + drop + suppression
-                // donc tu n’as rien d’autre à faire ici
             }
 
         }
@@ -496,8 +457,6 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                 hasHitThisAttack = true;
             }
 
-            System.out
-                    .println("Player -> LogMonster interaction, cell=" + isCellInteraction + ", state=" + currentState);
         }
 
         @Override
@@ -538,80 +497,4 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
     }
 }
 
-// private void drawHUD(Canvas canvas) {
-// int coinCount = 0;
-// for (ICMazeObject obj : bag) {
-// if (obj instanceof Coin)
-// coinCount++;
-// }
-//
-// // HUD Fixed Position (Screen Space)
-// // Canvas.getPosition() returns the camera center
-// float width = (float) canvas.getScaledWidth();
-// float height = (float) canvas.getScaledHeight();
-// Vector viewCenter = canvas.getPosition();
-// Vector topLeft = viewCenter.add(new Vector(-width / 2, height / 2));
-//
-// // HUD size is 4x2 units. Anchor is center of image.
-// // We place it at Top Left + margin.
-// Vector anchor = topLeft.add(new Vector(2f + 0.5f, -1f - 0.5f));
-//
-// // 1. Coin Display (64x32 px -> 4x2 units)
-// ImageGraphics coinIcon = new ImageGraphics(
-// ch.epfl.cs107.play.io.ResourcePath.getSprite("icmaze/coinsDisplay"),
-// 4f, 2f, new RegionOfInterest(0, 0, 64, 32),
-// anchor, 1f, 2000f);
-// coinIcon.draw(canvas);
-//
-// // 2. Digits
-// // Display in the right half of the 4x2 area.
-// // Right half center relative to anchor: (+1, 0).
-// // Digits size 0.5x0.5 ?
-// // 3 digits max. Total width 1.5. Fits in 2.0.
-//
-// String countStr = String.valueOf(coinCount);
-// float digitSize = 0.5f;
-//
-// // Start drawing digits centered in the right half
-// // Right half x range: [0, 2] relative to HUD center? No, HUD is [-2, 2].
-// // Right half is [0, 2].
-// // Center of right half is x=1.
-//
-// // Let's center the string of digits around x=1 relative to anchor.
-// float totalWidth = countStr.length() * digitSize;
-// float startX = 1f - (totalWidth / 2) + (digitSize / 2);
-// // Logic: if 1 digit (width 0.5), center at 1. Start at 1.
-// // Wait, anchor is center of digit? ImageGraphics anchor is center.
-// // So we place digit centers.
-//
-// // Let's simplify: Start at x = 0.5 (left of right half) + margin
-// // Right half starts at anchor.x (since anchor is center of 4-wide image).
-// // Correct.
-//
-// for (int i = 0; i < countStr.length(); i++) {
-// int digit = Character.getNumericValue(countStr.charAt(i));
-//
-// int regionX = 0;
-// int regionY = 0;
-//
-// if (digit == 0) {
-// regionX = 16;
-// regionY = 32;
-// } else {
-// int n = digit - 1;
-// int col = n % 4;
-// int row = n / 4;
-// regionX = col * 16;
-// regionY = row * 16;
-// }
-//
-// ImageGraphics digitGraphics = new ImageGraphics(
-// ch.epfl.cs107.play.io.ResourcePath.getSprite("icmaze/digits"),
-// digitSize, digitSize, new RegionOfInterest(regionX, regionY, 16, 16),
-// anchor.add(new Vector(0.4f + i * 0.6f, 0)), // Manual offset into right half
-// 1f, 2001f);
-// digitGraphics.draw(canvas);
-// }
-// }
 
-// Dans ICMazePlayer.java

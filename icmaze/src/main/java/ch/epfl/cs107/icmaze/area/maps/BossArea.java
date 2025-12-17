@@ -20,19 +20,7 @@ public class BossArea extends ICMazeArea implements Logic {
         return boss != null && boss.isDefeated() && boss.getDroppedKey() != null && boss.getDroppedKey().isCollected();
     }
 
-    // private int sizeBoss;
-    // public int getsSizeBoss(){
-    // return sizeBoss; }
 
-    // @Override
-    // public DiscreteCoordinates arrivalCoordinates(int size) {
-    // return ;
-    // }
-    //
-    // @Override
-    // public DiscreteCoordinates startingCoordinates(int size) {
-    // return ;
-    // }
 
     @Override
     public int getSize() {

@@ -22,23 +22,23 @@ public abstract class LabyrinthArea extends ICMazeArea {
     private AreaPortals portalExit;
     protected int keyId;
     public final static int keyIdL1 = Integer.MAX_VALUE;
-    public final static int keyIdL2 = Integer.MAX_VALUE - 1;
-    public final static int keyIdL3 = Integer.MAX_VALUE - 2;
-    public final static int keyIdL4 = Integer.MAX_VALUE - 3;
-    // private final String gridName;
+//    public final static int keyIdL2 = Integer.MAX_VALUE - 1;
+//    public final static int keyIdL3 = Integer.MAX_VALUE - 2;
+//    public final static int keyIdL4 = Integer.MAX_VALUE - 3;
+//    // private final String gridName;
 
     /** Matrice du labyrinthe : 0 = chemin, 1 = mur */
     protected int[][] mazeGrid;
 
     private int difficulty;
 
-    public int getDifficulty() {
-        return difficulty;
-    }
-
-    public void setDifficulty(int difficulty) {
-        this.difficulty = difficulty;
-    }
+//    public int getDifficulty() {
+//        return difficulty;
+//    }
+//
+//    public void setDifficulty(int difficulty) {
+//        this.difficulty = difficulty;
+//    }
 
     public void setPortalEnter(AreaPortals portalEnter) {
         this.portalEnter = portalEnter;
@@ -55,16 +55,15 @@ public abstract class LabyrinthArea extends ICMazeArea {
         this.portalExit = portalExit;
         this.keyId = Keyid;
         this.difficulty = difficulty;
-        // this.gridName = gridName;
     }
 
     public int getKeyId() {
         return keyId;
     }
 
-    public void setKeyId(int keyId) {
-        this.keyId = keyId;
-    }
+//    public void setKeyId(int keyId) {
+//        this.keyId = keyId;
+//    }
 
     private boolean isvalid(DiscreteCoordinates c) {
         return c.x >= 1 && c.x <= size && c.y >= 1 && c.y <= size;

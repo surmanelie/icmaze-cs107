@@ -21,10 +21,10 @@ public final class LevelGenerator {
      */
     public static ICMazeArea[] generateLine(ICMaze game, int length) {
 
-        // Spawn + length rooms + Boss
+
         ICMazeArea[] areas = new ICMazeArea[length + 2];
 
-        // Fictional referential [x][y]
+
         DiscreteCoordinates current = new DiscreteCoordinates(0, 0);
         Set<DiscreteCoordinates> occupied = new HashSet<>();
         occupied.add(current);
@@ -41,7 +41,7 @@ public final class LevelGenerator {
             return areas;
         }
 
-        // Generate first Labyrinth area connected to Spawn
+        // Premiere area connecte
         int index = 0;
         double progress = (double) (index + 1) / length;
         ICMazeArea.AreaPortals dir = chooseFreeDirection(current, occupied);
@@ -51,13 +51,13 @@ public final class LevelGenerator {
         LabyrinthArea firstArea = createAreaForProgress(index, progress);
         firstArea.setPortalEnter(getOpposite(dir));
 
-        // Connect Spawn -> First Labyrinth Area
+
         connectSpawnToLabyrinth(spawn, dir, firstArea);
         areas[1] = firstArea;
 
         LabyrinthArea previous = firstArea;
 
-        // 2) Intermediate areas
+        // 2) Aires inetremediaires
         for (int i = 1; i < length; i++) {
             progress = (double) (i + 1) / length;
             dir = chooseFreeDirection(current, occupied);
@@ -67,7 +67,6 @@ public final class LevelGenerator {
             LabyrinthArea newArea = createAreaForProgress(i, progress);
             newArea.setPortalEnter(getOpposite(dir));
 
-            // Previous (Labyrinth) -> Current (Labyrinth)
             previous.setPortalExit(dir);
 
             connectLabyrinthToLabyrinth(previous, dir, newArea);
@@ -76,18 +75,17 @@ public final class LevelGenerator {
             previous = newArea;
         }
 
-        // 3) BossArea at the end
+
         BossArea boss = new BossArea();
         ICMazeArea.AreaPortals bossDir = chooseFreeDirection(current, occupied);
 
-        // Previous (Labyrinth) -> Boss
         previous.setPortalExit(bossDir);
 
         connectLabyrinthToBoss(previous, bossDir, boss);
 
         areas[length + 1] = boss;
 
-        // Wiring the signal: BossArea -> Spawn and Labyrinth areas
+
         for (ICMazeArea area : areas) {
             if (area != boss) {
                 area.setValidationSignal(boss);
@@ -97,9 +95,7 @@ public final class LevelGenerator {
         return areas;
     }
 
-    // ======================
-    // UTILITY METHODS
-    // ======================
+
 
     /**
      * Chooses a free direction among N, E, S
@@ -167,19 +163,16 @@ public final class LevelGenerator {
         return new SmallArea(keyId, difficulty);
     }
 
-    // --- Specific Connection Methods strictly typed to remove instanceof ---
 
-    // Connect Spawn -> LabyrinthArea
     private static void connectSpawnToLabyrinth(Spawn from, ICMazeArea.AreaPortals dir, LabyrinthArea to) {
         setOutgoingLocked(from, dir, Integer.MAX_VALUE); // Spawn uses MAX_VALUE key
 
         setDestinations(from, dir, to);
 
-        // Entering a Labyrinth -> Open
+
         setIncomingOpen(to, dir);
     }
 
-    // Connect LabyrinthArea -> LabyrinthArea
     private static void connectLabyrinthToLabyrinth(LabyrinthArea from, ICMazeArea.AreaPortals dir,
             LabyrinthArea to) {
         setOutgoingLocked(from, dir, from.getKeyId());
@@ -189,17 +182,16 @@ public final class LevelGenerator {
         setIncomingOpen(to, dir);
     }
 
-    // Connect LabyrinthArea -> BossArea
     private static void connectLabyrinthToBoss(LabyrinthArea from, ICMazeArea.AreaPortals dir, BossArea to) {
         setOutgoingLocked(from, dir, from.getKeyId());
 
         setDestinations(from, dir, to);
 
-        // Entering Boss Area -> Locked usually
+
         setIncomingLocked(to, dir, 999);
     }
 
-    // Connect Spawn -> BossArea (case length=0)
+
     private static void connectSpawnToBoss(Spawn from, ICMazeArea.AreaPortals dir, BossArea to) {
         setOutgoingLocked(from, dir, Integer.MAX_VALUE);
 
@@ -208,7 +200,7 @@ public final class LevelGenerator {
         setIncomingLocked(to, dir, 999);
     }
 
-    // --- Low-level helpers for connection logic ---
+
 
     private static void setDestinations(ICMazeArea from, ICMazeArea.AreaPortals dir, ICMazeArea to) {
         switch (dir) {
@@ -253,11 +245,7 @@ public final class LevelGenerator {
     }
 
     private static void setIncomingOpen(ICMazeArea to, ICMazeArea.AreaPortals fromDir) {
-        // Warning: fromDir is the direction leaving 'from', so 'to' receives on
-        // opposite
-        // However, switch cases below match original logic which sets the COMPLEMENTARY
-        // portal on 'to'
-        // Original: case E -> to.setWestState(OPEN)
+
         switch (fromDir) {
             case E -> to.setWestState(Portal.State.OPEN);
             case W -> to.setEastState(Portal.State.OPEN);

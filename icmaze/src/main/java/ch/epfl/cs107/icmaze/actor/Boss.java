@@ -55,9 +55,7 @@ public class Boss extends Ennemy {
 
         Vector anchor = new Vector(-0.5f, 0f);
 
-        // Correct Animation Constructor based on LogMonster?
-        // OrientedAnimation(name, frameDuration, parent, anchor, orders, frameCount,
-        // width, height, regionWidth, regionHeight, repeat)
+
 
         Orientation[] orders = { Orientation.DOWN, Orientation.RIGHT, Orientation.UP, Orientation.LEFT };
 
@@ -74,7 +72,7 @@ public class Boss extends Ennemy {
             return;
         }
 
-        idleAnimation.update(deltaTime); // Update animation if activated
+        idleAnimation.update(deltaTime);
 
         if (barrageCooldown.ready(deltaTime)) {
             shootBarrage();
@@ -154,15 +152,7 @@ public class Boss extends Ennemy {
 
     private void respawnAt(Area area, TeleportDest dest) {
 
-        // orientate(dest.orientation);
-        //
-        // setCurrentPosition(dest.coords.toVector());
-        //
-        // resetMotion();
-        // this.resetMotion();
-        //
-        // this.leaveArea();
-        // this.enterArea(area, dest.coords);
+
         changePosition(dest.coords);
         this.orientate(dest.orientation);
     }
@@ -191,18 +181,16 @@ public class Boss extends Ennemy {
         }
 
         for (DiscreteCoordinates target : targets) {
-            // 1. On crée UN SEUL projectile
+
             Projectile p = new FireProjectile(area, ori, target);
 
-            // 2. On l'active sur l'aire
             p.enterArea(area, target);
 
-            // 3. On le mémorise dans la liste pour pouvoir le supprimer au prochain reset
+
             activeProjectiles.add(p);
         }
 
-        // for (DiscreteCoordinates target : targets) {
-        // new FireProjectile(area, ori, target).enterArea(area, target);
+
         //// Projectile p =new FireProjectile(area, ori, target);
         //// p.enterArea(area, target);
         //// activeProjectiles.add(p);
@@ -210,34 +198,7 @@ public class Boss extends Ennemy {
         // }
     }
 
-    // /**
-    // * Nettoie TOUT : les projectiles et le boss lui-même.
-    // * On passe l'aire en paramètre pour être sûr de nettoyer la bonne aire.
-    // */
-    // public void cleanUp(Area area) {
-    // // 1. Supprimer tous les projectiles enregistrés
-    // for (Projectile p : activeProjectiles) {
-    // area.unregisterActor(p);
-    // }
-    // activeProjectiles.clear();
-    //
-    // // 2. Supprimer le Boss lui-même
-    // area.unregisterActor(this);
-    // }
 
-    // public void cleanUP(){
-    // Area area = getOwnerArea();
-    // if(area == null){
-    // return;
-    // }
-    //
-    // for(Projectile p : activeProjectiles){
-    // p.leaveArea();
-    // }
-    // activeProjectiles.clear();
-    //
-    // this.leaveArea();
-    // }
 
     private record TeleportDest(DiscreteCoordinates coords, Orientation orientation) {
     }
