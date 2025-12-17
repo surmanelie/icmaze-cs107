@@ -427,7 +427,7 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                         portal.open();
                         // On choisit de ne PAS téléporter tout de suite :
                         // le joueur devra ensuite passer dessus pour se téléporter.
-git add
+
                     }
                 }
                 // Si le portail est INVISIBLE ou déjà OPEN : rien à faire en view interaction.

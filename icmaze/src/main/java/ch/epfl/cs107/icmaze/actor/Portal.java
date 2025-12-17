@@ -59,12 +59,17 @@ public class Portal extends ICMazeActor implements Interactable {
                 (orientation.ordinal() + 1) % 2 + 1,
                 orientation.ordinal() % 2 + 1,
                 this);
+        this.invisibleSprite.setDepth(-1);
+
+
+
 
         this.lockedSprite = new Sprite(
                 "icmaze/chained_wood_" + orientation.ordinal(),
                 (orientation.ordinal() + 1) % 2 + 1,
                 orientation.ordinal() % 2 + 1,
                 this);
+        this.lockedSprite.setDepth(-1);
     }
 
     public void setArrivalCoordinates(DiscreteCoordinates arrivalCoordinates) {

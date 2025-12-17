@@ -29,7 +29,7 @@ import java.util.Queue;
  */
 public class LogMonster extends PathFinderEnnemy {
 
-    private static final int MAX_HEALTH = 3;
+    private static final int MAX_HEALTH = 1;
     private static final int PERCEPTION_RADIUS = 5;
 
     private final double pTransition;
@@ -63,6 +63,7 @@ public class LogMonster extends PathFinderEnnemy {
     private boolean immune = false;
     private int blinkTick = 0;
     private boolean hasTakenDamage = false;
+    private boolean killNotified = false;
 
     private final Logic signal;
 
@@ -400,6 +401,11 @@ public class LogMonster extends PathFinderEnnemy {
         loseHealth(1);
         healthBar.decrease(1);
         hasTakenDamage = true;
+        if (isDead() && !killNotified) {
+            ((ICMazeArea) getOwnerArea()).incrementMonsterKillCount();
+            killNotified = true;
+        }
+
         triggerImmunity();
     }
 

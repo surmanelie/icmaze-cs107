@@ -259,6 +259,19 @@ public abstract class ICMazeArea extends Area implements DialogHandler, Logic {
         this.game = game;
     }
 
+    public void incrementMonsterKillCount() {
+        if (game != null) {
+            game.incrementMonsterKillCount();
+        }
+    }
+
+    public int getMonsterKillCount() {
+        if (game != null) {
+            return game.getMonsterKillCount();
+        }
+        return 0;
+    }
+
     public void requestReset() {
         if (game != null)
             game.resetCurrentArea();

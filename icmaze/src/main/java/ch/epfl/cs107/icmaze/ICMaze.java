@@ -23,6 +23,7 @@ public class ICMaze extends AreaGame implements DialogHandler {
     private ICMazePlayer player;
     private final CoinCounterHUD coinHUD = new CoinCounterHUD();
     private Dialog activeDialog;
+    private int monsterKillCount = 0;
 
     private Window window;
     private FileSystem fileSystem;
@@ -34,6 +35,7 @@ public class ICMaze extends AreaGame implements DialogHandler {
 
         this.window = window;
         this.fileSystem = fileSystem;
+        this.monsterKillCount = 0;
 
         if (!super.begin(window, fileSystem)) {
             return false;
@@ -47,7 +49,7 @@ public class ICMaze extends AreaGame implements DialogHandler {
 
     private void createAreas() {
         // generateHardCodedLevel();
-        ICMazeArea[] areas = LevelGenerator.generateLine(this, 10);
+        ICMazeArea[] areas = LevelGenerator.generateLine(this, 2);
 
         if (areas.length > 0) {
             // Le dernier est BossArea qui est le signal logique
@@ -168,4 +170,12 @@ public class ICMaze extends AreaGame implements DialogHandler {
     // private void generateHardCodedLevel() {
     // Keep empty reference or remove if unused, but maintain structure for now
     // }
+
+    public void incrementMonsterKillCount() {
+        monsterKillCount++;
+    }
+
+    public int getMonsterKillCount() {
+        return monsterKillCount;
+    }
 }
