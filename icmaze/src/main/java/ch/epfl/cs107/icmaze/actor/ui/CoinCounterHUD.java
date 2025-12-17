@@ -1,6 +1,7 @@
 package ch.epfl.cs107.icmaze.actor.ui;
 
 import ch.epfl.cs107.play.engine.actor.ImageGraphics;
+import ch.epfl.cs107.play.io.ResourcePath;
 import ch.epfl.cs107.play.math.RegionOfInterest;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
@@ -15,54 +16,88 @@ public final class CoinCounterHUD {
 
     public void draw(Canvas canvas) {
 
-        float scaleRatio = (float) canvas.getScaledHeight() / 11.0f;
+        // ===== SCALE =====
+        double scale = canvas.getScaledHeight() / 11.0;
 
-        float hudWidth = 4f * scaleRatio;
-        float hudHeight = 2f * scaleRatio;
-        float digitSize = 0.5f * scaleRatio;
+        double hudWidth  = 4.0 * scale;
+        double hudHeight = 2.0 * scale;
 
-        Vector viewCenter = canvas.getPosition();
-        float viewWidth = (float) canvas.getScaledWidth();
-        float viewHeight = (float) canvas.getScaledHeight();
+        // 🔥 DIGITS PLUS GRANDS
+        double digitSize = 1 * scale;
 
-        Vector topLeft = viewCenter.add(new Vector(-viewWidth / 2, viewHeight / 2));
+        // ===== CAMERA =====
+        Vector center = canvas.getPosition();
+        double viewWidth  = canvas.getScaledWidth();
+        double viewHeight = canvas.getScaledHeight();
 
-        Vector anchor = topLeft.add(
+        Vector topLeft = center.add(
+                new Vector(-viewWidth / 2.0, viewHeight / 2.0)
+        );
+
+        // ===== HUD ANCHOR =====
+        Vector hudAnchor = topLeft.add(
                 new Vector(
-                        (hudWidth / 2) + (0.5f * scaleRatio),
-                        -(hudHeight / 2) - (0.5f * scaleRatio)));
+                        hudWidth / 2.0 + scale,
+                        -hudHeight / 2.0 - scale
+                )
+        );
 
-        ImageGraphics coinIcon = new ImageGraphics(
-                ch.epfl.cs107.play.io.ResourcePath.getSprite("icmaze/coinsDisplay"),
-                hudWidth, hudHeight,
+        // ===== DRAW HUD BACKGROUND =====
+        new ImageGraphics(
+                ResourcePath.getSprite("icmaze/coinsDisplay"),
+                (float) hudWidth,
+                (float) hudHeight,
                 new RegionOfInterest(0, 0, 64, 32),
-                anchor, 1f, 2000f);
-        coinIcon.draw(canvas);
+                hudAnchor,
+                1f,
+                2000
+        ).draw(canvas);
 
-        String countStr = String.valueOf(coinCount);
-        float numberStartX = (hudWidth / 4) - ((countStr.length() * digitSize) / 2);
+        // ==================================================
+        // DIGITS — ANCRÉS DANS LA ZONE GRISE DE L’IMAGE
+        // ==================================================
 
-        for (int i = 0; i < countStr.length(); i++) {
+        // Coordonnées IMAGE (pixel)
+        final double GREY_X_CENTER = 70.0;
+        final double GREY_Y_CENTER = 6.5; //
 
-            int digit = Character.getNumericValue(countStr.charAt(i));
-            int regionX, regionY;
+        double pxToWorldX = hudWidth  / 64.0;
+        double pxToWorldY = hudHeight / 32.0;
+
+        Vector digitsCenter = hudAnchor.add(
+                new Vector(
+                        (GREY_X_CENTER - 32.0) * pxToWorldX,
+                        (16.0 - GREY_Y_CENTER) * pxToWorldY
+                )
+        );
+
+        // ===== DRAW DIGITS =====
+        String text = String.valueOf(coinCount);
+        double startX = -(text.length() * digitSize) / 2.0;
+
+        for (int i = 0; i < text.length(); i++) {
+
+            int digit = text.charAt(i) - '0';
+            int rx, ry;
 
             if (digit == 0) {
-                regionX = 16;
-                regionY = 32;
+                rx = 16;
+                ry = 32;
             } else {
                 int n = digit - 1;
-                regionX = (n % 4) * 16;
-                regionY = (n / 4) * 16;
+                rx = (n % 4) * 16;
+                ry = (n / 4) * 16;
             }
 
-            ImageGraphics digitGraphics = new ImageGraphics(
-                    ch.epfl.cs107.play.io.ResourcePath.getSprite("icmaze/digits"),
-                    digitSize, digitSize,
-                    new RegionOfInterest(regionX, regionY, 16, 16),
-                    anchor.add(new Vector(numberStartX + i * digitSize, 0)),
-                    1f, 2001f);
-            digitGraphics.draw(canvas);
+            new ImageGraphics(
+                    ResourcePath.getSprite("icmaze/digits"),
+                    (float) digitSize,
+                    (float) digitSize,
+                    new RegionOfInterest(rx, ry, 16, 16),
+                    digitsCenter.add(new Vector(startX + i * digitSize, 0.0)),
+                    1f,
+                    2001
+            ).draw(canvas);
         }
     }
 }
