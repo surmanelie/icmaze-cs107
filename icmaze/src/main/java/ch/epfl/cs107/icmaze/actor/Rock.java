@@ -106,11 +106,6 @@ public class Rock extends AreaEntity implements Interactable, Updatable {
         if (!visible)
             return;
 
-        // Si le signal est ON, on ne dessine rien (le rocher disparait)
-        if (signal != null && signal.isOn()) {
-            return;
-        }
-
         if (vanishing) {
             vanishAnimation.draw(canvas);
             return;
@@ -124,6 +119,13 @@ public class Rock extends AreaEntity implements Interactable, Updatable {
 
     @Override
     public void update(float dt) {
+        if (signal != null && signal.isOn() && !vanishing) {
+            while (!vanishing) {
+                immune = false;
+                weaken();
+            }
+        }
+
         if (vanishing) {
             handleVanish(dt);
             return;
@@ -139,25 +141,19 @@ public class Rock extends AreaEntity implements Interactable, Updatable {
 
     @Override
     public boolean takeCellSpace() {
-        if (signal != null && signal.isOn()) {
-            return false;
-        }
+
         return !vanishing;
     }
 
     @Override
     public boolean isCellInteractable() {
-        if (signal != null && signal.isOn()) {
-            return false;
-        }
+
         return !vanishing;
     }
 
     @Override
     public boolean isViewInteractable() {
-        if (signal != null && signal.isOn()) {
-            return false;
-        }
+
         return !vanishing;
     }
 
