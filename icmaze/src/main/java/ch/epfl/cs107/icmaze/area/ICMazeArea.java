@@ -41,7 +41,7 @@ public abstract class ICMazeArea extends Area implements DialogHandler, Logic {
     private Portal S;
     private Portal E;
     private Portal N;
-    protected final int size;
+    private final int size;
 
     private ICMaze game;
 
@@ -65,13 +65,12 @@ public abstract class ICMazeArea extends Area implements DialogHandler, Logic {
         createPortals();
     }
 
-
     @Override
     public float getCameraScaleFactor() {
 
         int effectiveSize = Math.max(getWidth(), getHeight());
 
-        return  Math.min(effectiveSize * DYNAMIC_SCALE_MULTIPLIER, MAXIMUM_SCALE);
+        return Math.min(effectiveSize * DYNAMIC_SCALE_MULTIPLIER, MAXIMUM_SCALE);
     }
 
     public abstract DiscreteCoordinates getplayerSpawnPosition();
@@ -112,8 +111,6 @@ public abstract class ICMazeArea extends Area implements DialogHandler, Logic {
         this.W.setState(state);
     }
 
-
-
     public void setNorthDestination(String destination, int nextSize) {
         this.N.setDestinationArea(destination);
         this.N.setArrivalCoordinates(new DiscreteCoordinates(nextSize / 2, 1));
@@ -151,10 +148,9 @@ public abstract class ICMazeArea extends Area implements DialogHandler, Logic {
         this.W.setKeyId(id);
     }
 
-
-    public abstract int getSize();
-
-
+    public int getSize() {
+        return size;
+    }
 
     protected void createPortals() {// modifier cordonne arrivee
 
@@ -195,7 +191,6 @@ public abstract class ICMazeArea extends Area implements DialogHandler, Logic {
 
     protected AreaGraph graph = new AreaGraph();
 
-
     public Queue<Orientation> getShortestPath(DiscreteCoordinates from, DiscreteCoordinates to) {
         return graph.shortestPath(from, to);
     }
@@ -223,7 +218,6 @@ public abstract class ICMazeArea extends Area implements DialogHandler, Logic {
     }
 
     private Logic validationSignal = Logic.FALSE;
-
 
     public void onRockDestroyed(DiscreteCoordinates cell) {
 

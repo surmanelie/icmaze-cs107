@@ -20,7 +20,7 @@ import java.util.Random;
 public abstract class LabyrinthArea extends ICMazeArea {
     private AreaPortals portalEnter; // il permet d entrer dans le labyrinthe associé
     private AreaPortals portalExit;
-    protected int keyId;
+    private int keyId;
     public final static int keyIdL1 = Integer.MAX_VALUE;
     // public final static int keyIdL2 = Integer.MAX_VALUE - 1;
     // public final static int keyIdL3 = Integer.MAX_VALUE - 2;
@@ -66,14 +66,14 @@ public abstract class LabyrinthArea extends ICMazeArea {
     // }
 
     private boolean isvalid(DiscreteCoordinates c) {
-        return c.x >= 1 && c.x <= size && c.y >= 1 && c.y <= size;
+        return c.x >= 1 && c.x <= getSize() && c.y >= 1 && c.y <= getSize();
     }
 
     @Override
     protected void createArea() {
         // 1. On génère le labyrinthe brut (avec des murs potentiellement devant les
         // portes)
-        mazeGrid = MazeGenerator.createMaze(size, size, difficulty);
+        mazeGrid = MazeGenerator.createMaze(getSize(), getSize(), difficulty);
 
         // 2. On récupère les positions des portes
         DiscreteCoordinates entry = getEntryArrivalCoordinates();
@@ -142,8 +142,8 @@ public abstract class LabyrinthArea extends ICMazeArea {
 
         List<DiscreteCoordinates> portalCells = getPortalCells();
 
-        for (int y = 0; y < size; y++) {
-            for (int x = 0; x < size; x++) {
+        for (int y = 0; y < getSize(); y++) {
+            for (int x = 0; x < getSize(); x++) {
 
                 if (mazeGrid[y][x] == 0) {
                     DiscreteCoordinates c = new DiscreteCoordinates(x + 1, y + 1);
@@ -155,11 +155,11 @@ public abstract class LabyrinthArea extends ICMazeArea {
 
                     boolean left = (x > 0 && mazeGrid[y][x - 1] == 0
                             && !portalCells.contains(new DiscreteCoordinates(x, y + 1)));
-                    boolean right = (x < size - 1 && mazeGrid[y][x + 1] == 0
+                    boolean right = (x < getSize() - 1 && mazeGrid[y][x + 1] == 0
                             && !portalCells.contains(new DiscreteCoordinates(x + 2, y + 1)));
                     boolean down = (y > 0 && mazeGrid[y - 1][x] == 0
                             && !portalCells.contains(new DiscreteCoordinates(x + 1, y)));
-                    boolean up = (y < size - 1 && mazeGrid[y + 1][x] == 0
+                    boolean up = (y < getSize() - 1 && mazeGrid[y + 1][x] == 0
                             && !portalCells.contains(new DiscreteCoordinates(x + 1, y + 2)));
 
                     graph.addNode(c, left, up, right, down);
@@ -196,8 +196,8 @@ public abstract class LabyrinthArea extends ICMazeArea {
         DiscreteCoordinates entry = getEntryArrivalCoordinates();
         DiscreteCoordinates exit = getExitArrivalCoordinates();
 
-        for (int y = 0; y < size; y++) {
-            for (int x = 0; x < size; x++) {
+        for (int y = 0; y < getSize(); y++) {
+            for (int x = 0; x < getSize(); x++) {
 
                 if (mazeGrid[y][x] == 1) {
 
@@ -231,10 +231,10 @@ public abstract class LabyrinthArea extends ICMazeArea {
     private DiscreteCoordinates getArrivalCoordinatesForPortal(AreaPortals portal) {
 
         return switch (portal) {
-            case N -> new DiscreteCoordinates(size / 2, size);
-            case S -> new DiscreteCoordinates(size / 2, 1);
-            case W -> new DiscreteCoordinates(1, size / 2);
-            case E -> new DiscreteCoordinates(size, size / 2);
+            case N -> new DiscreteCoordinates(getSize() / 2, getSize());
+            case S -> new DiscreteCoordinates(getSize() / 2, 1);
+            case W -> new DiscreteCoordinates(1, getSize() / 2);
+            case E -> new DiscreteCoordinates(getSize(), getSize() / 2);
         };
     }
 
@@ -305,7 +305,7 @@ public abstract class LabyrinthArea extends ICMazeArea {
         int gx = cell.x - 1;
         int gy = cell.y - 1;
 
-        if (gx < 0 || gx >= size || gy < 0 || gy >= size)
+        if (gx < 0 || gx >= getSize() || gy < 0 || gy >= getSize())
             return;
 
         // 1) Ouvrir la cellule
@@ -315,11 +315,11 @@ public abstract class LabyrinthArea extends ICMazeArea {
         rebuildGraphNodeAt(gx, gy);
         if (gx > 0)
             rebuildGraphNodeAt(gx - 1, gy);
-        if (gx < size - 1)
+        if (gx < getSize() - 1)
             rebuildGraphNodeAt(gx + 1, gy);
         if (gy > 0)
             rebuildGraphNodeAt(gx, gy - 1);
-        if (gy < size - 1)
+        if (gy < getSize() - 1)
             rebuildGraphNodeAt(gx, gy + 1);
     }
 
@@ -338,11 +338,11 @@ public abstract class LabyrinthArea extends ICMazeArea {
 
         boolean left = (gx > 0 && mazeGrid[gy][gx - 1] == 0
                 && !portalCells.contains(new DiscreteCoordinates(gx, gy + 1)));
-        boolean right = (gx < size - 1 && mazeGrid[gy][gx + 1] == 0
+        boolean right = (gx < getSize() - 1 && mazeGrid[gy][gx + 1] == 0
                 && !portalCells.contains(new DiscreteCoordinates(gx + 2, gy + 1)));
         boolean down = (gy > 0 && mazeGrid[gy - 1][gx] == 0
                 && !portalCells.contains(new DiscreteCoordinates(gx + 1, gy)));
-        boolean up = (gy < size - 1 && mazeGrid[gy + 1][gx] == 0
+        boolean up = (gy < getSize() - 1 && mazeGrid[gy + 1][gx] == 0
                 && !portalCells.contains(new DiscreteCoordinates(gx + 1, gy + 2)));
 
         graph.addNode(c, left, up, right, down);

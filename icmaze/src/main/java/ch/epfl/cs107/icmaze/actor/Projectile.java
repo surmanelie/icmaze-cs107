@@ -17,9 +17,9 @@ import java.util.List;
  */
 public abstract class Projectile extends ICMazeActor implements Interactor {
 
-    protected static final int SPEED = 1;
-    protected static final int MAX_RANGE = 7;
-    protected static final int DAMAGE = 1;
+    private static final int SPEED = 1;
+    private static final int MAX_RANGE = 7;
+    private static final int DAMAGE = 1;
     private static final int MOVE_DURATION = 4;
 
     private int remainingRange = MAX_RANGE;
