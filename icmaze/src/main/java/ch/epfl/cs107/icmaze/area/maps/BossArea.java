@@ -47,6 +47,7 @@ public class BossArea extends ICMazeArea implements Logic {
         boss = new Boss(this, Orientation.DOWN, new DiscreteCoordinates(4, 4));
         registerActor(boss);
         registerActor(new FinalLieutenant(this, Orientation.DOWN, new DiscreteCoordinates(2, 2)));
+
         // registerActor(new Pickaxe(this, Orientation.DOWN, new DiscreteCoordinates(5,
         // 5)));
     }

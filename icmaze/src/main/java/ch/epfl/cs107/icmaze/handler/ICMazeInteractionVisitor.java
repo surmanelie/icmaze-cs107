@@ -148,4 +148,14 @@ public interface ICMazeInteractionVisitor extends AreaInteractionVisitor {
         // default empty
     }
 
+    /**
+     * Simulate an interaction between ICMaze actors and a Trap
+     *
+     * @param trap              (Trap): the trap, not null
+     * @param isCellInteraction (boolean): true if it is a cell interaction
+     */
+    default void interactWith(Trap trap, boolean isCellInteraction) {
+        // default empty
+    }
+
 }

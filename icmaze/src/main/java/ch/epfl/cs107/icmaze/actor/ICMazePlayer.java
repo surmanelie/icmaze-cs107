@@ -479,5 +479,12 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                 speedBlinkTick = 0;
             }
         }
+
+        @Override
+        public void interactWith(Trap trap, boolean isCellInteraction) {
+            if (isCellInteraction && trap.isOn()) {
+                sufferHit();
+            }
+        }
     }
 }

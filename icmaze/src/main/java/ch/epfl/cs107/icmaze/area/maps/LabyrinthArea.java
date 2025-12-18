@@ -22,23 +22,23 @@ public abstract class LabyrinthArea extends ICMazeArea {
     private AreaPortals portalExit;
     protected int keyId;
     public final static int keyIdL1 = Integer.MAX_VALUE;
-//    public final static int keyIdL2 = Integer.MAX_VALUE - 1;
-//    public final static int keyIdL3 = Integer.MAX_VALUE - 2;
-//    public final static int keyIdL4 = Integer.MAX_VALUE - 3;
-//    // private final String gridName;
+    // public final static int keyIdL2 = Integer.MAX_VALUE - 1;
+    // public final static int keyIdL3 = Integer.MAX_VALUE - 2;
+    // public final static int keyIdL4 = Integer.MAX_VALUE - 3;
+    // // private final String gridName;
 
     /** Matrice du labyrinthe : 0 = chemin, 1 = mur */
     protected int[][] mazeGrid;
 
     private int difficulty;
 
-//    public int getDifficulty() {
-//        return difficulty;
-//    }
-//
-//    public void setDifficulty(int difficulty) {
-//        this.difficulty = difficulty;
-//    }
+    // public int getDifficulty() {
+    // return difficulty;
+    // }
+    //
+    // public void setDifficulty(int difficulty) {
+    // this.difficulty = difficulty;
+    // }
 
     public void setPortalEnter(AreaPortals portalEnter) {
         this.portalEnter = portalEnter;
@@ -61,9 +61,9 @@ public abstract class LabyrinthArea extends ICMazeArea {
         return keyId;
     }
 
-//    public void setKeyId(int keyId) {
-//        this.keyId = keyId;
-//    }
+    // public void setKeyId(int keyId) {
+    // this.keyId = keyId;
+    // }
 
     private boolean isvalid(DiscreteCoordinates c) {
         return c.x >= 1 && c.x <= size && c.y >= 1 && c.y <= size;
@@ -112,6 +112,7 @@ public abstract class LabyrinthArea extends ICMazeArea {
 
         placeLogMonsters(rng);
         placeSpeedBalls(rng);
+        placeTrap(rng);
     }
 
     private void placeSpeedBalls(Random rng) {
@@ -362,6 +363,25 @@ public abstract class LabyrinthArea extends ICMazeArea {
             case W -> new DiscreteCoordinates(pos.x + 1, pos.y); // Ouest -> on va à droite
             case E -> new DiscreteCoordinates(pos.x - 1, pos.y); // Est -> on va à gauche
         };
+    }
+
+    private void placeTrap(Random rng) {
+        List<DiscreteCoordinates> candidates = new ArrayList<>(graph.keySet());
+        DiscreteCoordinates entry = getEntryArrivalCoordinates();
+        DiscreteCoordinates exit = getExitArrivalCoordinates();
+
+        candidates.remove(entry);
+        candidates.remove(exit);
+
+        if (candidates.isEmpty()) {
+            return;
+        }
+
+        Collections.shuffle(candidates, rng);
+
+        // Place 1 trap
+        DiscreteCoordinates pos = candidates.get(0);
+        registerActor(new ch.epfl.cs107.icmaze.actor.Trap(this, Orientation.DOWN, pos, null));
     }
 
 }
