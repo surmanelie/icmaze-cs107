@@ -54,12 +54,10 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
 
     private final KeyBindings.PlayerKeyBindings keys;
 
-
     private OrientedAnimation animation;
 
     private OrientedAnimation pickaxeAnimation;
     private static final int PICKAXE_ANIMATION_DURATION = 5;
-
 
     private final ICMazePlayerInteractionHandler handler = new ICMazePlayerInteractionHandler();
 
@@ -68,15 +66,12 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
     private String destinationArea;
     private DiscreteCoordinates destinationCoordinates;
 
-
     private final Health healthBar = new Health(this, Transform.I.translated(0, 1.75f), 5, true);
-
 
     private static final float IMMUNITY_DURATION = 1.0f;
     private final Cooldown immunityCd = new Cooldown(IMMUNITY_DURATION);
     private boolean immune = false;
     private int blinkTick = 0;
-
 
     public ICMazePlayer(Area owner, Orientation orientation, DiscreteCoordinates coordinates, String spriteName) {
         super(owner, orientation, coordinates);
@@ -90,7 +85,6 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
 
         animation = new OrientedAnimation(prefix, ANIMATION_DURATION, this, anchor, orders,
                 4, 1, 2, 16, 32, true);
-
 
         final Vector anchor2 = new Vector(-.5f, 0);
         final Orientation[] orders2 = { DOWN, UP, RIGHT, LEFT };
@@ -154,11 +148,9 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
 
         boolean visible = true;
 
-
         if (immune) {
             visible = (blinkTick % 2 == 0);
         }
-
 
         if (speedVisualActive) {
             visible = (speedBlinkTick % SPEED_BLINK_RATE == 0);
@@ -200,8 +192,6 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
 
     private boolean hasHitThisAttack = false;
 
-
-
     public void sufferHit() {
 
         if (immune)
@@ -223,10 +213,8 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
         immunityCd.reset();
     }
 
-
     public void resetAfterAreaReset() {
         healthBar.resetHealth();
-
 
         bag.removeIf(item -> item instanceof Key);
 
@@ -247,7 +235,6 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
     @Override
     public void update(float deltaTime) {
 
-
         if (!healthBar.isOn()) {
             return;
         }
@@ -266,7 +253,6 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                     animation.update(deltaTime);
                 else
                     animation.reset();
-
 
                 if (!isDisplacementOccurs() &&
                         keyboard.get(keys.interact()).isPressed()) {
@@ -301,14 +287,12 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
 
                     currentState = PlayerState.IDLE;
 
-
                     animation.reset();
                     hasHitThisAttack = false;
                 }
 
                 break;
         }
-
 
         if (immune) {
             blinkTick++;
@@ -334,7 +318,6 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
             move(currentMoveDuration);
         }
     }
-
 
     @Override
     public boolean isViewInteractable() {
@@ -388,7 +371,6 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                 triggerVisualEffect();
             }
 
-
         }
 
         @Override
@@ -399,7 +381,6 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
 
             }
         }
-
 
         @Override
         public void interactWith(Portal portal, boolean isCellInteraction) {
@@ -413,11 +394,9 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                 }
             } else {
 
-
                 if (currentState != PlayerState.INTERACTING) {
                     return;
                 }
-
 
                 if (portal.getState() == Portal.State.LOCKED) {
                     int id = portal.getKeyId();
@@ -429,7 +408,6 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
                     if (hasKey(id) && useKey(id)) {
                         portal.open();
 
-
                     }
                 }
             }
@@ -437,7 +415,6 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
 
         @Override
         public void interactWith(Rock rock, boolean isCellInteraction) {
-
 
             if (!isCellInteraction && currentState == PlayerState.ATTACKING_WITH_PICKAXE && !hasHitThisAttack) {
 
@@ -463,6 +440,14 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
         public void interactWith(Boss boss, boolean isCellInteraction) {
             if (!isCellInteraction && currentState == PlayerState.ATTACKING_WITH_PICKAXE && !hasHitThisAttack) {
                 boss.sufferHit();
+                hasHitThisAttack = true;
+            }
+        }
+
+        @Override
+        public void interactWith(FinalLieutenant lieutenant, boolean isCellInteraction) {
+            if (!isCellInteraction && currentState == PlayerState.ATTACKING_WITH_PICKAXE && !hasHitThisAttack) {
+                lieutenant.loseHealth(1);
                 hasHitThisAttack = true;
             }
         }
@@ -496,5 +481,3 @@ public class ICMazePlayer extends ICMazeActor implements Interactor {
         }
     }
 }
-
-

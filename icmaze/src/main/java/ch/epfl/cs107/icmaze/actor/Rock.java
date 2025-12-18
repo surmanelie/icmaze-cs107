@@ -45,7 +45,6 @@ public class Rock extends AreaEntity implements Interactable, Updatable {
                 ANIMATION_DURATION / 7, false);
     }
 
-
     public Rock(ICMazeArea area, DiscreteCoordinates coordinates) {
 
         this(area, Orientation.DOWN, coordinates, Logic.FALSE);
@@ -78,7 +77,6 @@ public class Rock extends AreaEntity implements Interactable, Updatable {
             return;
         }
 
-
         triggerImmunity();
 
     }
@@ -108,11 +106,6 @@ public class Rock extends AreaEntity implements Interactable, Updatable {
         if (!visible)
             return;
 
-        // Si le signal est ON, on ne dessine rien (le rocher disparait)
-        if (signal != null && signal.isOn()) {
-            return;
-        }
-
         if (vanishing) {
             vanishAnimation.draw(canvas);
             return;
@@ -131,6 +124,15 @@ public class Rock extends AreaEntity implements Interactable, Updatable {
             return;
         }
 
+        if (signal != null && signal.isOn() && !vanishing) {
+            // Inflict massive damage to ensure destruction regardless of current health
+            healthBar.decrease(100);
+            if (!healthBar.isOn()) {
+                owner.onRockDestroyed(getCurrentMainCellCoordinates());
+                vanishing = true;
+            }
+        }
+
         if (immune) {
             blinkTick++;
             if (immunityCd.ready(dt)) {
@@ -141,25 +143,16 @@ public class Rock extends AreaEntity implements Interactable, Updatable {
 
     @Override
     public boolean takeCellSpace() {
-        if (signal != null && signal.isOn()) {
-            return false;
-        }
         return !vanishing;
     }
 
     @Override
     public boolean isCellInteractable() {
-        if (signal != null && signal.isOn()) {
-            return false;
-        }
         return !vanishing;
     }
 
     @Override
     public boolean isViewInteractable() {
-        if (signal != null && signal.isOn()) {
-            return false;
-        }
         return !vanishing;
     }
 

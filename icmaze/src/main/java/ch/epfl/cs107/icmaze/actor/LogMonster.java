@@ -105,7 +105,6 @@ public class LogMonster extends PathFinderEnnemy {
         this.reorientCooldown = new Cooldown(0.75f);
         this.stateCooldown = new Cooldown(3.0f);
 
-
         this.pTransition = (double) Difficulty.HARDEST / (double) difficulty;
 
         Vector anchor = new Vector(-0.5f, 0.25f);
@@ -173,72 +172,56 @@ public class LogMonster extends PathFinderEnnemy {
                 sleepingAnimation.reset();
                 graphicPath = null;
             }
-            sleepingAnimation.update(deltaTime);
-
-            return;
-        }
-
-        boolean canReorient = reorientCooldown.ready(deltaTime);
-        boolean canChangeState = stateCooldown.ready(deltaTime);
-
-        var rng = RandomGenerator.rng;
-
-        plannedOrientation = null;
-
-        switch (state) {
-
-            case SLEEPING -> {
-                if (canReorient) {
-                    orientate(leftof(getOrientation()));
-                }
-
-                if (canChangeState && rng.nextDouble() < pTransition) {
-                    state = State.RANDOM;
-                    randomAnimation.reset();
-                }
+        } else {
+            if (state == State.SLEEPING) {
+                state = State.RANDOM;
+                randomAnimation.reset();
             }
 
-            case RANDOM -> {
-                if (canReorient) {
-                    Orientation[] dirs = Orientation.values();
-                    Orientation randomDir = dirs[rng.nextInt(dirs.length)];
-                    plannedOrientation = randomDir;
-                }
+            // Normal behavior only if not sleeping
+            boolean canReorient = reorientCooldown.ready(deltaTime);
+            boolean canChangeState = stateCooldown.ready(deltaTime);
+            var rng = RandomGenerator.rng;
+            plannedOrientation = null;
 
-
-                if (lastKnowPlayerPosition != null) {
-                    state = State.TARGETING;
-                    targetingAnimation.reset();
-                } else if (canChangeState && rng.nextDouble() < pTransition) {
-                }
-            }
-
-            case TARGETING -> {
-                if (lastKnowPlayerPosition == null) {
-                    state = State.RANDOM;
-                    randomAnimation.reset();
-                    graphicPath = null;
-                } else {
-
+            switch (state) {
+                case RANDOM -> {
                     if (canReorient) {
-                        Orientation target = computeTargetOrientation();
-                        if (target != null) {
-                            plannedOrientation = target;
-                        }
+                        Orientation[] dirs = Orientation.values();
+                        Orientation randomDir = dirs[rng.nextInt(dirs.length)];
+                        plannedOrientation = randomDir;
                     }
 
-
+                    if (lastKnowPlayerPosition != null) {
+                        state = State.TARGETING;
+                        targetingAnimation.reset();
+                    } else if (canChangeState && rng.nextDouble() < pTransition) {
+                        // Optional transition logic
+                    }
+                }
+                case TARGETING -> {
+                    if (lastKnowPlayerPosition == null) {
+                        state = State.RANDOM;
+                        randomAnimation.reset();
+                        graphicPath = null;
+                    } else {
+                        if (canReorient) {
+                            Orientation target = computeTargetOrientation();
+                            if (target != null) {
+                                plannedOrientation = target;
+                            }
+                        }
+                    }
                 }
             }
         }
 
+        // Update animation for all states
         switch (state) {
             case SLEEPING -> sleepingAnimation.update(deltaTime);
             case RANDOM -> randomAnimation.update(deltaTime);
             case TARGETING -> targetingAnimation.update(deltaTime);
         }
-
-
 
         super.updateAlive(deltaTime);
     }
@@ -306,9 +289,7 @@ public class LogMonster extends PathFinderEnnemy {
                 return;
             }
 
-
             boolean victory = (signal != null && signal.isOn());
-
 
             if (!victory && state == State.SLEEPING) {
                 state = State.RANDOM;
@@ -339,17 +320,17 @@ public class LogMonster extends PathFinderEnnemy {
         }
     }
 
-//    public void setLastKnowPlayerPosition(DiscreteCoordinates position) {
-//        this.lastKnowPlayerPosition = position;
-//    }
-//
-//    public State getState() {
-//        return state;
-//    }
-//
-//    public void setState(State state) {
-//        this.state = state;
-//    }
+    // public void setLastKnowPlayerPosition(DiscreteCoordinates position) {
+    // this.lastKnowPlayerPosition = position;
+    // }
+    //
+    // public State getState() {
+    // return state;
+    // }
+    //
+    // public void setState(State state) {
+    // this.state = state;
+    // }
 
     /**
      * Monster takes damage
@@ -360,14 +341,13 @@ public class LogMonster extends PathFinderEnnemy {
             return;
         }
 
-        if (true) {
-            boolean victory = (signal != null && signal.isOn());
-            if (!victory) {
-                state = State.RANDOM;
-                randomAnimation.reset();
-                stateCooldown.reset();
-            }
+        boolean victory = (signal != null && signal.isOn());
+        if (!victory) {
+            state = State.RANDOM;
+            randomAnimation.reset();
+            stateCooldown.reset();
         }
+
 
         loseHealth(1);
         healthBar.decrease(1);
@@ -398,6 +378,7 @@ public class LogMonster extends PathFinderEnnemy {
         boolean visible = !immune || (blinkTick % 2 == 0);
 
         if (state == State.SLEEPING) {
+            System.out.println("animation");
             sleepingAnimation.draw(canvas);
         } else if (visible) {
             switch (state) {

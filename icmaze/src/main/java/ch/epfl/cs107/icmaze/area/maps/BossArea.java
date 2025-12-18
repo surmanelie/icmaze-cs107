@@ -3,6 +3,7 @@ package ch.epfl.cs107.icmaze.area.maps;
 import ch.epfl.cs107.icmaze.actor.collectable.Pickaxe;
 import ch.epfl.cs107.icmaze.area.ICMazeArea;
 import ch.epfl.cs107.icmaze.actor.Boss;
+import ch.epfl.cs107.icmaze.actor.FinalLieutenant;
 import ch.epfl.cs107.icmaze.actor.collectable.Pickaxe;
 import ch.epfl.cs107.play.math.DiscreteCoordinates;
 import ch.epfl.cs107.play.math.Orientation;
@@ -19,8 +20,6 @@ public class BossArea extends ICMazeArea implements Logic {
     public boolean isOn() {
         return boss != null && boss.isDefeated() && boss.getDroppedKey() != null && boss.getDroppedKey().isCollected();
     }
-
-
 
     @Override
     public int getSize() {
@@ -47,6 +46,7 @@ public class BossArea extends ICMazeArea implements Logic {
         // }
         boss = new Boss(this, Orientation.DOWN, new DiscreteCoordinates(4, 4));
         registerActor(boss);
+        registerActor(new FinalLieutenant(this, Orientation.DOWN, new DiscreteCoordinates(2, 2)));
         // registerActor(new Pickaxe(this, Orientation.DOWN, new DiscreteCoordinates(5,
         // 5)));
     }

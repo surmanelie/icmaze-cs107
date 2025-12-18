@@ -127,4 +127,25 @@ public interface ICMazeInteractionVisitor extends AreaInteractionVisitor {
     default void interactWith(SpeedBall ball, boolean isCellInteraction) {
         // default empty
     }
+
+    /**
+     * Simulate an interaction between ICMaze actors and a FinalLieutenant
+     *
+     * @param lieutenant        (FinalLieutenant): the lieutenant, not null
+     * @param isCellInteraction (boolean): true if it is a cell interaction
+     */
+    default void interactWith(FinalLieutenant lieutenant, boolean isCellInteraction) {
+        // default empty
+    }
+
+    /**
+     * Simulate an interaction between ICMaze actors and a FinalFireProjectile
+     *
+     * @param projectile        (FinalFireProjectile): the projectile, not null
+     * @param isCellInteraction (boolean): true if it is a cell interaction
+     */
+    default void interactWith(FinalFireProjectile projectile, boolean isCellInteraction) {
+        // default empty
+    }
+
 }
