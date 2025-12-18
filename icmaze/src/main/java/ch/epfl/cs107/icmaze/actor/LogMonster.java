@@ -1,5 +1,6 @@
 package ch.epfl.cs107.icmaze.actor;
 
+import ch.epfl.cs107.play.engine.actor.Sprite;
 import ch.epfl.cs107.play.signal.logic.Logic;
 import ch.epfl.cs107.icmaze.Difficulty;
 import ch.epfl.cs107.icmaze.RandomGenerator;
@@ -129,15 +130,18 @@ public class LogMonster extends PathFinderEnnemy {
         randomAnimation = new OrientedAnimation("icmaze/logMonster_random", ANIMATION_DURATION / 3, this, anchor,
                 ordersRandom, 4, 2, 2, 32, 32, true);
 
-        Orientation[] ordersSleeping = {
-                Orientation.DOWN,
-                Orientation.LEFT,
-                Orientation.UP,
-                Orientation.RIGHT
-        };
-        sleepingAnimation = new OrientedAnimation("icmaze/logMonster.sleeping", ANIMATION_DURATION / 3, this, anchor,
-                ordersSleeping, 1, 2, 2, 32, 32, true);
+        Sprite[] sleepingSprites = new Sprite[4];
+        for (int i = 0; i < 4; i++) {
+            sleepingSprites[i] = new Sprite("icmaze/logMonster.sleeping", 2, 2, this,
+                    new ch.epfl.cs107.play.math.RegionOfInterest(0, i * 32, 32, 32), anchor);
+        }
+        Animation sleepingAnim = new Animation(ANIMATION_DURATION / 3, sleepingSprites, true);
+        Animation[] sleepingAnims = new Animation[4];
+        for (int i = 0; i < 4; i++) {
+            sleepingAnims[i] = sleepingAnim;
+        }
 
+        sleepingAnimation = new OrientedAnimation(sleepingAnims, this);
     }
 
     @Override
@@ -348,7 +352,6 @@ public class LogMonster extends PathFinderEnnemy {
             stateCooldown.reset();
         }
 
-
         loseHealth(1);
         healthBar.decrease(1);
         hasTakenDamage = true;
@@ -375,19 +378,21 @@ public class LogMonster extends PathFinderEnnemy {
             return;
         }
 
+        // 1. Gère l'immunité (Clignotement) EN PREMIER
+        // Si le monstre est immunisé et dans sa phase "invisible", on ne dessine RIEN.
         boolean visible = !immune || (blinkTick % 2 == 0);
-
-        if (state == State.SLEEPING) {
-            System.out.println("animation");
-            sleepingAnimation.draw(canvas);
-        } else if (visible) {
-            switch (state) {
-                case RANDOM -> randomAnimation.draw(canvas);
-                case TARGETING -> targetingAnimation.draw(canvas);
-                default -> sleepingAnimation.draw(canvas);
-            }
+        if (!visible) {
+            return;
         }
 
+        // 2. Dessine le sprite principal
+        switch (state) {
+            case RANDOM -> randomAnimation.draw(canvas);
+            case TARGETING -> targetingAnimation.draw(canvas);
+            case SLEEPING -> sleepingAnimation.draw(canvas);
+        }
+
+        // 3. Dessine les éléments supplémentaires (Path, HealthBar)
         if (state == State.TARGETING && graphicPath != null) {
             graphicPath.draw(canvas);
         }
