@@ -4,15 +4,12 @@ Jeu de type *dungeon crawler* en Java, réalisé dans le cadre du cours de progr
 
 Le joueur explore une série de labyrinthes générés, doit survivre à des ennemis, résoudre des énigmes à base de leviers et de clés, puis affronter un boss final avant de pouvoir revenir récupérer les richesses laissées derrière lui.
 
-**Auteurs**
-- Danny Levy
-- Elie Menasche Reuben Surman
 
 ## Structure du projet
 
 Le projet est un multi-module Maven :
 
-- **`game-engine/`** — le moteur de jeu 2D fourni par le cours (gestion des zones, des acteurs, des collisions, de la boucle de jeu, du rendu). Ce module est la base commune fournie à tous les étudiants, pas notre travail.
+- **`game-engine/`** — le moteur de jeu 2D  (gestion des zones, des acteurs, des collisions, de la boucle de jeu, du rendu). 
 - **`icmaze/`** — notre jeu, développé au-dessus du moteur : logique de gameplay, ennemis, objets, zones, interface.
 - **`tutos/`** — tutoriels d'introduction au moteur, fournis par le cours.
 
@@ -50,6 +47,4 @@ mvn clean install
 
 Le jeu se lance ensuite via la classe `Play` du module concerné (voir la configuration du module dans votre IDE, ou `mvn exec:java` selon le module).
 
-## Remarque
 
-Le module `game-engine` (et `tutos`) est le matériel de base fourni par le cours CS-107 ; seul le module `icmaze` constitue notre propre travail pour ce mini-projet.
